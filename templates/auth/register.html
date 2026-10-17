@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campus User Registration - BulSU Facility System</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --bsu-maroon: #800000;
+            --bsu-gold: #f8b400;
+        }
+        body {
+            background: linear-gradient(135deg, #2b0000 0%, #111827 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1rem;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+        .register-card {
+            width: 100%;
+            max-width: 580px;
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .register-header {
+            background: linear-gradient(135deg, var(--bsu-maroon), #4a0000);
+            color: #ffffff;
+            padding: 1.75rem;
+            text-align: center;
+            border-bottom: 3px solid var(--bsu-gold);
+        }
+        .btn-bsu {
+            background-color: var(--bsu-maroon);
+            color: #ffffff;
+            font-weight: 600;
+        }
+        .btn-bsu:hover {
+            background-color: #600000;
+            color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+    <div class="register-card">
+        <div class="register-header">
+            <h4 class="fw-bold mb-1"><i class="bi bi-person-plus-fill me-2 text-warning"></i>Campus User Registration</h4>
+            <div class="small text-white-50">Create your Basic User account for facility requests</div>
+        </div>
+
+        <div class="p-4">
+            {% if form.non_field_errors %}
+                <div class="alert alert-danger small">
+                    {% for error in form.non_field_errors %}
+                        <div>{{ error }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <div class="alert alert-info py-2 small d-flex align-items-center gap-2">
+                <i class="bi bi-shield-check fs-5"></i>
+                <div>All public registrations automatically assign the <strong>Basic User</strong> role. Administrative roles are provisioned exclusively via institutional governance.</div>
+            </div>
+
+            <form method="post" novalidate>
+                {% csrf_token %}
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label small fw-semibold">Username *</label>
+                        {{ form.username }}
+                        {% if form.username.errors %}<div class="text-danger small">{{ form.username.errors.0 }}</div>{% endif %}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label small fw-semibold">Institutional Email *</label>
+                        {{ form.email }}
+                        {% if form.email.errors %}<div class="text-danger small">{{ form.email.errors.0 }}</div>{% endif %}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label small fw-semibold">First Name *</label>
+                        {{ form.first_name }}
+                        {% if form.first_name.errors %}<div class="text-danger small">{{ form.first_name.errors.0 }}</div>{% endif %}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label small fw-semibold">Last Name *</label>
+                        {{ form.last_name }}
+                        {% if form.last_name.errors %}<div class="text-danger small">{{ form.last_name.errors.0 }}</div>{% endif %}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label small fw-semibold">Contact Number</label>
+                        {{ form.contact_number }}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label small fw-semibold">College / Department</label>
+                        {{ form.department }}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label small fw-semibold">Password *</label>
+                        {{ form.password }}
+                        {% if form.password.errors %}<div class="text-danger small">{{ form.password.errors.0 }}</div>{% endif %}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label small fw-semibold">Confirm Password *</label>
+                        {{ form.password_confirm }}
+                        {% if form.password_confirm.errors %}<div class="text-danger small">{{ form.password_confirm.errors.0 }}</div>{% endif %}
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-bsu w-100 py-2 mt-4">
+                    <i class="bi bi-check2-circle me-1"></i> Complete Registration
+                </button>
+            </form>
+
+            <div class="mt-3 text-center">
+                <span class="text-muted small">Already have an account?</span>
+                <a href="{% url 'login' %}" class="fw-semibold text-danger text-decoration-none ms-1">Sign In</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

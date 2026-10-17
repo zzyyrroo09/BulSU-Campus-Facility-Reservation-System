@@ -1,0 +1,115 @@
+{% extends 'base_user.html' %}
+
+{% block title %}My Bookings - BulSU Facility Portal{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h3 class="fw-bold mb-1 text-dark"><i class="bi bi-bookmark-check-fill text-danger me-2"></i>My Facility Bookings</h3>
+        <p class="text-muted mb-0 small">Track status of pending requests, approved reservations, and historical event logs</p>
+    </div>
+    <div>
+        <a href="{% url 'user_portal:reserve' %}" class="btn btn-danger btn-sm" style="background-color: var(--bsu-maroon);">
+            <i class="bi bi-plus-lg me-1"></i> New Request
+        </a>
+    </div>
+</div>
+
+<!-- Status Filter -->
+<div class="card shadow-sm mb-4">
+    <div class="card-body py-2">
+        <form method="get" class="row g-2 align-items-center">
+            <div class="col-md-4">
+                <select name="status" class="form-select form-select-sm" onchange="this.form.submit()">
+                    <option value="">All Statuses</option>
+                    <option value="PENDING" {% if status_filter == 'PENDING' %}selected{% endif %}>Pending Only</option>
+                    <option value="APPROVED" {% if status_filter == 'APPROVED' %}selected{% endif %}>Approved Only</option>
+                    <option value="CHECKED_IN" {% if status_filter == 'CHECKED_IN' %}selected{% endif %}>Checked In Only</option>
+                    <option value="COMPLETED" {% if status_filter == 'COMPLETED' %}selected{% endif %}>Completed Only</option>
+                    <option value="REJECTED" {% if status_filter == 'REJECTED' %}selected{% endif %}>Rejected Only</option>
+                    <option value="CANCELLED" {% if status_filter == 'CANCELLED' %}selected{% endif %}>Cancelled Only</option>
+                </select>
+            </div>
+            <div class="col-md-8 text-end">
+                <span class="text-muted small">Cancellations are allowed for Pending or Approved bookings strictly before event start time.</span>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Bookings Table -->
+<div class="card shadow-sm">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>Tracking Code</th>
+                    <th>Facility</th>
+                    <th>Event Details</th>
+                    <th>Date & Time</th>
+                    <th>Status</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for res in page_obj %}
+                    <tr>
+                        <td>
+                            <code>{{ res.tracking_code }}</code>
+                            <div class="text-muted small" style="font-size: 0.75rem;">{{ res.created_at|date:"M d, Y" }}</div>
+                        </td>
+                        <td>
+                            <div class="fw-bold text-dark">{{ res.facility.name }}</div>
+                            <small class="text-muted">{{ res.facility.location }}</small>
+                        </td>
+                        <td>
+                            <div class="fw-bold text-dark">{{ res.title }}</div>
+                            <small class="text-muted">{{ res.participants_count }} Attendees</small>
+                        </td>
+                        <td>
+                            <div class="fw-semibold">{{ res.start_time|date:"M d, Y" }}</div>
+                            <small class="text-muted">{{ res.start_time|date:"H:i" }} &ndash; {{ res.end_time|date:"H:i" }} ({{ res.duration_hours }}h)</small>
+                        </td>
+                        <td>
+                            <span class="badge-status status-{{ res.status }}">{{ res.get_status_display }}</span>
+                        </td>
+                        <td class="text-end">
+                            <a href="{% url 'user_portal:reservation_detail' res.id %}" class="btn btn-sm btn-outline-secondary me-1">
+                                Details
+                            </a>
+                            {% if res.can_be_cancelled_by_user %}
+                                <a href="{% url 'user_portal:cancel_reservation' res.id %}" class="btn btn-sm btn-outline-danger">
+                                    Cancel
+                                </a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center py-5 text-muted">
+                            <i class="bi bi-calendar2-x fs-1 d-block mb-2 text-secondary"></i>
+                            No facility bookings found matching this filter.
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Pagination -->
+    {% if page_obj.has_other_pages %}
+        <div class="card-footer bg-white d-flex justify-content-between align-items-center py-3">
+            <span class="text-muted small">Showing {{ page_obj.start_index }} to {{ page_obj.end_index }} of {{ page_obj.paginator.count }} bookings</span>
+            <ul class="pagination pagination-sm mb-0">
+                {% if page_obj.has_previous %}
+                    <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}&status={{ status_filter }}">Previous</a></li>
+                {% endif %}
+                <li class="page-item active"><span class="page-link">{{ page_obj.number }}</span></li>
+                {% if page_obj.has_next %}
+                    <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}&status={{ status_filter }}">Next</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

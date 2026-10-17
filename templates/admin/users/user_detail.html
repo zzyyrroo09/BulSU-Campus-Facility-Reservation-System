@@ -1,0 +1,124 @@
+{% extends 'base_admin.html' %}
+
+{% block title %}User Profile & History: {{ target_profile.user.username }} - Admin Console{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+    <a href="{% url 'admin_panel:user_list' %}" class="text-decoration-none small text-secondary">
+        <i class="bi bi-arrow-left me-1"></i> Back to User Accounts
+    </a>
+    <div class="d-flex justify-content-between align-items-center mt-2">
+        <div>
+            <h3 class="fw-bold mb-1 text-dark">{{ target_profile.user.get_full_name|default:target_profile.user.username }}</h3>
+            <p class="text-muted mb-0 small">Account details, audit status, and full facility reservation history</p>
+        </div>
+        <div>
+            <form method="post" action="{% url 'admin_panel:user_toggle_status' target_profile.user.id %}" class="d-inline" onsubmit="return confirm('Toggle active status for this user?');">
+                {% csrf_token %}
+                {% if target_profile.is_active_account %}
+                    <button type="submit" class="btn btn-danger btn-sm">
+                        <i class="bi bi-slash-circle me-1"></i> Deactivate Account
+                    </button>
+                {% else %}
+                    <button type="submit" class="btn btn-success btn-sm">
+                        <i class="bi bi-check-circle me-1"></i> Activate Account
+                    </button>
+                {% endif %}
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-md-4">
+        <div class="card shadow-sm h-100">
+            <div class="card-header bg-white">
+                <span class="fw-bold"><i class="bi bi-person-badge text-danger me-2"></i>Account Overview</span>
+            </div>
+            <div class="card-body">
+                <ul class="list-group list-group-flush small">
+                    <li class="list-group-item d-flex justify-content-between px-0">
+                        <span class="text-muted">Username:</span>
+                        <span class="fw-semibold">@{{ target_profile.user.username }}</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between px-0">
+                        <span class="text-muted">Role:</span>
+                        <span class="badge bg-secondary">{{ target_profile.get_role_display }}</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between px-0">
+                        <span class="text-muted">Status:</span>
+                        {% if target_profile.is_active_account %}
+                            <span class="badge bg-success">ACTIVE</span>
+                        {% else %}
+                            <span class="badge bg-danger">DEACTIVATED</span>
+                        {% endif %}
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between px-0">
+                        <span class="text-muted">Email:</span>
+                        <span class="fw-semibold">{{ target_profile.user.email }}</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between px-0">
+                        <span class="text-muted">Contact:</span>
+                        <span class="fw-semibold">{{ target_profile.contact_number|default:"N/A" }}</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between px-0">
+                        <span class="text-muted">Department:</span>
+                        <span class="fw-semibold">{{ target_profile.department|default:"N/A" }}</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between px-0">
+                        <span class="text-muted">Registered On:</span>
+                        <span>{{ target_profile.user.date_joined|date:"M d, Y H:i" }}</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-8">
+        <div class="card shadow-sm h-100">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                <span class="fw-bold"><i class="bi bi-clock-history text-danger me-2"></i>Reservation History</span>
+                <span class="badge bg-secondary">{{ reservations.count }} Total</span>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0 small">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Tracking</th>
+                            <th>Facility</th>
+                            <th>Event Title</th>
+                            <th>Schedule</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for res in reservations %}
+                            <tr>
+                                <td><code>{{ res.tracking_code }}</code></td>
+                                <td>{{ res.facility.name }}</td>
+                                <td>
+                                    <div class="fw-bold text-dark">{{ res.title }}</div>
+                                    <div class="text-muted">{{ res.participants_count }} pax</div>
+                                </td>
+                                <td>
+                                    <div>{{ res.start_time|date:"M d, Y" }}</div>
+                                    <small class="text-muted">{{ res.start_time|date:"H:i" }} - {{ res.end_time|date:"H:i" }}</small>
+                                </td>
+                                <td>
+                                    <span class="badge-status status-{{ res.status }}">{{ res.get_status_display }}</span>
+                                </td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="5" class="text-center py-4 text-muted">
+                                    No reservation records associated with this campus user.
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

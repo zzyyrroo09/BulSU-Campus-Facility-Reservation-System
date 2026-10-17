@@ -1,0 +1,96 @@
+{% extends 'base_user.html' %}
+
+{% block title %}Browse Facilities - BulSU Facility Portal{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h3 class="fw-bold mb-1 text-dark"><i class="bi bi-building text-danger me-2"></i>Campus Facilities Catalog</h3>
+        <p class="text-muted mb-0 small">Browse approved venues, inspect seating capacity, operating hours, and available amenities</p>
+    </div>
+</div>
+
+<!-- Filters -->
+<div class="card shadow-sm mb-4">
+    <div class="card-body py-3">
+        <form method="get" class="row g-2 align-items-center">
+            <div class="col-md-4">
+                <input type="text" name="q" value="{{ query }}" class="form-control form-control-sm" placeholder="Search by name, location, code...">
+            </div>
+            <div class="col-md-3">
+                <select name="category" class="form-select form-select-sm">
+                    <option value="">All Categories</option>
+                    {% for c in categories %}
+                        <option value="{{ c.id }}" {% if selected_category == c.id|stringformat:"s" %}selected{% endif %}>{{ c.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-3">
+                <input type="number" name="min_capacity" value="{{ min_capacity }}" class="form-control form-control-sm" placeholder="Min capacity (pax)">
+            </div>
+            <div class="col-md-2 d-flex gap-2">
+                <button type="submit" class="btn btn-primary btn-sm w-100">Filter</button>
+                <a href="{% url 'user_portal:facility_catalog' %}" class="btn btn-outline-secondary btn-sm">Reset</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Facilities Grid -->
+<div class="row g-4">
+    {% for fac in facilities %}
+        <div class="col-md-6 col-lg-4">
+            <div class="card shadow-sm h-100 border">
+                <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                    <span class="badge bg-secondary-subtle text-secondary border">{{ fac.category.name }}</span>
+                    <code>{{ fac.code }}</code>
+                </div>
+                <div class="card-body">
+                    <h5 class="fw-bold text-dark mb-1">{{ fac.name }}</h5>
+                    <div class="text-muted small mb-3"><i class="bi bi-geo-alt-fill text-danger me-1"></i>{{ fac.location }}</div>
+                    
+                    <p class="small text-secondary mb-3">{{ fac.description|truncatewords:25|default:"Facility available for academic, athletic, and official campus events." }}</p>
+
+                    <div class="bg-light p-2 rounded mb-3 small">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span class="text-muted"><i class="bi bi-people me-1"></i>Max Capacity:</span>
+                            <span class="fw-bold">{{ fac.capacity }} Attendees</span>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <span class="text-muted"><i class="bi bi-clock me-1"></i>Daily Hours:</span>
+                            <span class="fw-semibold">{{ fac.operating_start_time|time:"H:i" }} &ndash; {{ fac.operating_end_time|time:"H:i" }}</span>
+                        </div>
+                    </div>
+
+                    <!-- Amenities list -->
+                    <div class="mb-3">
+                        <span class="small text-muted fw-semibold d-block mb-1">Equipped Amenities:</span>
+                        <div class="d-flex flex-wrap gap-1">
+                            {% for fa in fac.facility_amenities.all %}
+                                <span class="badge bg-light text-dark border small" title="{{ fa.amenity.name }} (Qty: {{ fa.quantity }})">
+                                    <i class="bi bi-check2 text-success me-1"></i>{{ fa.amenity.name }}
+                                </span>
+                            {% empty %}
+                                <span class="text-muted small fst-italic">Standard venue equipment</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer bg-white border-top p-3 d-flex gap-2">
+                    <a href="{% url 'user_portal:facility_detail' fac.id %}" class="btn btn-outline-secondary btn-sm flex-grow-1">
+                        <i class="bi bi-calendar-event me-1"></i> Check Open Slots
+                    </a>
+                    <a href="{% url 'user_portal:reserve_facility' fac.id %}" class="btn btn-danger btn-sm px-3" style="background-color: var(--bsu-maroon);">
+                        Request
+                    </a>
+                </div>
+            </div>
+        </div>
+    {% empty %}
+        <div class="col-12 text-center py-5 text-muted">
+            <i class="bi bi-building-x fs-1 d-block mb-2 text-secondary"></i>
+            No campus facilities matched your current search criteria.
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}

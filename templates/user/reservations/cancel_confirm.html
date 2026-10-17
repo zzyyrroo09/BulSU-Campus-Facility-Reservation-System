@@ -1,0 +1,43 @@
+{% extends 'base_user.html' %}
+
+{% block title %}Confirm Cancellation - {{ reservation.tracking_code }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow-sm border-danger">
+            <div class="card-header bg-danger text-white">
+                <h5 class="fw-bold mb-0 fs-6"><i class="bi bi-exclamation-triangle-fill me-2"></i>Confirm Booking Cancellation</h5>
+            </div>
+            <div class="card-body">
+                <p>Are you sure you want to cancel your reservation for <strong>{{ reservation.title }}</strong>?</p>
+
+                <div class="bg-light p-3 rounded mb-3 small border">
+                    <div><strong>Facility:</strong> {{ reservation.facility.name }}</div>
+                    <div><strong>Scheduled Time:</strong> {{ reservation.start_time|date:"F d, Y H:i" }} &ndash; {{ reservation.end_time|date:"H:i" }}</div>
+                    <div><strong>Current Status:</strong> <span class="badge-status status-{{ reservation.status }}">{{ reservation.get_status_display }}</span></div>
+                </div>
+
+                <div class="alert alert-warning small">
+                    <i class="bi bi-info-circle-fill me-1"></i> Cancelling releases this time slot for other campus organizers. This action cannot be reversed.
+                </div>
+
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label class="form-label small fw-semibold">Cancellation Reason (Optional):</label>
+                        <textarea name="reason" class="form-control" rows="2" placeholder="e.g. Event postponed, speaker unavailable..."></textarea>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-danger w-100">
+                            <i class="bi bi-x-circle me-1"></i> Yes, Cancel My Reservation
+                        </button>
+                        <a href="{% url 'user_portal:my_reservations' %}" class="btn btn-outline-secondary">Go Back</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

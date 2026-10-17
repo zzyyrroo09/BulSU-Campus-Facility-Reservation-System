@@ -1,0 +1,198 @@
+{% extends 'base_admin.html' %}
+
+{% block title %}Request Review & Approval Queue - Admin Console{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h3 class="fw-bold mb-1 text-dark"><i class="bi bi-inbox-fill text-warning me-2"></i>Reservation Review Queue</h3>
+        <p class="text-muted mb-0 small">Review incoming facility requests, verify capacity and operating hours, and execute atomic approvals</p>
+    </div>
+</div>
+
+<!-- Filters -->
+<div class="card shadow-sm mb-4">
+    <div class="card-body">
+        <form method="get" class="row g-2 align-items-center">
+            <div class="col-md-3">
+                <label class="form-label small text-muted mb-1">Status Filter</label>
+                <select name="status" class="form-select form-select-sm">
+                    <option value="PENDING" {% if selected_status == 'PENDING' %}selected{% endif %}>Pending Requests Only</option>
+                    <option value="ALL" {% if selected_status == 'ALL' %}selected{% endif %}>All Statuses</option>
+                    <option value="APPROVED" {% if selected_status == 'APPROVED' %}selected{% endif %}>Approved Only</option>
+                    <option value="REJECTED" {% if selected_status == 'REJECTED' %}selected{% endif %}>Rejected Only</option>
+                    <option value="CANCELLED" {% if selected_status == 'CANCELLED' %}selected{% endif %}>Cancelled Only</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label small text-muted mb-1">Facility Filter</label>
+                <select name="facility" class="form-select form-select-sm">
+                    <option value="">All Campus Facilities</option>
+                    {% for f in facilities %}
+                        <option value="{{ f.id }}" {% if selected_facility == f.id|stringformat:"s" %}selected{% endif %}>{{ f.name }} ({{ f.code }})</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label small text-muted mb-1">Specific Date</label>
+                <input type="date" name="date" value="{{ selected_date }}" class="form-control form-control-sm">
+            </div>
+            <div class="col-md-3 d-flex gap-2 align-self-end">
+                <button type="submit" class="btn btn-primary btn-sm w-100"><i class="bi bi-funnel-fill me-1"></i> Apply Filter</button>
+                <a href="{% url 'admin_panel:review_queue' %}" class="btn btn-outline-secondary btn-sm">Reset</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Queue Table -->
+<div class="card shadow-sm">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>Tracking Code</th>
+                    <th>Requested Facility</th>
+                    <th>Event Details & Purpose</th>
+                    <th>Requestor / Dept</th>
+                    <th>Schedule & Duration</th>
+                    <th>Status</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for res in page_obj %}
+                    <tr>
+                        <td>
+                            <code>{{ res.tracking_code }}</code>
+                            <div class="text-muted small">{{ res.created_at|date:"M d, Y H:i" }}</div>
+                        </td>
+                        <td>
+                            <div class="fw-bold text-dark">{{ res.facility.name }}</div>
+                            <span class="badge bg-secondary-subtle text-secondary border">{{ res.facility.code }}</span>
+                            <div class="small text-muted">Cap: {{ res.facility.capacity }} | {{ res.facility.operating_start_time|time:"H:i" }}-{{ res.facility.operating_end_time|time:"H:i" }}</div>
+                        </td>
+                        <td style="max-width: 280px;">
+                            <div class="fw-bold text-dark">{{ res.title }}</div>
+                            <p class="text-muted small mb-1 text-truncate" title="{{ res.purpose }}">{{ res.purpose }}</p>
+                            <span class="badge bg-light text-dark border"><i class="bi bi-people me-1"></i>{{ res.participants_count }} Attendees</span>
+                        </td>
+                        <td>
+                            <div class="fw-semibold">{{ res.user.get_full_name|default:res.user.username }}</div>
+                            <small class="text-muted">{{ res.user.profile.department|default:res.user.email }}</small>
+                        </td>
+                        <td>
+                            <div class="fw-bold">{{ res.start_time|date:"M d, Y" }}</div>
+                            <div class="text-secondary small">{{ res.start_time|date:"H:i" }} - {{ res.end_time|date:"H:i" }} ({{ res.duration_hours }}h)</div>
+                        </td>
+                        <td>
+                            <span class="badge-status status-{{ res.status }}">{{ res.get_status_display }}</span>
+                        </td>
+                        <td class="text-end">
+                            {% if res.status == 'PENDING' %}
+                                <button type="button" class="btn btn-sm btn-success me-1" data-bs-toggle="modal" data-bs-target="#approveModal{{ res.id }}" title="Approve with Atomic Lock">
+                                    <i class="bi bi-check-lg"></i> Approve
+                                </button>
+                                <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#rejectModal{{ res.id }}" title="Reject Request">
+                                    <i class="bi bi-x-lg"></i> Reject
+                                </button>
+                            {% elif res.status == 'APPROVED' %}
+                                <a href="{% url 'admin_panel:reschedule_reservation' res.id %}" class="btn btn-sm btn-outline-warning">
+                                    <i class="bi bi-arrow-repeat"></i> Reschedule
+                                </a>
+                            {% else %}
+                                <span class="text-muted small">No actions</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+
+                    {% if res.status == 'PENDING' %}
+                        <!-- Approve Modal -->
+                        <div class="modal fade" id="approveModal{{ res.id }}" tabindex="-1" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <form method="post" action="{% url 'admin_panel:approve_reservation' res.id %}">
+                                        {% csrf_token %}
+                                        <div class="modal-header bg-success text-white">
+                                            <h5 class="modal-title fs-6"><i class="bi bi-check-circle me-2"></i>Approve Reservation Request</h5>
+                                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <div class="modal-body text-start">
+                                            <p class="mb-2">You are approving <strong>{{ res.title }}</strong> for <strong>{{ res.facility.name }}</strong>.</p>
+                                            <ul class="list-unstyled small text-muted bg-light p-3 rounded mb-3 border">
+                                                <li><strong>Tracking:</strong> {{ res.tracking_code }}</li>
+                                                <li><strong>Schedule:</strong> {{ res.start_time|date:"M d, Y H:i" }} to {{ res.end_time|date:"H:i" }}</li>
+                                                <li><strong>Attendees:</strong> {{ res.participants_count }} / {{ res.facility.capacity }} max capacity</li>
+                                            </ul>
+                                            <div class="alert alert-warning small py-2">
+                                                <i class="bi bi-lock-fill me-1"></i> System will atomically lock database rows and re-verify half-open conflicts <code>[start, end)</code> against closures and approved reservations before committing.
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label small fw-semibold">Administrative Remarks / Conditions (Optional):</label>
+                                                <textarea name="reason" class="form-control" rows="2" placeholder="e.g. Approved per facility guidelines. Clean-as-you-go policy applies."></textarea>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+                                            <button type="submit" class="btn btn-success btn-sm">Confirm & Atomically Approve</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Reject Modal -->
+                        <div class="modal fade" id="rejectModal{{ res.id }}" tabindex="-1" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <form method="post" action="{% url 'admin_panel:reject_reservation' res.id %}">
+                                        {% csrf_token %}
+                                        <div class="modal-header bg-danger text-white">
+                                            <h5 class="modal-title fs-6"><i class="bi bi-x-circle me-2"></i>Reject Reservation Request</h5>
+                                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <div class="modal-body text-start">
+                                            <p class="mb-2">Are you sure you want to reject <strong>{{ res.title }}</strong> requested by <strong>{{ res.user.get_full_name|default:res.user.username }}</strong>?</p>
+                                            <div class="mb-3">
+                                                <label class="form-label small fw-semibold text-danger">Rejection Reason (Required) *</label>
+                                                <textarea name="reason" class="form-control" rows="3" required placeholder="State clear operational reason for rejection (e.g. Exceeds capacity, institutional event conflict, etc.)..."></textarea>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+                                            <button type="submit" class="btn btn-danger btn-sm">Confirm Rejection</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                {% empty %}
+                    <tr>
+                        <td colspan="7" class="text-center py-5 text-muted">
+                            <i class="bi bi-check-circle-fill text-success fs-2 d-block mb-2"></i>
+                            No reservations found matching the specified filters.
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Pagination -->
+    {% if page_obj.has_other_pages %}
+        <div class="card-footer bg-white d-flex justify-content-between align-items-center py-3">
+            <span class="text-muted small">Showing {{ page_obj.start_index }} to {{ page_obj.end_index }} of {{ page_obj.paginator.count }} entries</span>
+            <ul class="pagination pagination-sm mb-0">
+                {% if page_obj.has_previous %}
+                    <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}&facility={{ selected_facility }}&status={{ selected_status }}&date={{ selected_date }}">Previous</a></li>
+                {% endif %}
+                <li class="page-item active"><span class="page-link">{{ page_obj.number }}</span></li>
+                {% if page_obj.has_next %}
+                    <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}&facility={{ selected_facility }}&status={{ selected_status }}&date={{ selected_date }}">Next</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

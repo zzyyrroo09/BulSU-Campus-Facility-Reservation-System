@@ -1,0 +1,125 @@
+{% extends 'base_user.html' %}
+
+{% block title %}Request a Facility - BulSU Facility Portal{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+    <a href="{% url 'user_portal:facility_catalog' %}" class="text-decoration-none small text-secondary">
+        <i class="bi bi-arrow-left me-1"></i> Back to Facilities
+    </a>
+    <h3 class="fw-bold mb-1 mt-2 text-dark"><i class="bi bi-calendar-plus text-danger me-2"></i>Submit Facility Reservation Request</h3>
+    <p class="text-muted mb-0 small">Enter event specifications. Requests enter PENDING status for administrative review and do not immediately reserve the slot.</p>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-8">
+        <div class="card shadow-sm">
+            <div class="card-header bg-white">
+                <span class="fw-bold"><i class="bi bi-pencil-square text-primary me-2"></i>Event & Schedule Request Form</span>
+            </div>
+            <div class="card-body">
+                <form method="post" novalidate>
+                    {% csrf_token %}
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger small">
+                            {% for err in form.non_field_errors %}{{ err }}{% endfor %}
+                        </div>
+                    {% endif %}
+
+                    <div class="row g-3">
+                        <div class="col-md-8">
+                            <label class="form-label small fw-semibold">Target Facility *</label>
+                            {{ form.facility }}
+                            {% if form.facility.errors %}<div class="text-danger small">{{ form.facility.errors.0 }}</div>{% endif %}
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label small fw-semibold">Expected Attendees *</label>
+                            {{ form.participants_count }}
+                            {% if form.participants_count.errors %}<div class="text-danger small">{{ form.participants_count.errors.0 }}</div>{% endif %}
+                            <div class="form-text small">Must not exceed facility capacity.</div>
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label small fw-semibold">Event Title *</label>
+                            {{ form.title }}
+                            {% if form.title.errors %}<div class="text-danger small">{{ form.title.errors.0 }}</div>{% endif %}
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label small fw-semibold">Event Purpose / Objectives *</label>
+                            {{ form.purpose }}
+                            {% if form.purpose.errors %}<div class="text-danger small">{{ form.purpose.errors.0 }}</div>{% endif %}
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label small fw-semibold">Event Date *</label>
+                            {{ form.booking_date }}
+                            {% if form.booking_date.errors %}<div class="text-danger small">{{ form.booking_date.errors.0 }}</div>{% endif %}
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label small fw-semibold">Start Time *</label>
+                            {{ form.start_time_input }}
+                            {% if form.start_time_input.errors %}<div class="text-danger small">{{ form.start_time_input.errors.0 }}</div>{% endif %}
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label small fw-semibold">End Time *</label>
+                            {{ form.end_time_input }}
+                            {% if form.end_time_input.errors %}<div class="text-danger small">{{ form.end_time_input.errors.0 }}</div>{% endif %}
+                        </div>
+                    </div>
+
+                    <div class="alert alert-warning small mt-4 mb-3">
+                        <i class="bi bi-exclamation-triangle-fill me-1"></i>
+                        <strong>Important Rules:</strong>
+                        <ul class="mb-0 mt-1 ps-3">
+                            <li>Bookings must fit entirely within one operating day (no overnight events).</li>
+                            <li>Maximum event duration is <strong>{{ system_setting.max_event_duration_hours }} hours</strong>.</li>
+                            <li>Advance booking window: up to <strong>{{ system_setting.advance_booking_window_days }} calendar days</strong> ahead.</li>
+                            <li>Pending submissions do not reserve the slot until approved by an administrator.</li>
+                        </ul>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-danger px-4" style="background-color: var(--bsu-maroon);">
+                            <i class="bi bi-send-fill me-1"></i> Submit Reservation Request
+                        </button>
+                        <a href="{% url 'user_portal:facility_catalog' %}" class="btn btn-outline-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card shadow-sm bg-light border">
+            <div class="card-body">
+                <h6 class="fw-bold text-dark mb-2"><i class="bi bi-info-circle-fill text-primary me-1"></i>Approval Workflow</h6>
+                <p class="small text-muted">
+                    Upon submission, your request will be queued in the administrator review console.
+                </p>
+                <div class="small text-muted">
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <span class="badge-status status-PENDING">Pending</span>
+                        <span>Request submitted & queued</span>
+                    </div>
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <span class="badge-status status-APPROVED">Approved</span>
+                        <span>Slot locked & confirmed</span>
+                    </div>
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <span class="badge-status status-CHECKED_IN">Checked In</span>
+                        <span>Event in physical progress</span>
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="badge-status status-COMPLETED">Completed</span>
+                        <span>Inspection & close-out</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

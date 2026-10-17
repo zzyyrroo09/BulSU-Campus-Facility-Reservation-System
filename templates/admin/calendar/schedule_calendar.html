@@ -1,0 +1,101 @@
+{% extends 'base_admin.html' %}
+
+{% block title %}Facility Schedule Calendar - Admin Console{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h3 class="fw-bold mb-1 text-dark"><i class="bi bi-calendar3 text-danger me-2"></i>Weekly Facility Schedule Calendar</h3>
+        <p class="text-muted mb-0 small">Auditable schedule view of approved bookings, checked-in events, and maintenance closures</p>
+    </div>
+    <div class="d-flex align-items-center gap-2">
+        <a href="?date={{ prev_week }}&facility={{ selected_facility }}" class="btn btn-outline-secondary btn-sm">
+            <i class="bi bi-chevron-left"></i> Previous Week
+        </a>
+        <span class="badge bg-light text-dark border px-3 py-2 fw-semibold">
+            {{ start_of_week|date:"M d" }} - {{ end_of_week|date:"M d, Y" }}
+        </span>
+        <a href="?date={{ next_week }}&facility={{ selected_facility }}" class="btn btn-outline-secondary btn-sm">
+            Next Week <i class="bi bi-chevron-right"></i>
+        </a>
+    </div>
+</div>
+
+<!-- Facility Filter -->
+<div class="card shadow-sm mb-4">
+    <div class="card-body py-2">
+        <form method="get" class="row g-2 align-items-center">
+            <input type="hidden" name="date" value="{{ view_date|date:'Y-m-d' }}">
+            <div class="col-md-5">
+                <select name="facility" class="form-select form-select-sm" onchange="this.form.submit()">
+                    <option value="">All Campus Facilities</option>
+                    {% for f in facilities %}
+                        <option value="{{ f.id }}" {% if selected_facility == f.id|stringformat:"s" %}selected{% endif %}>
+                            {{ f.name }} ({{ f.code }}) - Hours: {{ f.operating_start_time|time:"H:i" }} to {{ f.operating_end_time|time:"H:i" }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-4">
+                <input type="date" name="date" value="{{ view_date|date:'Y-m-d' }}" class="form-control form-control-sm" onchange="this.form.submit()">
+            </div>
+            <div class="col-md-3 text-end">
+                <a href="{% url 'admin_panel:schedule_calendar' %}" class="btn btn-sm btn-outline-secondary">Jump to Today</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Weekly Grid -->
+<div class="row g-3">
+    {% for day in week_days %}
+        <div class="col-xl">
+            <div class="card shadow-sm h-100 {% if day == view_date %}border-danger border-2{% endif %}">
+                <div class="card-header bg-white py-2 text-center border-bottom">
+                    <div class="fw-bold text-uppercase small text-muted">{{ day|date:"D" }}</div>
+                    <div class="fs-5 fw-bold {% if day == view_date %}text-danger{% else %}text-dark{% endif %}">{{ day|date:"M d" }}</div>
+                </div>
+                <div class="card-body p-2" style="min-height: 280px; max-height: 500px; overflow-y: auto;">
+                    <!-- Closures on this day -->
+                    {% for closure in closures %}
+                        {% if closure.start_time.date == day %}
+                            <div class="p-2 mb-2 rounded bg-danger-subtle border border-danger-subtle small">
+                                <div class="fw-bold text-danger"><i class="bi bi-slash-circle-fill me-1"></i>Closure / Maintenance</div>
+                                <div class="text-dark fw-semibold">{{ closure.facility.code }}</div>
+                                <div class="text-muted">{{ closure.start_time|date:"H:i" }} - {{ closure.end_time|date:"H:i" }}</div>
+                                <div class="text-secondary fst-italic">{{ closure.reason }}</div>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+
+                    <!-- Bookings on this day -->
+                    {% for res in reservations %}
+                        {% if res.start_time.date == day %}
+                            <div class="p-2 mb-2 rounded border bg-light shadow-2xs small">
+                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                    <span class="badge-status status-{{ res.status }} py-0 px-1">{{ res.get_status_display }}</span>
+                                    <code>{{ res.facility.code }}</code>
+                                </div>
+                                <div class="fw-bold text-dark text-truncate" title="{{ res.title }}">{{ res.title }}</div>
+                                <div class="text-muted"><i class="bi bi-clock me-1"></i>{{ res.start_time|date:"H:i" }} - {{ res.end_time|date:"H:i" }}</div>
+                                <div class="text-muted"><i class="bi bi-person me-1"></i>{{ res.user.get_full_name|default:res.user.username }}</div>
+                                
+                                {% if res.status == 'APPROVED' %}
+                                    <div class="mt-2 pt-1 border-top d-flex justify-content-between">
+                                        <a href="{% url 'admin_panel:reschedule_reservation' res.id %}" class="btn btn-outline-warning btn-xs py-0 px-2" style="font-size: 0.72rem;">
+                                            <i class="bi bi-arrow-repeat"></i> Reschedule
+                                        </a>
+                                        <a href="{% url 'admin_panel:reservation_slip' res.id %}" target="_blank" class="btn btn-outline-secondary btn-xs py-0 px-2" style="font-size: 0.72rem;">
+                                            <i class="bi bi-printer"></i> Slip
+                                        </a>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}

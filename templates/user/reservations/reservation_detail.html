@@ -1,0 +1,116 @@
+{% extends 'base_user.html' %}
+
+{% block title %}Booking Details - {{ reservation.tracking_code }}{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+    <a href="{% url 'user_portal:my_reservations' %}" class="text-decoration-none small text-secondary">
+        <i class="bi bi-arrow-left me-1"></i> Back to My Bookings
+    </a>
+    <div class="d-flex justify-content-between align-items-center mt-2">
+        <div>
+            <h3 class="fw-bold mb-1 text-dark">{{ reservation.title }}</h3>
+            <p class="text-muted mb-0 small">Tracking Reference: <code>{{ reservation.tracking_code }}</code></p>
+        </div>
+        <div>
+            {% if reservation.can_be_cancelled_by_user %}
+                <a href="{% url 'user_portal:cancel_reservation' reservation.id %}" class="btn btn-outline-danger btn-sm">
+                    <i class="bi bi-x-circle me-1"></i> Cancel Booking
+                </a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-7">
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-white">
+                <span class="fw-bold"><i class="bi bi-file-text text-primary me-2"></i>Booking Specifications</span>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <span class="text-muted small d-block">Status:</span>
+                    <span class="badge-status status-{{ reservation.status }} fs-6">{{ reservation.get_status_display }}</span>
+                </div>
+
+                <div class="row g-3 small">
+                    <div class="col-sm-6">
+                        <span class="text-muted d-block">Facility:</span>
+                        <div class="fw-bold text-dark">{{ reservation.facility.name }} ({{ reservation.facility.code }})</div>
+                    </div>
+                    <div class="col-sm-6">
+                        <span class="text-muted d-block">Location:</span>
+                        <div class="fw-semibold">{{ reservation.facility.location }}</div>
+                    </div>
+                    <div class="col-sm-6">
+                        <span class="text-muted d-block">Scheduled Date:</span>
+                        <div class="fw-bold">{{ reservation.start_time|date:"F d, Y (l)" }}</div>
+                    </div>
+                    <div class="col-sm-6">
+                        <span class="text-muted d-block">Time Slot:</span>
+                        <div class="fw-semibold">{{ reservation.start_time|date:"H:i" }} &ndash; {{ reservation.end_time|date:"H:i" }} ({{ reservation.duration_hours }}h)</div>
+                    </div>
+                    <div class="col-sm-6">
+                        <span class="text-muted d-block">Participants:</span>
+                        <div class="fw-semibold">{{ reservation.participants_count }} Attendees</div>
+                    </div>
+                    <div class="col-sm-6">
+                        <span class="text-muted d-block">Submitted On:</span>
+                        <div>{{ reservation.created_at|date:"M d, Y H:i" }}</div>
+                    </div>
+                </div>
+
+                <div class="mt-3 pt-3 border-top">
+                    <span class="text-muted small d-block fw-semibold mb-1">Stated Purpose / Objective:</span>
+                    <p class="text-dark bg-light p-3 rounded mb-0 small">{{ reservation.purpose }}</p>
+                </div>
+
+                {% if reservation.decision_reason %}
+                    <div class="mt-3 pt-3 border-top">
+                        <span class="text-muted small d-block fw-semibold mb-1">Administrative Remarks / Decision Reason:</span>
+                        <div class="alert alert-light border small mb-0">
+                            {{ reservation.decision_reason }}
+                            <div class="text-muted mt-1" style="font-size: 0.75rem;">
+                                Reviewed by Administrator on {{ reservation.decision_timestamp|date:"M d, Y H:i" }}
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-5">
+        <!-- Reschedule change history if any -->
+        {% if reschedule_history %}
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-white">
+                    <span class="fw-bold"><i class="bi bi-clock-history text-warning me-2"></i>Schedule Adjustment History</span>
+                </div>
+                <div class="card-body p-0">
+                    <ul class="list-group list-group-flush small">
+                        {% for chg in reschedule_history %}
+                            <li class="list-group-item">
+                                <div class="text-muted" style="font-size: 0.75rem;">{{ chg.timestamp|date:"M d, Y H:i" }}</div>
+                                <div><strong>Previous:</strong> {{ chg.previous_start|date:"M d, Y H:i" }} &ndash; {{ chg.previous_end|date:"H:i" }}</div>
+                                <div class="text-success"><strong>Updated:</strong> {{ chg.new_start|date:"M d, Y H:i" }} &ndash; {{ chg.new_end|date:"H:i" }}</div>
+                                <div class="text-secondary mt-1"><em>Reason: {{ chg.reason }}</em></div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        {% endif %}
+
+        <div class="card shadow-sm bg-light border">
+            <div class="card-body small">
+                <h6 class="fw-bold text-dark mb-2"><i class="bi bi-info-circle-fill text-primary me-1"></i>Need to Reschedule?</h6>
+                <p class="text-muted mb-0">
+                    Approved bookings can only be rescheduled through the campus facility administration office. If your schedule changes, please contact the CICT Facility Admin or cancel before the start time.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

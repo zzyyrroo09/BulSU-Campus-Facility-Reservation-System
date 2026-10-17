@@ -1,0 +1,120 @@
+{% extends 'base_admin.html' %}
+
+{% block title %}Reschedule Booking: {{ reservation.tracking_code }} - Admin Console{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+    <a href="{% url 'admin_panel:schedule_calendar' %}" class="text-decoration-none small text-secondary">
+        <i class="bi bi-arrow-left me-1"></i> Back to Schedule Calendar
+    </a>
+    <h3 class="fw-bold mb-1 mt-2 text-dark"><i class="bi bi-arrow-repeat text-warning me-2"></i>Reschedule Approved Reservation</h3>
+    <p class="text-muted mb-0 small">Audit-compliant schedule adjustment. Retains original timestamps in historical change logs.</p>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-6">
+        <div class="card shadow-sm">
+            <div class="card-header bg-white">
+                <span class="fw-bold"><i class="bi bi-pencil-square text-primary me-2"></i>New Schedule Submission</span>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-light border small mb-3">
+                    <div class="fw-bold text-dark mb-1">{{ reservation.title }}</div>
+                    <div><strong>Facility:</strong> {{ reservation.facility.name }} ({{ reservation.facility.code }})</div>
+                    <div><strong>Operating Hours:</strong> {{ reservation.facility.operating_start_time|time:"H:i" }} to {{ reservation.facility.operating_end_time|time:"H:i" }}</div>
+                    <div><strong>Current Schedule:</strong> {{ reservation.start_time|date:"M d, Y H:i" }} - {{ reservation.end_time|date:"H:i" }}</div>
+                </div>
+
+                <form method="post" novalidate>
+                    {% csrf_token %}
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger small">
+                            {% for err in form.non_field_errors %}{{ err }}{% endfor %}
+                        </div>
+                    {% endif %}
+
+                    <div class="mb-3">
+                        <label class="form-label small fw-semibold">New Date *</label>
+                        {{ form.booking_date }}
+                        {% if form.booking_date.errors %}<div class="text-danger small">{{ form.booking_date.errors.0 }}</div>{% endif %}
+                    </div>
+
+                    <div class="row g-2 mb-3">
+                        <div class="col-6">
+                            <label class="form-label small fw-semibold">New Start Time *</label>
+                            {{ form.start_time_input }}
+                            {% if form.start_time_input.errors %}<div class="text-danger small">{{ form.start_time_input.errors.0 }}</div>{% endif %}
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label small fw-semibold">New End Time *</label>
+                            {{ form.end_time_input }}
+                            {% if form.end_time_input.errors %}<div class="text-danger small">{{ form.end_time_input.errors.0 }}</div>{% endif %}
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label small fw-semibold">Administrative Rescheduling Reason *</label>
+                        {{ form.reason }}
+                        {% if form.reason.errors %}<div class="text-danger small">{{ form.reason.errors.0 }}</div>{% endif %}
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-warning w-100 fw-semibold">
+                            <i class="bi bi-check2-circle me-1"></i> Confirm & Atomically Reschedule
+                        </button>
+                        <a href="{% url 'admin_panel:schedule_calendar' %}" class="btn btn-outline-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="card shadow-sm h-100">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                <span class="fw-bold"><i class="bi bi-clock-history text-secondary me-2"></i>Historical Change Log</span>
+                <span class="badge bg-secondary">{{ change_history.count }} Changes</span>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0 small">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Adjusted By</th>
+                            <th>Previous Schedule</th>
+                            <th>New Schedule</th>
+                            <th>Reason</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for chg in change_history %}
+                            <tr>
+                                <td>
+                                    <div class="fw-bold">{{ chg.actor.username }}</div>
+                                    <small class="text-muted">{{ chg.timestamp|date:"M d, Y H:i" }}</small>
+                                </td>
+                                <td>
+                                    <div>{{ chg.previous_start|date:"M d, Y" }}</div>
+                                    <small class="text-muted">{{ chg.previous_start|date:"H:i" }} - {{ chg.previous_end|date:"H:i" }}</small>
+                                </td>
+                                <td>
+                                    <div class="text-success fw-bold">{{ chg.new_start|date:"M d, Y" }}</div>
+                                    <small class="text-muted">{{ chg.new_start|date:"H:i" }} - {{ chg.new_end|date:"H:i" }}</small>
+                                </td>
+                                <td>
+                                    <div class="text-secondary">{{ chg.reason }}</div>
+                                </td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="4" class="text-center py-4 text-muted">
+                                    No prior rescheduling modifications recorded for this booking.
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,117 @@
+{% extends 'base_admin.html' %}
+
+{% block title %}Utilization Reports & Analytics - Admin Console{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h3 class="fw-bold mb-1 text-dark"><i class="bi bi-bar-chart-line-fill text-danger me-2"></i>Facility Utilization Reports</h3>
+        <p class="text-muted mb-0 small">Comprehensive institutional analytics on facility occupancy hours, completion metrics, and demand patterns</p>
+    </div>
+    <div>
+        <a href="{% url 'admin_panel:export_reports_csv' %}?date_from={{ date_from }}&date_to={{ date_to }}" class="btn btn-success btn-sm shadow-sm">
+            <i class="bi bi-file-earmark-spreadsheet-fill me-1"></i> Export Report to CSV
+        </a>
+    </div>
+</div>
+
+<!-- Date Filter Card -->
+<div class="card shadow-sm mb-4">
+    <div class="card-body py-3">
+        <form method="get" class="row g-2 align-items-center">
+            <div class="col-md-4">
+                <label class="form-label small text-muted mb-1">Start Date</label>
+                <input type="date" name="date_from" value="{{ date_from }}" class="form-control form-control-sm">
+            </div>
+            <div class="col-md-4">
+                <label class="form-label small text-muted mb-1">End Date</label>
+                <input type="date" name="date_to" value="{{ date_to }}" class="form-control form-control-sm">
+            </div>
+            <div class="col-md-4 d-flex gap-2 align-self-end">
+                <button type="submit" class="btn btn-primary btn-sm w-100"><i class="bi bi-filter me-1"></i> Filter Date Range</button>
+                <a href="{% url 'admin_panel:reports' %}" class="btn btn-outline-secondary btn-sm">Reset</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Report Summary Metrics -->
+<div class="row g-3 mb-4">
+    <div class="col-md-4">
+        <div class="card shadow-sm border-start border-4 border-primary">
+            <div class="card-body">
+                <div class="text-muted small fw-semibold text-uppercase">Total Requests in Window</div>
+                <h3 class="fw-bold mb-0 text-dark">{{ total_bookings }}</h3>
+                <div class="small text-muted mt-1">Spanning all facilities</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card shadow-sm border-start border-4 border-success">
+            <div class="card-body">
+                <div class="text-muted small fw-semibold text-uppercase">Completed Events</div>
+                <h3 class="fw-bold mb-0 text-success">{{ total_completed }}</h3>
+                <div class="small text-muted mt-1">Successfully concluded</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card shadow-sm border-start border-4 border-warning">
+            <div class="card-body">
+                <div class="text-muted small fw-semibold text-uppercase">Total Booked Occupancy Hours</div>
+                <h3 class="fw-bold mb-0 text-dark">{{ total_hours }} <span class="fs-6 fw-normal text-muted">hrs</span></h3>
+                <div class="small text-muted mt-1">Calculated from ORM reservations</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Detailed Facility Utilization Table -->
+<div class="card shadow-sm">
+    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+        <span class="fw-bold"><i class="bi bi-table text-danger me-2"></i>Per-Facility Utilization Breakdown</span>
+        <span class="text-muted small">{{ date_from }} &mdash; {{ date_to }}</span>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>Facility Code & Name</th>
+                    <th>Category</th>
+                    <th>Capacity</th>
+                    <th class="text-center">Total Requests</th>
+                    <th class="text-center">Approved</th>
+                    <th class="text-center">Completed</th>
+                    <th class="text-center">Rejected</th>
+                    <th class="text-center">No-Show</th>
+                    <th class="text-end">Occupied Booked Hours</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in facility_stats %}
+                    <tr>
+                        <td>
+                            <div class="fw-bold text-dark">{{ row.facility.name }}</div>
+                            <code>{{ row.facility.code }}</code>
+                        </td>
+                        <td>
+                            <span class="badge bg-secondary-subtle text-secondary border">{{ row.facility.category.name }}</span>
+                        </td>
+                        <td>{{ row.facility.capacity }} pax</td>
+                        <td class="text-center fw-bold">{{ row.total_requests }}</td>
+                        <td class="text-center"><span class="badge bg-success-subtle text-success">{{ row.approved_count }}</span></td>
+                        <td class="text-center"><span class="badge bg-primary-subtle text-primary">{{ row.completed_count }}</span></td>
+                        <td class="text-center"><span class="badge bg-danger-subtle text-danger">{{ row.rejected_count }}</span></td>
+                        <td class="text-center"><span class="badge bg-dark-subtle text-dark">{{ row.no_show_count }}</span></td>
+                        <td class="text-end fw-bold fs-6 text-primary">{{ row.booked_hours }} hrs</td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="9" class="text-center py-4 text-muted">No facility records found.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

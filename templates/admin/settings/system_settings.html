@@ -1,0 +1,63 @@
+{% extends 'base_admin.html' %}
+
+{% block title %}System Settings - Admin Console{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+    <h3 class="fw-bold mb-1 text-dark"><i class="bi bi-sliders text-danger me-2"></i>Global Reservation Parameters</h3>
+    <p class="text-muted mb-0 small">Regulate institutional booking constraints, time bounds, and advance reservation windows</p>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div class="card-header bg-white">
+                <span class="fw-bold"><i class="bi bi-gear-fill text-primary me-2"></i>Institutional Booking Constraints</span>
+            </div>
+            <div class="card-body">
+                <form method="post" novalidate>
+                    {% csrf_token %}
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger small">
+                            {% for err in form.non_field_errors %}{{ err }}{% endfor %}
+                        </div>
+                    {% endif %}
+
+                    <div class="mb-3">
+                        <label class="form-label small fw-semibold">Maximum Event Duration (Hours) *</label>
+                        {{ form.max_event_duration_hours }}
+                        {% if form.max_event_duration_hours.errors %}<div class="text-danger small">{{ form.max_event_duration_hours.errors.0 }}</div>{% endif %}
+                        <div class="form-text small">Default limit is 4 hours. Applies to all prospective user reservation submissions.</div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label small fw-semibold">Advance Booking Window (Calendar Days) *</label>
+                        {{ form.advance_booking_window_days }}
+                        {% if form.advance_booking_window_days.errors %}<div class="text-danger small">{{ form.advance_booking_window_days.errors.0 }}</div>{% endif %}
+                        <div class="form-text small">Default is 30 calendar days. Users cannot reserve facilities beyond this window.</div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary px-4">
+                        <i class="bi bi-check-circle me-1"></i> Update System Settings
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card shadow-sm bg-light border">
+            <div class="card-body">
+                <h6 class="fw-bold text-dark mb-2"><i class="bi bi-info-circle-fill text-info me-1"></i>Policy Preservation Rule</h6>
+                <p class="small text-muted mb-3">
+                    Per technical specification Part 5 Rule 5: Modifying maximum event duration or advance booking windows immediately validates new submissions while preserving historical booking times already committed to the database.
+                </p>
+                <h6 class="fw-bold text-dark mb-2"><i class="bi bi-clock-history text-secondary me-1"></i>System Timezone Standard</h6>
+                <p class="small text-muted mb-0">
+                    The entire reservation engine strictly operates in <code>Asia/Manila</code> (UTC+8). All interval calculations, half-open checks <code>[start, end)</code>, and operating hours are synchronized with this standard.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

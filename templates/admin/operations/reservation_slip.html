@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reservation Slip - {{ reservation.tracking_code }}</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8fafc;
+            color: #1e293b;
+            font-family: Arial, Helvetica, sans-serif;
+            padding: 2rem 0;
+        }
+        .slip-container {
+            max-width: 800px;
+            margin: auto;
+            background: #ffffff;
+            border: 2px solid #334155;
+            padding: 2.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+        }
+        .header-rule {
+            border-top: 3px double #334155;
+            margin: 1.25rem 0;
+        }
+        .signature-line {
+            border-top: 1px solid #000;
+            margin-top: 45px;
+            padding-top: 5px;
+            font-size: 0.85rem;
+            text-align: center;
+        }
+        @media print {
+            body { background: #fff; padding: 0; }
+            .slip-container { border: 1px solid #000; box-shadow: none; max-width: 100%; padding: 1.5rem; }
+            .no-print { display: none !important; }
+        }
+    </style>
+</head>
+<body>
+    <div class="text-center mb-3 no-print">
+        <button class="btn btn-primary px-4 shadow-sm" onclick="window.print()">
+            <i class="bi bi-printer-fill me-1"></i> Print Slip / Export PDF
+        </button>
+        <button class="btn btn-outline-secondary ms-2" onclick="window.close()">Close</button>
+    </div>
+
+    <div class="slip-container">
+        <!-- Institutional Header -->
+        <div class="text-center">
+            <h6 class="text-uppercase mb-0 text-secondary" style="letter-spacing: 0.05em;">Republic of the Philippines</h6>
+            <h4 class="fw-bold mb-0 text-danger" style="color: #800000 !important;">BULACAN STATE UNIVERSITY</h4>
+            <div class="fw-semibold">College of Information and Communications Technology</div>
+            <div class="small text-muted">Campus Facility Reservation and Event Scheduling System</div>
+            <div class="badge bg-dark mt-2 px-3 py-2 text-uppercase fs-6">Official Facility Reservation Slip</div>
+        </div>
+
+        <div class="header-rule"></div>
+
+        <!-- Tracking & Status Banner -->
+        <div class="row align-items-center mb-4 bg-light p-3 border rounded">
+            <div class="col-sm-6">
+                <div class="text-muted small text-uppercase fw-bold">Tracking Reference Code</div>
+                <div class="fs-4 fw-bold font-monospace text-dark">{{ reservation.tracking_code }}</div>
+            </div>
+            <div class="col-sm-6 text-sm-end">
+                <div class="text-muted small text-uppercase fw-bold">Reservation Status</div>
+                <span class="badge bg-dark fs-6">{{ reservation.get_status_display }}</span>
+            </div>
+        </div>
+
+        <!-- Section 1: Event & Requestor Information -->
+        <h6 class="fw-bold text-uppercase border-bottom pb-1 text-secondary">1. Event & Requestor Specifications</h6>
+        <div class="row g-2 mb-4 small">
+            <div class="col-sm-6">
+                <strong>Event Title:</strong> {{ reservation.title }}
+            </div>
+            <div class="col-sm-6">
+                <strong>Organizer Name:</strong> {{ reservation.user.get_full_name|default:reservation.user.username }}
+            </div>
+            <div class="col-sm-6">
+                <strong>Department:</strong> {{ reservation.user.profile.department|default:"N/A" }}
+            </div>
+            <div class="col-sm-6">
+                <strong>Contact / Email:</strong> {{ reservation.user.email }} ({{ reservation.user.profile.contact_number|default:"N/A" }})
+            </div>
+            <div class="col-12 mt-2">
+                <strong>Stated Purpose:</strong>
+                <p class="mb-0 text-muted fst-italic">{{ reservation.purpose }}</p>
+            </div>
+        </div>
+
+        <!-- Section 2: Facility & Schedule Details -->
+        <h6 class="fw-bold text-uppercase border-bottom pb-1 text-secondary">2. Facility & Time Allocation</h6>
+        <div class="row g-2 mb-4 small">
+            <div class="col-sm-6">
+                <strong>Assigned Facility:</strong> {{ reservation.facility.name }} (<code>{{ reservation.facility.code }}</code>)
+            </div>
+            <div class="col-sm-6">
+                <strong>Location:</strong> {{ reservation.facility.location }}
+            </div>
+            <div class="col-sm-6">
+                <strong>Scheduled Date:</strong> {{ reservation.start_time|date:"F d, Y (l)" }}
+            </div>
+            <div class="col-sm-6">
+                <strong>Time Slot:</strong> {{ reservation.start_time|date:"H:i" }} to {{ reservation.end_time|date:"H:i" }} ({{ reservation.duration_hours }} hours)
+            </div>
+            <div class="col-sm-6">
+                <strong>Expected Attendees:</strong> {{ reservation.participants_count }} persons (Max: {{ reservation.facility.capacity }})
+            </div>
+            <div class="col-sm-6">
+                <strong>Operating Window:</strong> {{ reservation.facility.operating_start_time|time:"H:i" }} - {{ reservation.facility.operating_end_time|time:"H:i" }}
+            </div>
+        </div>
+
+        <!-- Section 3: Operational Monitoring & Attendance Sign-Off -->
+        <h6 class="fw-bold text-uppercase border-bottom pb-1 text-secondary">3. Operational Verification & Execution Summary</h6>
+        <div class="row g-2 mb-4 small">
+            <div class="col-sm-6">
+                <strong>Physical Check-in Timestamp:</strong>
+                {{ event_record.check_in_time|date:"M d, Y H:i:s"|default:"Pending On-Site Arrival" }}
+            </div>
+            <div class="col-sm-6">
+                <strong>Actual Operational Status:</strong>
+                {{ event_record.get_operational_status_display|default:"Awaiting Execution" }}
+            </div>
+            <div class="col-sm-6">
+                <strong>Actual Start Timestamp:</strong>
+                {{ event_record.actual_start_time|date:"M d, Y H:i:s"|default:"--" }}
+            </div>
+            <div class="col-sm-6">
+                <strong>Actual End Timestamp:</strong>
+                {{ event_record.actual_end_time|date:"M d, Y H:i:s"|default:"--" }}
+            </div>
+            <div class="col-12 mt-1">
+                <strong>Incident & Operational Notes:</strong>
+                <p class="mb-0 text-muted">{{ event_record.incident_notes|default:"No incident reports or damages logged." }}</p>
+            </div>
+        </div>
+
+        <!-- Section 4: Administrative Decision & Signatures -->
+        <div class="row mt-5 pt-4">
+            <div class="col-sm-6">
+                <div class="signature-line">
+                    <strong>{{ reservation.user.get_full_name|default:reservation.user.username }}</strong><br>
+                    Event Organizer / Requestor Signature
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="signature-line">
+                    <strong>{{ reservation.decision_actor.get_full_name|default:"Authorized Administrator" }}</strong><br>
+                    BulSU Facility Administration Authority
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center mt-5 pt-3 border-top text-muted" style="font-size: 0.75rem;">
+            Generated by BulSU CICT Campus Facility Reservation and Event Scheduling System on {% now "Y-m-d H:i:s" %} (Asia/Manila).
+            This document serves as physical entry verification and operational record.
+        </div>
+    </div>
+</body>
+</html>

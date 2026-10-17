@@ -1,0 +1,75 @@
+{% extends 'base_admin.html' %}
+
+{% block title %}Amenities Catalog - Admin Console{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+    <a href="{% url 'admin_panel:facility_list' %}" class="text-decoration-none small text-secondary">
+        <i class="bi bi-arrow-left me-1"></i> Back to Facilities Catalog
+    </a>
+    <h3 class="fw-bold mb-1 mt-2 text-dark"><i class="bi bi-plug-fill text-danger me-2"></i>Campus Amenities Catalog</h3>
+    <p class="text-muted mb-0 small">Audiovisual systems, seating, stage, and technical resources catalog</p>
+</div>
+
+<div class="row g-4">
+    <div class="col-md-5">
+        <div class="card shadow-sm">
+            <div class="card-header bg-white">
+                <span class="fw-bold"><i class="bi bi-plus-circle text-primary me-2"></i>Add New Amenity</span>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label class="form-label small fw-semibold">Amenity Name *</label>
+                        {{ form.name }}
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-semibold">Description</label>
+                        {{ form.description }}
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="bi bi-save me-1"></i> Add Amenity
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-7">
+        <div class="card shadow-sm">
+            <div class="card-header bg-white">
+                <span class="fw-bold">Amenity Inventory</span>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Amenity Name</th>
+                            <th>Description</th>
+                            <th>Linked Facilities</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for am in amenities %}
+                            <tr>
+                                <td class="fw-bold text-dark">{{ am.name }}</td>
+                                <td class="small text-muted">{{ am.description|default:"No specifications provided" }}</td>
+                                <td>
+                                    <span class="badge bg-info-subtle text-info border border-info-subtle">
+                                        {{ am.usage_count }} Facilities
+                                    </span>
+                                </td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="3" class="text-center py-4 text-muted">No amenities added yet.</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

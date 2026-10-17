@@ -1,0 +1,134 @@
+{% extends 'base_user.html' %}
+
+{% block title %}{{ facility.name }} - Availability & Specs{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+    <a href="{% url 'user_portal:facility_catalog' %}" class="text-decoration-none small text-secondary">
+        <i class="bi bi-arrow-left me-1"></i> Back to Facilities Catalog
+    </a>
+    <div class="d-flex justify-content-between align-items-center mt-2">
+        <div>
+            <h3 class="fw-bold mb-1 text-dark">{{ facility.name }} ({{ facility.code }})</h3>
+            <p class="text-muted mb-0 small"><i class="bi bi-geo-alt-fill text-danger me-1"></i>{{ facility.location }} &bull; Category: {{ facility.category.name }}</p>
+        </div>
+        <div>
+            <a href="{% url 'user_portal:reserve_facility' facility.id %}" class="btn btn-danger shadow-sm" style="background-color: var(--bsu-maroon);">
+                <i class="bi bi-calendar-plus me-1"></i> Request This Facility
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
+    <!-- Facility Specs & Amenities -->
+    <div class="col-lg-4">
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-white">
+                <span class="fw-bold"><i class="bi bi-info-circle text-primary me-2"></i>Venue Specifications</span>
+            </div>
+            <div class="card-body small">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item d-flex justify-content-between px-0">
+                        <span class="text-muted">Maximum Capacity:</span>
+                        <span class="fw-bold text-dark">{{ facility.capacity }} Attendees</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between px-0">
+                        <span class="text-muted">Operating Hours:</span>
+                        <span class="fw-semibold">{{ facility.operating_start_time|time:"H:i" }} &ndash; {{ facility.operating_end_time|time:"H:i" }}</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between px-0">
+                        <span class="text-muted">Overnight Bookings:</span>
+                        <span class="badge bg-secondary-subtle text-muted border">Not Permitted</span>
+                    </li>
+                </ul>
+                <div class="mt-3">
+                    <span class="fw-semibold d-block mb-1">Description:</span>
+                    <p class="text-muted mb-0">{{ facility.description|default:"Institutional venue managed under university event scheduling guidelines." }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="card shadow-sm">
+            <div class="card-header bg-white">
+                <span class="fw-bold"><i class="bi bi-plug-fill text-warning me-2"></i>Available Amenities</span>
+            </div>
+            <div class="card-body p-0">
+                <ul class="list-group list-group-flush small">
+                    {% for fa in facility.facility_amenities.all %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <div class="fw-semibold text-dark">{{ fa.amenity.name }}</div>
+                                <div class="text-muted" style="font-size: 0.75rem;">{{ fa.amenity.description }}</div>
+                            </div>
+                            <span class="badge bg-light text-dark border">{{ fa.quantity }} units</span>
+                        </li>
+                    {% empty %}
+                        <li class="list-group-item text-muted py-3 text-center">No specific amenities configured.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Daily Availability View -->
+    <div class="col-lg-8">
+        <div class="card shadow-sm">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                <span class="fw-bold"><i class="bi bi-calendar2-range text-danger me-2"></i>Daily Slot Availability</span>
+                <div class="d-flex align-items-center gap-2">
+                    <a href="?date={{ prev_day }}" class="btn btn-sm btn-outline-secondary py-0 px-2"><i class="bi bi-chevron-left"></i></a>
+                    <span class="fw-semibold small">{{ schedule_date|date:"F d, Y (l)" }}</span>
+                    <a href="?date={{ next_day }}" class="btn btn-sm btn-outline-secondary py-0 px-2"><i class="bi bi-chevron-right"></i></a>
+                </div>
+            </div>
+            <div class="card-body">
+                <!-- Operating Window Banner -->
+                <div class="alert alert-light border small d-flex justify-content-between align-items-center mb-3">
+                    <span>
+                        <i class="bi bi-clock-history me-1 text-primary"></i>
+                        Daily Facility Operating Hours: <strong>{{ facility.operating_start_time|time:"H:i" }} &ndash; {{ facility.operating_end_time|time:"H:i" }}</strong>
+                    </span>
+                    <span class="badge bg-success-subtle text-success border border-success-subtle">Asia/Manila Timezone</span>
+                </div>
+
+                <!-- Sanitized Occupied Slots -->
+                <h6 class="fw-bold small text-muted text-uppercase mb-2">Occupied & Unavailable Time Intervals</h6>
+                <div class="alert alert-info py-2 small mb-3">
+                    <i class="bi bi-shield-lock-fill me-1"></i> <strong>Privacy Safeguard:</strong> Time intervals reserved by other organizations are displayed as "Occupied" without disclosing identity, event titles, or internal details.
+                </div>
+
+                {% if busy_blocks %}
+                    <div class="list-group mb-3">
+                        {% for block in busy_blocks %}
+                            <div class="list-group-item d-flex justify-content-between align-items-center {% if block.type == 'closure' %}list-group-item-danger{% else %}list-group-item-warning{% endif %}">
+                                <div>
+                                    <div class="fw-bold">{{ block.label }}</div>
+                                    <div class="small text-muted">
+                                        <i class="bi bi-clock me-1"></i>{{ block.start_time|date:"H:i" }} to {{ block.end_time|date:"H:i" }}
+                                    </div>
+                                </div>
+                                <span class="badge {% if block.type == 'closure' %}bg-danger{% else %}bg-warning text-dark{% endif %} text-uppercase small">
+                                    Unavailable
+                                </span>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="p-4 bg-light rounded text-center text-muted mb-3 border">
+                        <i class="bi bi-check-circle-fill text-success fs-3 d-block mb-1"></i>
+                        All operating hours on {{ schedule_date|date:"M d, Y" }} are currently open and available for booking requests.
+                    </div>
+                {% endif %}
+
+                <div class="border-top pt-3 d-flex justify-content-between align-items-center">
+                    <span class="small text-muted">Intervals follow half-open <code>[start, end)</code> logic. Adjacent bookings sharing endpoints are permitted.</span>
+                    <a href="{% url 'user_portal:reserve_facility' facility.id %}" class="btn btn-sm btn-danger" style="background-color: var(--bsu-maroon);">
+                        Request Slot on this Date
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

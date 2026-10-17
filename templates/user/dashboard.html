@@ -1,0 +1,143 @@
+{% extends 'base_user.html' %}
+
+{% block title %}My Dashboard - BulSU Facility Portal{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h3 class="fw-bold mb-1 text-dark">Welcome, {{ request.user.first_name|default:request.user.username }}!</h3>
+        <p class="text-muted mb-0 small">Campus Facility Reservation & Event Scheduling Portal</p>
+    </div>
+    <div>
+        <a href="{% url 'user_portal:reserve' %}" class="btn btn-danger btn-sm shadow-sm" style="background-color: var(--bsu-maroon);">
+            <i class="bi bi-calendar-plus me-1"></i> Request a Facility
+        </a>
+    </div>
+</div>
+
+<!-- Quick Stats -->
+<div class="row g-3 mb-4">
+    <div class="col-md-4">
+        <div class="card shadow-sm border-start border-4 border-warning">
+            <div class="card-body">
+                <div class="text-muted small fw-semibold text-uppercase">Pending Review</div>
+                <h3 class="fw-bold mb-0 text-dark">{{ pending_count }}</h3>
+                <div class="small text-muted mt-1">Awaiting admin decision</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card shadow-sm border-start border-4 border-success">
+            <div class="card-body">
+                <div class="text-muted small fw-semibold text-uppercase">Upcoming Approved</div>
+                <h3 class="fw-bold mb-0 text-success">{{ upcoming_approved }}</h3>
+                <div class="small text-muted mt-1">Ready for physical event</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card shadow-sm border-start border-4 border-primary">
+            <div class="card-body">
+                <div class="text-muted small fw-semibold text-uppercase">Completed Events</div>
+                <h3 class="fw-bold mb-0 text-primary">{{ completed_count }}</h3>
+                <div class="small text-muted mt-1">Past successful bookings</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Shortcuts Banner -->
+<div class="row g-3 mb-4">
+    <div class="col-md-6">
+        <div class="card shadow-sm p-3 h-100 bg-white">
+            <div class="d-flex align-items-center gap-3">
+                <div class="bg-primary-subtle text-primary p-3 rounded-circle">
+                    <i class="bi bi-buildings fs-3"></i>
+                </div>
+                <div>
+                    <h5 class="fw-bold mb-1">Explore Campus Facilities</h5>
+                    <p class="text-muted small mb-2">Check capacities, audiovisual equipment, and inspect open time slots.</p>
+                    <a href="{% url 'user_portal:facility_catalog' %}" class="btn btn-outline-primary btn-sm">
+                        Browse Facilities Catalog &rarr;
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card shadow-sm p-3 h-100 bg-white">
+            <div class="d-flex align-items-center gap-3">
+                <div class="bg-success-subtle text-success p-3 rounded-circle">
+                    <i class="bi bi-bookmark-check fs-3"></i>
+                </div>
+                <div>
+                    <h5 class="fw-bold mb-1">Track My Reservations</h5>
+                    <p class="text-muted small mb-2">Monitor approval progress, review administrative notes, or cancel bookings.</p>
+                    <a href="{% url 'user_portal:my_reservations' %}" class="btn btn-outline-success btn-sm">
+                        View All My Bookings &rarr;
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Personal Bookings -->
+<div class="card shadow-sm">
+    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+        <span class="fw-bold"><i class="bi bi-clock-history text-danger me-2"></i>My Recent Reservations</span>
+        <a href="{% url 'user_portal:my_reservations' %}" class="small text-decoration-none">View Complete List &rarr;</a>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0 small">
+            <thead class="table-light">
+                <tr>
+                    <th>Tracking Code</th>
+                    <th>Facility</th>
+                    <th>Event Title</th>
+                    <th>Schedule</th>
+                    <th>Status</th>
+                    <th class="text-end">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for res in recent_bookings %}
+                    <tr>
+                        <td><code>{{ res.tracking_code }}</code></td>
+                        <td>
+                            <div class="fw-bold text-dark">{{ res.facility.name }}</div>
+                            <small class="text-muted">{{ res.facility.location }}</small>
+                        </td>
+                        <td>
+                            <div class="fw-bold text-dark">{{ res.title }}</div>
+                            <small class="text-muted">{{ res.participants_count }} attendees</small>
+                        </td>
+                        <td>
+                            <div>{{ res.start_time|date:"M d, Y" }}</div>
+                            <small class="text-muted">{{ res.start_time|date:"H:i" }} - {{ res.end_time|date:"H:i" }}</small>
+                        </td>
+                        <td>
+                            <span class="badge-status status-{{ res.status }}">{{ res.get_status_display }}</span>
+                        </td>
+                        <td class="text-end">
+                            <a href="{% url 'user_portal:reservation_detail' res.id %}" class="btn btn-sm btn-outline-secondary">
+                                Details
+                            </a>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center py-5 text-muted">
+                            <i class="bi bi-calendar-plus fs-2 d-block mb-2 text-secondary"></i>
+                            You have not submitted any facility reservation requests yet.
+                            <div class="mt-2">
+                                <a href="{% url 'user_portal:reserve' %}" class="btn btn-danger btn-sm">Submit Your First Request</a>
+                            </div>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

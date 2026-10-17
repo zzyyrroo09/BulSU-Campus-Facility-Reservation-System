@@ -1,0 +1,85 @@
+{% extends 'base_admin.html' %}
+
+{% block title %}Facility Categories - Admin Console{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+    <a href="{% url 'admin_panel:facility_list' %}" class="text-decoration-none small text-secondary">
+        <i class="bi bi-arrow-left me-1"></i> Back to Facilities Catalog
+    </a>
+    <h3 class="fw-bold mb-1 mt-2 text-dark"><i class="bi bi-tags-fill text-danger me-2"></i>Facility Categories</h3>
+    <p class="text-muted mb-0 small">Manage institutional category groupings for campus facilities</p>
+</div>
+
+<div class="row g-4">
+    <div class="col-md-5">
+        <div class="card shadow-sm">
+            <div class="card-header bg-white">
+                <span class="fw-bold"><i class="bi bi-plus-circle text-primary me-2"></i>Add New Category</span>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label class="form-label small fw-semibold">Category Name *</label>
+                        {{ form.name }}
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-semibold">Description</label>
+                        {{ form.description }}
+                    </div>
+                    <div class="form-check form-switch mb-3">
+                        {{ form.is_active }}
+                        <label class="form-check-label fw-semibold" for="{{ form.is_active.id_for_label }}">Active Status</label>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="bi bi-save me-1"></i> Save Category
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-7">
+        <div class="card shadow-sm">
+            <div class="card-header bg-white">
+                <span class="fw-bold">Existing Categories</span>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Category Name</th>
+                            <th>Description</th>
+                            <th>Facilities Count</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for cat in categories %}
+                            <tr>
+                                <td class="fw-bold text-dark">{{ cat.name }}</td>
+                                <td class="small text-muted">{{ cat.description|default:"No description" }}</td>
+                                <td>
+                                    <span class="badge bg-light text-dark border">{{ cat.facility_count }} Facilities</span>
+                                </td>
+                                <td>
+                                    {% if cat.is_active %}
+                                        <span class="badge bg-success-subtle text-success border border-success-subtle">Active</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary-subtle text-muted border">Inactive</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="4" class="text-center py-4 text-muted">No categories created yet.</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

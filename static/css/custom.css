@@ -1,0 +1,13 @@
+/* Custom styles for BulSU Campus Facility Reservation System */
+.bsu-maroon {
+    color: #800000;
+}
+.bsu-bg-maroon {
+    background-color: #800000;
+}
+.bsu-gold {
+    color: #f8b400;
+}
+.shadow-2xs {
+    box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+}

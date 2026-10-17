@@ -1,0 +1,280 @@
+{% extends 'base_admin.html' %}
+
+{% block title %}Admin Dashboard - BulSU Facility Management{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h3 class="fw-bold mb-1 text-dark">Administrative Dashboard</h3>
+        <p class="text-muted mb-0 small">Overview of facility operations, pending queues, and active bookings</p>
+    </div>
+    <div class="d-flex gap-2">
+        <a href="{% url 'admin_panel:review_queue' %}" class="btn btn-warning btn-sm fw-semibold shadow-sm">
+            <i class="bi bi-inbox-fill me-1"></i> Review Queue ({{ pending_count }})
+        </a>
+        <a href="{% url 'admin_panel:schedule_calendar' %}" class="btn btn-outline-secondary btn-sm shadow-sm">
+            <i class="bi bi-calendar3 me-1"></i> Schedule Calendar
+        </a>
+    </div>
+</div>
+
+<!-- 4 Live Metric Cards -->
+<div class="row g-3 mb-4">
+    <div class="col-sm-6 col-xl-3">
+        <div class="stat-card shadow-sm border-start border-4 border-warning">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="text-muted small fw-semibold text-uppercase">Pending Requests</div>
+                    <h2 class="fw-bold mb-0 text-dark">{{ pending_count }}</h2>
+                    <div class="small text-warning mt-1"><i class="bi bi-hourglass-split"></i> Awaiting admin review</div>
+                </div>
+                <div class="bg-warning-subtle text-warning p-3 rounded-circle">
+                    <i class="bi bi-inbox fs-3"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-sm-6 col-xl-3">
+        <div class="stat-card shadow-sm border-start border-4 border-success">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="text-muted small fw-semibold text-uppercase">Approved Upcoming</div>
+                    <h2 class="fw-bold mb-0 text-dark">{{ approved_upcoming_count }}</h2>
+                    <div class="small text-success mt-1"><i class="bi bi-check-circle"></i> Ready for execution</div>
+                </div>
+                <div class="bg-success-subtle text-success p-3 rounded-circle">
+                    <i class="bi bi-calendar2-check fs-3"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-sm-6 col-xl-3">
+        <div class="stat-card shadow-sm border-start border-4 border-primary">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="text-muted small fw-semibold text-uppercase">Completed Events</div>
+                    <h2 class="fw-bold mb-0 text-dark">{{ completed_events_count }}</h2>
+                    <div class="small text-primary mt-1"><i class="bi bi-award"></i> Successfully held</div>
+                </div>
+                <div class="bg-primary-subtle text-primary p-3 rounded-circle">
+                    <i class="bi bi-check2-all fs-3"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-sm-6 col-xl-3">
+        <div class="stat-card shadow-sm border-start border-4 border-danger">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="text-muted small fw-semibold text-uppercase">Active Facilities</div>
+                    <h2 class="fw-bold mb-0 text-dark">{{ active_facilities_count }}</h2>
+                    <div class="small text-danger mt-1"><i class="bi bi-building"></i> Available for booking</div>
+                </div>
+                <div class="bg-danger-subtle text-danger p-3 rounded-circle">
+                    <i class="bi bi-buildings fs-3"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Charts Section -->
+<div class="row g-4 mb-4">
+    <div class="col-lg-7">
+        <div class="card shadow-sm h-100">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                <span class="fw-bold text-secondary"><i class="bi bi-graph-up me-2 text-danger"></i>Monthly Booking Requests Trend</span>
+                <span class="badge bg-light text-muted border">Last 6 Months</span>
+            </div>
+            <div class="card-body">
+                <canvas id="monthlyTrendChart" height="130"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-5">
+        <div class="card shadow-sm h-100">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                <span class="fw-bold text-secondary"><i class="bi bi-pie-chart-fill me-2 text-danger"></i>Facility Utilization Distribution</span>
+                <span class="badge bg-light text-muted border">Top Booked</span>
+            </div>
+            <div class="card-body">
+                <canvas id="facilityUsageChart" height="130"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Operational Focus Tables -->
+<div class="row g-4">
+    <!-- Today's Operations Queue -->
+    <div class="col-lg-6">
+        <div class="card shadow-sm">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                <span class="fw-bold"><i class="bi bi-stopwatch text-danger me-2"></i>Today's Event Operations</span>
+                <a href="{% url 'admin_panel:event_operations' %}" class="small text-decoration-none">View All Operations &rarr;</a>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0 small">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Time</th>
+                            <th>Facility</th>
+                            <th>Event / Requestor</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for event in todays_events %}
+                            <tr>
+                                <td class="fw-semibold">{{ event.start_time|date:"H:i" }} - {{ event.end_time|date:"H:i" }}</td>
+                                <td>{{ event.facility.name }}</td>
+                                <td>
+                                    <div class="fw-bold text-dark">{{ event.title }}</div>
+                                    <div class="text-muted">{{ event.user.get_full_name|default:event.user.username }}</div>
+                                </td>
+                                <td>
+                                    <span class="badge-status status-{{ event.status }}">{{ event.get_status_display }}</span>
+                                </td>
+                                <td>
+                                    {% if event.status == 'APPROVED' %}
+                                        <form method="post" action="{% url 'admin_panel:check_in' event.id %}" class="d-inline">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-sm btn-outline-primary" title="Check In">Check In</button>
+                                        </form>
+                                    {% elif event.status == 'CHECKED_IN' %}
+                                        <form method="post" action="{% url 'admin_panel:complete_event' event.id %}" class="d-inline">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-sm btn-success" title="Complete Event">Complete</button>
+                                        </form>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="5" class="text-center py-4 text-muted">
+                                    <i class="bi bi-calendar2-x fs-4 d-block mb-1 text-secondary"></i>
+                                    No events scheduled for operational check-in today.
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Pending Requests -->
+    <div class="col-lg-6">
+        <div class="card shadow-sm">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                <span class="fw-bold"><i class="bi bi-inbox-fill text-warning me-2"></i>Recent Pending Requests</span>
+                <a href="{% url 'admin_panel:review_queue' %}" class="small text-decoration-none">Full Queue &rarr;</a>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0 small">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Requested For</th>
+                            <th>Facility</th>
+                            <th>Event Title</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for req in recent_pending %}
+                            <tr>
+                                <td>
+                                    <div class="fw-bold">{{ req.start_time|date:"M d, Y" }}</div>
+                                    <div class="text-muted">{{ req.start_time|date:"H:i" }} - {{ req.end_time|date:"H:i" }}</div>
+                                </td>
+                                <td>{{ req.facility.name }}</td>
+                                <td>
+                                    <div class="fw-bold text-dark">{{ req.title }}</div>
+                                    <div class="text-muted">{{ req.user.get_full_name|default:req.user.username }} ({{ req.participants_count }} pax)</div>
+                                </td>
+                                <td>
+                                    <form method="post" action="{% url 'admin_panel:approve_reservation' req.id %}" class="d-inline">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-sm btn-success" title="Atomically Approve">
+                                            <i class="bi bi-check-lg"></i>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="4" class="text-center py-4 text-muted">
+                                    <i class="bi bi-check2-circle fs-4 text-success d-block mb-1"></i>
+                                    All submitted reservation requests have been processed!
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    // Monthly Trend Chart
+    const monthlyLabels = {{ monthly_labels|safe }};
+    const monthlyData = {{ monthly_counts|safe }};
+
+    const ctxTrend = document.getElementById('monthlyTrendChart').getContext('2d');
+    new Chart(ctxTrend, {
+        type: 'line',
+        data: {
+            labels: monthlyLabels,
+            datasets: [{
+                label: 'Total Booking Requests',
+                data: monthlyData,
+                borderColor: '#800000',
+                backgroundColor: 'rgba(128, 0, 0, 0.08)',
+                fill: true,
+                tension: 0.35,
+                pointBackgroundColor: '#800000',
+                pointRadius: 4,
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: { legend: { display: false } },
+            scales: {
+                y: { beginAtZero: true, ticks: { precision: 0 } }
+            }
+        }
+    });
+
+    // Facility Usage Chart
+    const facLabels = {{ facility_labels|safe }};
+    const facData = {{ facility_counts|safe }};
+
+    const ctxUsage = document.getElementById('facilityUsageChart').getContext('2d');
+    new Chart(ctxUsage, {
+        type: 'doughnut',
+        data: {
+            labels: facLabels,
+            datasets: [{
+                data: facData,
+                backgroundColor: [
+                    '#800000', '#f8b400', '#2563eb', '#10b981', '#8b5cf6', '#ec4899'
+                ]
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 } } }
+            }
+        }
+    });
+</script>
+{% endblock %}
