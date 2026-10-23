@@ -9,13 +9,13 @@
         <p class="text-muted mb-0 small">Auditable schedule view of approved bookings, checked-in events, and maintenance closures</p>
     </div>
     <div class="d-flex align-items-center gap-2">
-        <a href="?date={{ prev_week }}&facility={{ selected_facility }}" class="btn btn-outline-secondary btn-sm">
+        <a href="?date={{ prev_week }}{% if selected_facility %}&facility={{ selected_facility }}{% endif %}" class="btn btn-outline-secondary btn-sm">
             <i class="bi bi-chevron-left"></i> Previous Week
         </a>
         <span class="badge bg-light text-dark border px-3 py-2 fw-semibold">
             {{ start_of_week|date:"M d" }} - {{ end_of_week|date:"M d, Y" }}
         </span>
-        <a href="?date={{ next_week }}&facility={{ selected_facility }}" class="btn btn-outline-secondary btn-sm">
+        <a href="?date={{ next_week }}{% if selected_facility %}&facility={{ selected_facility }}{% endif %}" class="btn btn-outline-secondary btn-sm">
             Next Week <i class="bi bi-chevron-right"></i>
         </a>
     </div>

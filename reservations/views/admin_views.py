@@ -361,17 +361,21 @@ def review_queue_view(request):
     """
     Searchable, paginated review queue filtered by facility, status, and date.
     """
-    facility_id = request.GET.get('facility')
+    facility_id = request.GET.get('facility', '').strip()
+    if facility_id in ['None', 'none', 'null']:
+        facility_id = ''
     status = request.GET.get('status', 'PENDING')
-    date_str = request.GET.get('date')
+    date_str = request.GET.get('date', '').strip()
+    if date_str in ['None', 'none', 'null']:
+        date_str = ''
 
     reservations = Reservation.objects.select_related('user', 'facility', 'facility__category')
 
     if status and status != 'ALL':
         reservations = reservations.filter(status=status)
 
-    if facility_id:
-        reservations = reservations.filter(facility_id=facility_id)
+    if facility_id and facility_id.isdigit():
+        reservations = reservations.filter(facility_id=int(facility_id))
 
     if date_str:
         try:
@@ -391,7 +395,7 @@ def review_queue_view(request):
     return render(request, 'admin/queue/review_queue.html', {
         'page_obj': page_obj,
         'facilities': facilities,
-        'selected_facility': facility_id,
+        'selected_facility': facility_id if facility_id.isdigit() else '',
         'selected_status': status,
         'selected_date': date_str
     })
@@ -452,8 +456,12 @@ def schedule_calendar_view(request):
     """
     Display daily and weekly facility schedules with clear visual status labels.
     """
-    facility_id = request.GET.get('facility')
-    date_str = request.GET.get('date')
+    raw_facility = request.GET.get('facility', '').strip()
+    facility_id = raw_facility if raw_facility and raw_facility.lower() not in ['none', 'null'] else ''
+
+    date_str = request.GET.get('date', '').strip()
+    if date_str in ['None', 'none', 'null']:
+        date_str = ''
 
     if date_str:
         try:
@@ -482,9 +490,9 @@ def schedule_calendar_view(request):
         start_time__lte=dt_end
     ).select_related('facility')
 
-    if facility_id:
-        reservations = reservations.filter(facility_id=facility_id)
-        closures = closures.filter(facility_id=facility_id)
+    if facility_id and facility_id.isdigit():
+        reservations = reservations.filter(facility_id=int(facility_id))
+        closures = closures.filter(facility_id=int(facility_id))
 
     facilities = Facility.objects.all()
 
@@ -499,7 +507,7 @@ def schedule_calendar_view(request):
         'reservations': reservations,
         'closures': closures,
         'facilities': facilities,
-        'selected_facility': facility_id,
+        'selected_facility': facility_id if facility_id.isdigit() else '',
         'prev_week': (view_date - timedelta(days=7)).isoformat(),
         'next_week': (view_date + timedelta(days=7)).isoformat(),
     })

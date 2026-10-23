@@ -251,3 +251,31 @@ class RBACSecurityTestCase(TestCase):
         res_after = self.client.get('/portal/dashboard/')
         self.assertEqual(res_after.status_code, 302)
         self.assertIn('/login/', res_after.url)
+
+
+class CalendarViewTestCase(TestCase):
+    """
+    Test calendar view parameters, preventing ValueError on facility='None'.
+    """
+    def setUp(self):
+        self.client = Client()
+        self.admin = User.objects.create_user(username="admin_cal", password="Password123!")
+        Profile.objects.create(user=self.admin, role='ADMIN', is_active_account=True)
+        self.client.login(username="admin_cal", password="Password123!")
+
+    def test_calendar_with_none_facility_param(self):
+        """
+        When navigating weeks with facility=None or empty string, view must not crash.
+        """
+        # Test literal 'None' string from template link
+        res = self.client.get('/manage/calendar/?date=2026-10-30&facility=None')
+        self.assertEqual(res.status_code, 200)
+        self.assertNotContains(res, '&facility=None')
+
+        # Test empty facility
+        res_empty = self.client.get('/manage/calendar/?date=2026-10-30&facility=')
+        self.assertEqual(res_empty.status_code, 200)
+
+        # Test invalid non-numeric string
+        res_invalid = self.client.get('/manage/calendar/?date=2026-10-30&facility=invalid')
+        self.assertEqual(res_invalid.status_code, 200)
