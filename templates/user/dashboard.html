@@ -3,14 +3,20 @@
 {% block title %}My Dashboard - BulSU Facility Portal{% endblock %}
 
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-4">
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4 pb-2 border-bottom">
     <div>
-        <h3 class="fw-bold mb-1 text-dark">Welcome, {{ request.user.first_name|default:request.user.username }}!</h3>
-        <p class="text-muted mb-0 small">Campus Facility Reservation & Event Scheduling Portal</p>
+        <div class="d-flex align-items-center gap-2 mb-1">
+            <h3 class="fw-bold mb-0 text-dark tracking-tight">Welcome back, {{ request.user.first_name|default:request.user.username }}!</h3>
+            <span class="badge bg-primary-subtle text-primary border border-primary-subtle">STUDENT PORTAL</span>
+        </div>
+        <p class="text-muted mb-0 small">CICT Facility Reservation & Availability Verification System &bull; Asia/Manila</p>
     </div>
-    <div>
-        <a href="{% url 'user_portal:reserve' %}" class="btn btn-danger btn-sm shadow-sm" style="background-color: var(--bsu-maroon);">
-            <i class="bi bi-calendar-plus me-1"></i> Request a Facility
+    <div class="d-flex gap-2">
+        <a href="{% url 'user_portal:reserve' %}" class="btn btn-bsu btn-sm shadow-sm d-inline-flex align-items-center gap-1">
+            <i class="bi bi-calendar-plus"></i> Request a Facility
+        </a>
+        <a href="{% url 'user_portal:facility_catalog' %}" class="btn btn-outline-secondary btn-sm shadow-sm d-inline-flex align-items-center gap-1">
+            <i class="bi bi-building"></i> Browse Venues
         </a>
     </div>
 </div>
@@ -18,29 +24,44 @@
 <!-- Quick Stats -->
 <div class="row g-3 mb-4">
     <div class="col-md-4">
-        <div class="card shadow-sm border-start border-4 border-warning">
-            <div class="card-body">
-                <div class="text-muted small fw-semibold text-uppercase">Pending Review</div>
-                <h3 class="fw-bold mb-0 text-dark">{{ pending_count }}</h3>
-                <div class="small text-muted mt-1">Awaiting admin decision</div>
+        <div class="stat-card border-start border-4 border-warning">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <div class="stat-label">Pending Review</div>
+                    <div class="stat-value text-dark mt-1">{{ pending_count }}</div>
+                    <div class="small text-warning mt-1 fw-semibold"><i class="bi bi-hourglass-split me-1"></i>Awaiting administrator</div>
+                </div>
+                <div class="stat-icon bg-warning-subtle text-warning">
+                    <i class="bi bi-clock-history"></i>
+                </div>
             </div>
         </div>
     </div>
     <div class="col-md-4">
-        <div class="card shadow-sm border-start border-4 border-success">
-            <div class="card-body">
-                <div class="text-muted small fw-semibold text-uppercase">Upcoming Approved</div>
-                <h3 class="fw-bold mb-0 text-success">{{ upcoming_approved }}</h3>
-                <div class="small text-muted mt-1">Ready for physical event</div>
+        <div class="stat-card border-start border-4 border-success">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <div class="stat-label">Upcoming Approved</div>
+                    <div class="stat-value text-dark mt-1">{{ upcoming_approved }}</div>
+                    <div class="small text-success mt-1 fw-semibold"><i class="bi bi-check-circle-fill me-1"></i>Ready for physical event</div>
+                </div>
+                <div class="stat-icon bg-success-subtle text-success">
+                    <i class="bi bi-bookmark-check-fill"></i>
+                </div>
             </div>
         </div>
     </div>
     <div class="col-md-4">
-        <div class="card shadow-sm border-start border-4 border-primary">
-            <div class="card-body">
-                <div class="text-muted small fw-semibold text-uppercase">Completed Events</div>
-                <h3 class="fw-bold mb-0 text-primary">{{ completed_count }}</h3>
-                <div class="small text-muted mt-1">Past successful bookings</div>
+        <div class="stat-card border-start border-4 border-primary">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <div class="stat-label">Completed Events</div>
+                    <div class="stat-value text-dark mt-1">{{ completed_count }}</div>
+                    <div class="small text-primary mt-1 fw-semibold"><i class="bi bi-award-fill me-1"></i>Past successful bookings</div>
+                </div>
+                <div class="stat-icon bg-primary-subtle text-primary">
+                    <i class="bi bi-check2-all"></i>
+                </div>
             </div>
         </div>
     </div>

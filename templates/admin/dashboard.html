@@ -3,17 +3,26 @@
 {% block title %}Admin Dashboard - BulSU Facility Management{% endblock %}
 
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-4">
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4 pb-2 border-bottom">
     <div>
-        <h3 class="fw-bold mb-1 text-dark">Administrative Dashboard</h3>
-        <p class="text-muted mb-0 small">Overview of facility operations, pending queues, and active bookings</p>
+        <div class="d-flex align-items-center gap-2 mb-1">
+            <h3 class="fw-bold mb-0 text-dark tracking-tight">Administrative Console</h3>
+            <span class="badge bg-danger-subtle text-danger border border-danger-subtle">LIVE ORM</span>
+        </div>
+        <p class="text-muted mb-0 small">Real-time telemetry of facility reservations, concurrency queues, and on-site event operations</p>
     </div>
     <div class="d-flex gap-2">
-        <a href="{% url 'admin_panel:review_queue' %}" class="btn btn-warning btn-sm fw-semibold shadow-sm">
-            <i class="bi bi-inbox-fill me-1"></i> Review Queue ({{ pending_count }})
+        <a href="{% url 'admin_panel:review_queue' %}" class="btn btn-warning btn-sm fw-semibold shadow-sm d-inline-flex align-items-center gap-1">
+            <i class="bi bi-inbox-fill"></i> Review Queue
+            {% if pending_count %}
+                <span class="badge bg-danger text-white rounded-pill ms-1">{{ pending_count }}</span>
+            {% endif %}
         </a>
-        <a href="{% url 'admin_panel:schedule_calendar' %}" class="btn btn-outline-secondary btn-sm shadow-sm">
-            <i class="bi bi-calendar3 me-1"></i> Schedule Calendar
+        <a href="{% url 'admin_panel:schedule_calendar' %}" class="btn btn-outline-secondary btn-sm shadow-sm d-inline-flex align-items-center gap-1">
+            <i class="bi bi-calendar3"></i> Schedule Calendar
+        </a>
+        <a href="{% url 'admin_panel:reports' %}" class="btn btn-outline-secondary btn-sm shadow-sm d-inline-flex align-items-center gap-1">
+            <i class="bi bi-download"></i> CSV Reports
         </a>
     </div>
 </div>
@@ -21,60 +30,60 @@
 <!-- 4 Live Metric Cards -->
 <div class="row g-3 mb-4">
     <div class="col-sm-6 col-xl-3">
-        <div class="stat-card shadow-sm border-start border-4 border-warning">
-            <div class="d-flex justify-content-between align-items-center">
+        <div class="stat-card border-start border-4 border-warning">
+            <div class="d-flex justify-content-between align-items-start">
                 <div>
-                    <div class="text-muted small fw-semibold text-uppercase">Pending Requests</div>
-                    <h2 class="fw-bold mb-0 text-dark">{{ pending_count }}</h2>
-                    <div class="small text-warning mt-1"><i class="bi bi-hourglass-split"></i> Awaiting admin review</div>
+                    <div class="stat-label">Pending Requests</div>
+                    <div class="stat-value text-dark mt-1">{{ pending_count }}</div>
+                    <div class="small text-warning mt-1 fw-semibold"><i class="bi bi-hourglass-split me-1"></i>Awaiting decision</div>
                 </div>
-                <div class="bg-warning-subtle text-warning p-3 rounded-circle">
-                    <i class="bi bi-inbox fs-3"></i>
+                <div class="stat-icon bg-warning-subtle text-warning">
+                    <i class="bi bi-inbox-fill"></i>
                 </div>
             </div>
         </div>
     </div>
 
     <div class="col-sm-6 col-xl-3">
-        <div class="stat-card shadow-sm border-start border-4 border-success">
-            <div class="d-flex justify-content-between align-items-center">
+        <div class="stat-card border-start border-4 border-success">
+            <div class="d-flex justify-content-between align-items-start">
                 <div>
-                    <div class="text-muted small fw-semibold text-uppercase">Approved Upcoming</div>
-                    <h2 class="fw-bold mb-0 text-dark">{{ approved_upcoming_count }}</h2>
-                    <div class="small text-success mt-1"><i class="bi bi-check-circle"></i> Ready for execution</div>
+                    <div class="stat-label">Approved Upcoming</div>
+                    <div class="stat-value text-dark mt-1">{{ approved_upcoming_count }}</div>
+                    <div class="small text-success mt-1 fw-semibold"><i class="bi bi-calendar2-check-fill me-1"></i>Scheduled slots</div>
                 </div>
-                <div class="bg-success-subtle text-success p-3 rounded-circle">
-                    <i class="bi bi-calendar2-check fs-3"></i>
+                <div class="stat-icon bg-success-subtle text-success">
+                    <i class="bi bi-calendar-check-fill"></i>
                 </div>
             </div>
         </div>
     </div>
 
     <div class="col-sm-6 col-xl-3">
-        <div class="stat-card shadow-sm border-start border-4 border-primary">
-            <div class="d-flex justify-content-between align-items-center">
+        <div class="stat-card border-start border-4 border-primary">
+            <div class="d-flex justify-content-between align-items-start">
                 <div>
-                    <div class="text-muted small fw-semibold text-uppercase">Completed Events</div>
-                    <h2 class="fw-bold mb-0 text-dark">{{ completed_events_count }}</h2>
-                    <div class="small text-primary mt-1"><i class="bi bi-award"></i> Successfully held</div>
+                    <div class="stat-label">Completed Events</div>
+                    <div class="stat-value text-dark mt-1">{{ completed_events_count }}</div>
+                    <div class="small text-primary mt-1 fw-semibold"><i class="bi bi-check2-all me-1"></i>Inspection passed</div>
                 </div>
-                <div class="bg-primary-subtle text-primary p-3 rounded-circle">
-                    <i class="bi bi-check2-all fs-3"></i>
+                <div class="stat-icon bg-primary-subtle text-primary">
+                    <i class="bi bi-award-fill"></i>
                 </div>
             </div>
         </div>
     </div>
 
     <div class="col-sm-6 col-xl-3">
-        <div class="stat-card shadow-sm border-start border-4 border-danger">
-            <div class="d-flex justify-content-between align-items-center">
+        <div class="stat-card border-start border-4 border-danger">
+            <div class="d-flex justify-content-between align-items-start">
                 <div>
-                    <div class="text-muted small fw-semibold text-uppercase">Active Facilities</div>
-                    <h2 class="fw-bold mb-0 text-dark">{{ active_facilities_count }}</h2>
-                    <div class="small text-danger mt-1"><i class="bi bi-building"></i> Available for booking</div>
+                    <div class="stat-label">Active Facilities</div>
+                    <div class="stat-value text-dark mt-1">{{ active_facilities_count }}</div>
+                    <div class="small text-danger mt-1 fw-semibold"><i class="bi bi-building-fill me-1"></i>Campus capacity</div>
                 </div>
-                <div class="bg-danger-subtle text-danger p-3 rounded-circle">
-                    <i class="bi bi-buildings fs-3"></i>
+                <div class="stat-icon bg-danger-subtle text-danger">
+                    <i class="bi bi-buildings-fill"></i>
                 </div>
             </div>
         </div>

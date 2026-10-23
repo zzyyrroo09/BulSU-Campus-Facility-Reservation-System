@@ -1,149 +1,34 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}BulSU Facility Management Console{% endblock %}</title>
+    <!-- Google Fonts: Plus Jakarta Sans & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <!-- Modern Theme CSS -->
+    <link href="{% static 'css/modern_theme.css' %}" rel="stylesheet">
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        :root {
-            --bsu-maroon: #800000;
-            --bsu-maroon-dark: #5c0000;
-            --bsu-gold: #f8b400;
-            --bsu-dark: #1e242b;
-            --bsu-sidebar: #191e24;
-            --bsu-light-bg: #f4f6f9;
-        }
-        body {
-            background-color: var(--bsu-light-bg);
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            color: #2d3748;
-        }
-        .admin-sidebar {
-            width: 260px;
-            min-height: 100vh;
-            background-color: var(--bsu-sidebar);
-            color: #d1d5db;
-            position: fixed;
-            top: 0;
-            bottom: 0;
-            left: 0;
-            z-index: 1000;
-            box-shadow: 2px 0 10px rgba(0,0,0,0.15);
-            overflow-y: auto;
-        }
-        .admin-sidebar .brand {
-            padding: 1.25rem 1.5rem;
-            background: linear-gradient(135deg, var(--bsu-maroon), var(--bsu-maroon-dark));
-            color: #fff;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-weight: 700;
-            font-size: 1.05rem;
-            border-bottom: 2px solid var(--bsu-gold);
-        }
-        .admin-sidebar .nav-link {
-            color: #9ca3af;
-            padding: 0.75rem 1.25rem;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-size: 0.92rem;
-            border-left: 3px solid transparent;
-            transition: all 0.2s ease;
-        }
-        .admin-sidebar .nav-link:hover, .admin-sidebar .nav-link.active {
-            color: #fff;
-            background-color: rgba(255, 255, 255, 0.05);
-            border-left-color: var(--bsu-gold);
-        }
-        .admin-sidebar .nav-section-title {
-            font-size: 0.72rem;
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-            color: #6b7280;
-            padding: 1rem 1.25rem 0.35rem;
-            font-weight: 700;
-        }
-        .admin-main-wrapper {
-            margin-left: 260px;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-        .admin-topbar {
-            height: 64px;
-            background: #ffffff;
-            border-bottom: 1px solid #e5e7eb;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 1.75rem;
-            position: sticky;
-            top: 0;
-            z-index: 900;
-        }
-        .admin-content {
-            padding: 1.75rem;
-            flex-grow: 1;
-        }
-        .card {
-            border: 1px solid #e5e7eb;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-            border-radius: 8px;
-        }
-        .card-header {
-            background-color: #fff;
-            border-bottom: 1px solid #e5e7eb;
-            font-weight: 600;
-            padding: 0.9rem 1.25rem;
-        }
-        .stat-card {
-            border-left: 4px solid var(--bsu-maroon);
-            border-radius: 8px;
-            background: #fff;
-            padding: 1.25rem;
-            transition: transform 0.15s ease;
-        }
-        .stat-card:hover {
-            transform: translateY(-2px);
-        }
-        .badge-status {
-            padding: 0.45em 0.8em;
-            font-weight: 600;
-            font-size: 0.78rem;
-            border-radius: 6px;
-            letter-spacing: 0.02em;
-        }
-        .status-PENDING { background-color: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
-        .status-APPROVED { background-color: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; }
-        .status-CHECKED_IN { background-color: #e0e7ff; color: #3730a3; border: 1px solid #c7d2fe; }
-        .status-COMPLETED { background-color: #ecfdf5; color: #047857; border: 1px solid #6ee7b7; }
-        .status-REJECTED { background-color: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
-        .status-CANCELLED { background-color: #f3f4f6; color: #4b5563; border: 1px solid #e5e7eb; }
-        .status-NO_SHOW { background-color: #fdf2f8; color: #9d174d; border: 1px solid #fbcfe8; }
-        @media (max-width: 992px) {
-            .admin-sidebar { margin-left: -260px; transition: margin 0.3s ease; }
-            .admin-sidebar.show { margin-left: 0; }
-            .admin-main-wrapper { margin-left: 0; }
-        }
-    </style>
     {% block extra_head %}{% endblock %}
 </head>
 <body>
     <!-- Sidebar Navigation -->
     <nav class="admin-sidebar" id="adminSidebar">
         <div class="brand">
-            <i class="bi bi-shield-shaded text-warning fs-4"></i>
+            <div class="bg-warning text-dark rounded-3 d-flex align-items-center justify-content-center p-2 shadow-sm" style="width: 38px; height: 38px;">
+                <i class="bi bi-shield-shaded fs-5"></i>
+            </div>
             <div>
-                <div>BulSU CICT</div>
-                <div style="font-size: 0.75rem; font-weight: 400; opacity: 0.85;">Facility Admin Console</div>
+                <div class="fw-bold tracking-tight" style="font-size: 1.05rem;">BulSU CICT</div>
+                <div style="font-size: 0.72rem; opacity: 0.85; font-weight: 500;">Facility Admin Console</div>
             </div>
         </div>
 
@@ -160,7 +45,7 @@
                     <i class="bi bi-inbox-fill"></i>
                     <span>Review Queue</span>
                     {% if pending_queue_count %}
-                        <span class="badge bg-danger rounded-pill ms-auto">{{ pending_queue_count }}</span>
+                        <span class="badge bg-danger rounded-pill ms-auto px-2 py-1" style="font-size: 0.72rem;">{{ pending_queue_count }}</span>
                     {% endif %}
                 </a>
             </li>
@@ -207,7 +92,7 @@
         </ul>
 
         <div class="nav-section-title">Governance & System</div>
-        <ul class="nav flex-column mb-4">
+        <ul class="nav flex-column mb-3">
             <li class="nav-item">
                 <a class="nav-link {% if 'users' in request.path %}active{% endif %}" href="{% url 'admin_panel:user_list' %}">
                     <i class="bi bi-people-fill"></i>
@@ -233,6 +118,17 @@
                 </a>
             </li>
         </ul>
+
+        <!-- Bottom System Badge -->
+        <div class="mt-auto p-3 m-3 rounded-3 border border-secondary border-opacity-25 bg-white bg-opacity-5">
+            <div class="d-flex align-items-center justify-content-between mb-1">
+                <span class="badge bg-success-subtle text-success border border-success-subtle" style="font-size: 0.68rem;">ONLINE</span>
+                <small class="text-white-50" style="font-size: 0.7rem;">Asia/Manila</small>
+            </div>
+            <a href="{% url 'user_portal:dashboard' %}" class="btn btn-outline-light btn-sm w-100 mt-2 d-flex align-items-center justify-content-center gap-1" style="font-size: 0.78rem;">
+                <i class="bi bi-arrow-up-right-square"></i> Student Portal
+            </a>
+        </div>
     </nav>
 
     <!-- Main Container -->
@@ -243,26 +139,50 @@
                 <button class="btn btn-outline-secondary btn-sm d-lg-none" onclick="document.getElementById('adminSidebar').classList.toggle('show')">
                     <i class="bi bi-list fs-5"></i>
                 </button>
-                <div class="fw-semibold text-secondary d-none d-md-block">
-                    <i class="bi bi-geo-alt-fill text-danger me-1"></i> BulSU Main Campus | Malolos, Bulacan
+                <div class="d-flex align-items-center gap-2">
+                    <span class="badge bg-light text-secondary border px-2 py-1">
+                        <i class="bi bi-geo-alt-fill text-danger me-1"></i> BulSU Main Campus
+                    </span>
+                    <span class="text-muted d-none d-sm-inline" style="font-size: 0.82rem;">|</span>
+                    <span class="text-muted small d-none d-md-inline">
+                        <i class="bi bi-clock me-1"></i> {% now "l, F d, Y" %}
+                    </span>
                 </div>
             </div>
 
-            <div class="d-flex align-items-center gap-3">
-                <span class="badge bg-danger-subtle text-danger border border-danger-subtle px-2 py-1">
-                    <i class="bi bi-person-badge-fill me-1"></i> ADMIN ROLE
-                </span>
-                <div class="dropdown">
-                    <button class="btn btn-light dropdown-toggle d-flex align-items-center gap-2 border" type="button" data-bs-toggle="dropdown">
-                        <div class="bg-danger text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 32px; height: 32px; font-size: 0.85rem; font-weight: bold;">
+            <!-- Fast Navigation Shortcuts & Profile -->
+            <div class="d-flex align-items-center gap-2">
+                <a href="{% url 'admin_panel:review_queue' %}" class="btn btn-light btn-sm border text-secondary d-none d-sm-inline-flex align-items-center gap-1" title="Jump to Review Queue">
+                    <i class="bi bi-inbox text-warning"></i>
+                    <span>Queue</span>
+                    {% if pending_queue_count %}
+                        <span class="badge bg-danger rounded-pill">{{ pending_queue_count }}</span>
+                    {% endif %}
+                </a>
+                <a href="{% url 'admin_panel:schedule_calendar' %}" class="btn btn-light btn-sm border text-secondary d-none d-sm-inline-flex align-items-center gap-1" title="View Schedule Calendar">
+                    <i class="bi bi-calendar3 text-primary"></i>
+                    <span>Calendar</span>
+                </a>
+
+                <div class="dropdown ms-1">
+                    <button class="btn btn-light dropdown-toggle d-flex align-items-center gap-2 border shadow-2xs py-1 px-2" type="button" data-bs-toggle="dropdown">
+                        <div class="bg-danger text-white rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 32px; height: 32px; font-size: 0.85rem; font-weight: bold; background: linear-gradient(135deg, var(--bsu-maroon), #4d0000) !important;">
                             {{ request.user.first_name|first|default:request.user.username|first|upper }}
                         </div>
-                        <span class="fw-medium">{{ request.user.get_full_name|default:request.user.username }}</span>
+                        <div class="text-start d-none d-md-block lh-sm pe-1">
+                            <div class="fw-bold text-dark" style="font-size: 0.82rem;">{{ request.user.get_full_name|default:request.user.username }}</div>
+                            <small class="text-danger fw-semibold" style="font-size: 0.7rem;">CICT ADMINISTRATOR</small>
+                        </div>
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end shadow-sm">
-                        <li><a class="dropdown-item" href="{% url 'admin_panel:system_settings' %}"><i class="bi bi-gear me-2"></i> Settings</a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item text-danger" href="{% url 'logout' %}"><i class="bi bi-box-arrow-right me-2"></i> Sign Out</a></li>
+                        <li class="px-3 py-2 border-bottom">
+                            <div class="fw-bold">{{ request.user.get_full_name|default:request.user.username }}</div>
+                            <small class="text-muted">{{ request.user.email }}</small>
+                        </li>
+                        <li><a class="dropdown-item py-2" href="{% url 'admin_panel:system_settings' %}"><i class="bi bi-gear me-2 text-secondary"></i> System Settings</a></li>
+                        <li><a class="dropdown-item py-2" href="{% url 'admin_panel:audit_log' %}"><i class="bi bi-journal-text me-2 text-secondary"></i> System Audit Logs</a></li>
+                        <li><hr class="dropdown-divider my-1"></li>
+                        <li><a class="dropdown-item py-2 text-danger fw-semibold" href="{% url 'logout' %}"><i class="bi bi-box-arrow-right me-2"></i> Sign Out</a></li>
                     </ul>
                 </div>
             </div>

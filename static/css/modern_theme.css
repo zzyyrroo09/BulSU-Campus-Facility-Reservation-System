@@ -1,0 +1,463 @@
+/* ==========================================================================
+   BulSU Campus Facility Reservation and Event Scheduling System
+   Modern Enterprise Design System & Layout Engine
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+:root {
+    /* Brand Colors (BulSU Palette) */
+    --bsu-maroon: #800000;
+    --bsu-maroon-dark: #4d0000;
+    --bsu-maroon-light: #991b1b;
+    --bsu-maroon-subtle: #fef2f2;
+    --bsu-gold: #f59e0b;
+    --bsu-gold-dark: #d97706;
+    --bsu-gold-subtle: #fffbeb;
+    
+    /* Surface & Canvas */
+    --bsu-sidebar-bg: #0f172a;
+    --bsu-sidebar-border: #1e293b;
+    --bsu-sidebar-hover: rgba(255, 255, 255, 0.06);
+    --bsu-canvas-bg: #f8fafc;
+    --bsu-card-bg: #ffffff;
+    
+    /* Typography & Neutral Palette */
+    --bsu-text-main: #0f172a;
+    --bsu-text-secondary: #475569;
+    --bsu-text-muted: #64748b;
+    --bsu-border: #e2e8f0;
+    --bsu-border-subtle: #f1f5f9;
+    
+    /* Dimensions & Radii */
+    --bsu-radius: 12px;
+    --bsu-radius-sm: 8px;
+    --bsu-radius-lg: 16px;
+    --bsu-radius-pill: 9999px;
+    
+    /* Soft Elevation Shadows */
+    --bsu-shadow-xs: 0 1px 2px 0 rgba(15, 23, 42, 0.05);
+    --bsu-shadow-sm: 0 1px 3px 0 rgba(15, 23, 42, 0.06), 0 1px 2px -1px rgba(15, 23, 42, 0.04);
+    --bsu-shadow-md: 0 4px 6px -1px rgba(15, 23, 42, 0.07), 0 2px 4px -2px rgba(15, 23, 42, 0.05);
+    --bsu-shadow-lg: 0 10px 15px -3px rgba(15, 23, 42, 0.08), 0 4px 6px -4px rgba(15, 23, 42, 0.04);
+}
+
+/* Base Document Styling */
+body {
+    background-color: var(--bsu-canvas-bg);
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    color: var(--bsu-text-main);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+code, kbd, samp, pre {
+    font-family: 'JetBrains Mono', SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 0.84em;
+}
+
+/* ==========================================================================
+   CARDS & CONTAINERS
+   ========================================================================== */
+.card {
+    background-color: var(--bsu-card-bg);
+    border: 1px solid var(--bsu-border);
+    border-radius: var(--bsu-radius);
+    box-shadow: var(--bsu-shadow-xs);
+    transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.card:hover {
+    box-shadow: var(--bsu-shadow-sm);
+}
+
+.card-header {
+    background-color: #ffffff;
+    border-bottom: 1px solid var(--bsu-border-subtle);
+    padding: 1rem 1.35rem;
+    font-weight: 700;
+    color: var(--bsu-text-main);
+}
+
+.card-body {
+    padding: 1.35rem;
+}
+
+.card-footer {
+    background-color: #ffffff;
+    border-top: 1px solid var(--bsu-border-subtle);
+    padding: 0.9rem 1.35rem;
+}
+
+/* Stat & KPI Cards */
+.stat-card {
+    background: #ffffff;
+    border: 1px solid var(--bsu-border);
+    border-radius: var(--bsu-radius);
+    padding: 1.35rem;
+    box-shadow: var(--bsu-shadow-xs);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--bsu-shadow-md);
+}
+
+.stat-card .stat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+}
+
+.stat-card .stat-value {
+    font-size: 1.85rem;
+    font-weight: 800;
+    line-height: 1.1;
+    color: var(--bsu-text-main);
+    letter-spacing: -0.02em;
+}
+
+.stat-card .stat-label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--bsu-text-muted);
+}
+
+/* ==========================================================================
+   STATUS BADGES & PILLS
+   ========================================================================== */
+.badge-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0.32rem 0.75rem;
+    font-size: 0.72rem;
+    font-weight: 700;
+    border-radius: var(--bsu-radius-pill);
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.badge-status::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.status-PENDING {
+    background-color: #fffbeb;
+    color: #b45309;
+    border: 1px solid #fde68a;
+}
+.status-PENDING::before { background-color: #f59e0b; }
+
+.status-APPROVED {
+    background-color: #f0fdf4;
+    color: #15803d;
+    border: 1px solid #bbf7d0;
+}
+.status-APPROVED::before { background-color: #22c55e; }
+
+.status-CHECKED_IN {
+    background-color: #eef2ff;
+    color: #4338ca;
+    border: 1px solid #c7d2fe;
+}
+.status-CHECKED_IN::before { background-color: #6366f1; }
+
+.status-COMPLETED {
+    background-color: #ecfdf5;
+    color: #047857;
+    border: 1px solid #a7f3d0;
+}
+.status-COMPLETED::before { background-color: #10b981; }
+
+.status-REJECTED {
+    background-color: #fef2f2;
+    color: #b91c1c;
+    border: 1px solid #fecaca;
+}
+.status-REJECTED::before { background-color: #ef4444; }
+
+.status-CANCELLED {
+    background-color: #f8fafc;
+    color: #64748b;
+    border: 1px solid #e2e8f0;
+}
+.status-CANCELLED::before { background-color: #94a3b8; }
+
+.status-NO_SHOW {
+    background-color: #fdf2f8;
+    color: #be185d;
+    border: 1px solid #fbcfe8;
+}
+.status-NO_SHOW::before { background-color: #ec4899; }
+
+/* ==========================================================================
+   BUTTONS & FORMS
+   ========================================================================== */
+.btn {
+    border-radius: var(--bsu-radius-sm);
+    font-weight: 600;
+    font-size: 0.88rem;
+    padding: 0.5rem 1rem;
+    transition: all 0.15s ease;
+}
+
+.btn-primary, .btn-bsu {
+    background-color: var(--bsu-maroon);
+    border-color: var(--bsu-maroon);
+    color: #ffffff;
+}
+
+.btn-primary:hover, .btn-bsu:hover {
+    background-color: var(--bsu-maroon-dark);
+    border-color: var(--bsu-maroon-dark);
+    color: #ffffff;
+    box-shadow: 0 4px 10px rgba(128, 0, 0, 0.25);
+}
+
+.btn-outline-primary {
+    border-color: var(--bsu-maroon);
+    color: var(--bsu-maroon);
+}
+
+.btn-outline-primary:hover {
+    background-color: var(--bsu-maroon);
+    border-color: var(--bsu-maroon);
+    color: #ffffff;
+}
+
+.form-control, .form-select {
+    border-radius: var(--bsu-radius-sm);
+    border: 1px solid #cbd5e1;
+    padding: 0.55rem 0.85rem;
+    font-size: 0.9rem;
+    color: var(--bsu-text-main);
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--bsu-maroon);
+    box-shadow: 0 0 0 3px rgba(128, 0, 0, 0.12);
+    outline: 0;
+}
+
+.form-label {
+    font-weight: 600;
+    font-size: 0.84rem;
+    color: var(--bsu-text-main);
+    margin-bottom: 0.35rem;
+}
+
+/* ==========================================================================
+   TABLES
+   ========================================================================== */
+.table {
+    margin-bottom: 0;
+    color: var(--bsu-text-main);
+}
+
+.table thead th {
+    background-color: #f8fafc;
+    color: var(--bsu-text-muted);
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    border-bottom: 1px solid var(--bsu-border);
+    padding: 0.85rem 1rem;
+    white-space: nowrap;
+}
+
+.table tbody td {
+    padding: 0.9rem 1rem;
+    vertical-align: middle;
+    border-bottom: 1px solid var(--bsu-border-subtle);
+    font-size: 0.88rem;
+}
+
+.table-hover tbody tr:hover {
+    background-color: #f8fafc;
+}
+
+/* ==========================================================================
+   ADMIN LAYOUT (SIDEBAR & TOPBAR)
+   ========================================================================== */
+.admin-sidebar {
+    width: 260px;
+    min-height: 100vh;
+    background-color: var(--bsu-sidebar-bg);
+    color: #94a3b8;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 1000;
+    box-shadow: 4px 0 20px rgba(0, 0, 0, 0.2);
+    overflow-y: auto;
+    transition: all 0.3s ease;
+}
+
+.admin-sidebar .brand {
+    padding: 1.35rem 1.5rem;
+    background: linear-gradient(135deg, var(--bsu-maroon), var(--bsu-maroon-dark));
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-bottom: 2px solid var(--bsu-gold);
+}
+
+.admin-sidebar .nav-section-title {
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #64748b;
+    padding: 1.1rem 1.35rem 0.35rem;
+    font-weight: 800;
+}
+
+.admin-sidebar .nav-link {
+    color: #94a3b8;
+    padding: 0.68rem 1.35rem;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 0.88rem;
+    font-weight: 500;
+    border-left: 3px solid transparent;
+    transition: all 0.15s ease;
+}
+
+.admin-sidebar .nav-link i {
+    font-size: 1.1rem;
+    opacity: 0.85;
+    transition: transform 0.15s ease;
+}
+
+.admin-sidebar .nav-link:hover {
+    color: #ffffff;
+    background-color: var(--bsu-sidebar-hover);
+    border-left-color: rgba(255, 255, 255, 0.3);
+}
+
+.admin-sidebar .nav-link:hover i {
+    transform: scale(1.1);
+}
+
+.admin-sidebar .nav-link.active {
+    color: #ffffff;
+    background: linear-gradient(90deg, rgba(128, 0, 0, 0.35), transparent);
+    border-left-color: var(--bsu-gold);
+    font-weight: 600;
+}
+
+.admin-sidebar .nav-link.active i {
+    color: var(--bsu-gold);
+}
+
+.admin-main-wrapper {
+    margin-left: 260px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--bsu-canvas-bg);
+}
+
+.admin-topbar {
+    height: 64px;
+    background: #ffffff;
+    border-bottom: 1px solid var(--bsu-border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 2rem;
+    position: sticky;
+    top: 0;
+    z-index: 900;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+}
+
+.admin-content {
+    padding: 2rem;
+    flex-grow: 1;
+}
+
+/* ==========================================================================
+   USER PORTAL (NAVBAR & HERO)
+   ========================================================================== */
+.user-navbar {
+    background: linear-gradient(135deg, var(--bsu-maroon), #4a0000);
+    border-bottom: 3px solid var(--bsu-gold);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.user-navbar .navbar-brand {
+    font-weight: 700;
+    letter-spacing: -0.01em;
+}
+
+.user-navbar .nav-link {
+    color: rgba(255, 255, 255, 0.85) !important;
+    font-weight: 500;
+    font-size: 0.92rem;
+    padding: 0.5rem 0.9rem !important;
+    border-radius: var(--bsu-radius-sm);
+    transition: all 0.15s ease;
+}
+
+.user-navbar .nav-link:hover, .user-navbar .nav-link.active {
+    color: #ffffff !important;
+    background-color: rgba(255, 255, 255, 0.15);
+}
+
+.btn-request-pill {
+    background-color: var(--bsu-gold);
+    color: #0f172a !important;
+    font-weight: 700;
+    padding: 0.45rem 1rem !important;
+    border-radius: var(--bsu-radius-pill);
+    box-shadow: 0 2px 8px rgba(245, 158, 11, 0.35);
+    transition: all 0.15s ease;
+}
+
+.btn-request-pill:hover {
+    background-color: #fbbf24;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.5);
+}
+
+/* ==========================================================================
+   RESPONSIVENESS
+   ========================================================================== */
+@media (max-width: 992px) {
+    .admin-sidebar {
+        margin-left: -260px;
+    }
+    .admin-sidebar.show {
+        margin-left: 0;
+    }
+    .admin-main-wrapper {
+        margin-left: 0;
+    }
+    .admin-topbar {
+        padding: 0 1rem;
+    }
+    .admin-content {
+        padding: 1.25rem;
+    }
+}

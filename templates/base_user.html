@@ -1,62 +1,20 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}BulSU Facility Reservation Portal{% endblock %}</title>
+    <!-- Google Fonts: Plus Jakarta Sans & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
-    <style>
-        :root {
-            --bsu-maroon: #800000;
-            --bsu-gold: #f8b400;
-            --bsu-body-bg: #f8fafc;
-        }
-        body {
-            background-color: var(--bsu-body-bg);
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            color: #1e293b;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-        .user-navbar {
-            background: linear-gradient(135deg, var(--bsu-maroon), #4a0000);
-            border-bottom: 3px solid var(--bsu-gold);
-        }
-        .nav-link {
-            color: rgba(255, 255, 255, 0.85) !important;
-            font-weight: 500;
-            padding: 0.5rem 1rem !important;
-            border-radius: 6px;
-            transition: all 0.2s;
-        }
-        .nav-link:hover, .nav-link.active {
-            color: #ffffff !important;
-            background-color: rgba(255, 255, 255, 0.12);
-        }
-        .badge-status {
-            padding: 0.45em 0.8em;
-            font-weight: 600;
-            font-size: 0.78rem;
-            border-radius: 6px;
-            letter-spacing: 0.02em;
-        }
-        .status-PENDING { background-color: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
-        .status-APPROVED { background-color: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; }
-        .status-CHECKED_IN { background-color: #e0e7ff; color: #3730a3; border: 1px solid #c7d2fe; }
-        .status-COMPLETED { background-color: #ecfdf5; color: #047857; border: 1px solid #6ee7b7; }
-        .status-REJECTED { background-color: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
-        .status-CANCELLED { background-color: #f3f4f6; color: #4b5563; border: 1px solid #e5e7eb; }
-        .status-NO_SHOW { background-color: #fdf2f8; color: #9d174d; border: 1px solid #fbcfe8; }
-        .card {
-            border: 1px solid #e2e8f0;
-            border-radius: 10px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-        }
-    </style>
+    <!-- Modern Theme CSS -->
+    <link href="{% static 'css/modern_theme.css' %}" rel="stylesheet">
     {% block extra_head %}{% endblock %}
 </head>
 <body>
@@ -64,10 +22,12 @@
     <nav class="navbar navbar-expand-lg user-navbar navbar-dark sticky-top shadow-sm py-2">
         <div class="container">
             <a class="navbar-brand d-flex align-items-center gap-2 fw-bold" href="{% url 'user_portal:dashboard' %}">
-                <i class="bi bi-calendar2-check-fill text-warning fs-4"></i>
+                <div class="bg-warning text-dark rounded-3 d-flex align-items-center justify-content-center p-2 shadow-sm" style="width: 36px; height: 36px;">
+                    <i class="bi bi-calendar2-check-fill fs-5"></i>
+                </div>
                 <div>
-                    <div>BulSU Facility Portal</div>
-                    <div style="font-size: 0.7rem; font-weight: 400; opacity: 0.85;">Campus Reservation System</div>
+                    <div class="lh-1 tracking-tight" style="font-size: 1.05rem;">BulSU Facility Portal</div>
+                    <div style="font-size: 0.7rem; font-weight: 500; opacity: 0.85; margin-top: 2px;">Campus Reservation System &bull; CICT</div>
                 </div>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#userNavbar">
@@ -75,7 +35,7 @@
             </button>
 
             <div class="collapse navbar-collapse" id="userNavbar">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4 gap-lg-1">
                     <li class="nav-item">
                         <a class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}" href="{% url 'user_portal:dashboard' %}">
                             <i class="bi bi-house-door me-1"></i> Dashboard
@@ -87,11 +47,6 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {% if request.resolver_match.url_name == 'reserve' %}active{% endif %}" href="{% url 'user_portal:reserve' %}">
-                            <i class="bi bi-plus-circle-fill text-warning me-1"></i> Request Reservation
-                        </a>
-                    </li>
-                    <li class="nav-item">
                         <a class="nav-link {% if 'my-reservations' in request.path %}active{% endif %}" href="{% url 'user_portal:my_reservations' %}">
                             <i class="bi bi-bookmark-check me-1"></i> My Bookings
                         </a>
@@ -99,15 +54,30 @@
                 </ul>
 
                 <div class="d-flex align-items-center gap-3">
+                    <a href="{% url 'user_portal:reserve' %}" class="btn btn-request-pill d-inline-flex align-items-center gap-1">
+                        <i class="bi bi-plus-circle-fill"></i>
+                        <span>Request Facility</span>
+                    </a>
+
                     <div class="dropdown">
-                        <button class="btn btn-outline-light dropdown-toggle d-flex align-items-center gap-2" type="button" data-bs-toggle="dropdown">
-                            <i class="bi bi-person-circle"></i>
-                            <span>{{ request.user.first_name|default:request.user.username }}</span>
+                        <button class="btn btn-outline-light dropdown-toggle d-flex align-items-center gap-2 py-1 px-2 border-opacity-50" type="button" data-bs-toggle="dropdown">
+                            <div class="bg-warning text-dark rounded-circle d-flex align-items-center justify-content-center fw-bold" style="width: 28px; height: 28px; font-size: 0.8rem;">
+                                {{ request.user.first_name|first|default:request.user.username|first|upper }}
+                            </div>
+                            <span class="small fw-semibold">{{ request.user.first_name|default:request.user.username }}</span>
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end shadow-sm">
-                            <li><a class="dropdown-item" href="{% url 'user_portal:profile' %}"><i class="bi bi-person me-2"></i> My Profile</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item text-danger" href="{% url 'logout' %}"><i class="bi bi-box-arrow-right me-2"></i> Sign Out</a></li>
+                            <li class="px-3 py-2 border-bottom">
+                                <div class="fw-bold">{{ request.user.get_full_name|default:request.user.username }}</div>
+                                <small class="text-muted">{{ request.user.email }}</small>
+                            </li>
+                            <li><a class="dropdown-item py-2" href="{% url 'user_portal:profile' %}"><i class="bi bi-person me-2 text-secondary"></i> My Profile</a></li>
+                            <li><a class="dropdown-item py-2" href="{% url 'user_portal:my_reservations' %}"><i class="bi bi-calendar-check me-2 text-secondary"></i> My Reservations</a></li>
+                            {% if request.user.profile.role == 'ADMIN' %}
+                                <li><a class="dropdown-item py-2 text-warning fw-semibold" href="{% url 'admin_panel:dashboard' %}"><i class="bi bi-shield-lock me-2"></i> Switch to Admin Console</a></li>
+                            {% endif %}
+                            <li><hr class="dropdown-divider my-1"></li>
+                            <li><a class="dropdown-item py-2 text-danger fw-semibold" href="{% url 'logout' %}"><i class="bi bi-box-arrow-right me-2"></i> Sign Out</a></li>
                         </ul>
                     </div>
                 </div>

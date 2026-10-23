@@ -3,10 +3,18 @@
 {% block title %}Request Review & Approval Queue - Admin Console{% endblock %}
 
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-4">
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4 pb-2 border-bottom">
     <div>
-        <h3 class="fw-bold mb-1 text-dark"><i class="bi bi-inbox-fill text-warning me-2"></i>Reservation Review Queue</h3>
-        <p class="text-muted mb-0 small">Review incoming facility requests, verify capacity and operating hours, and execute atomic approvals</p>
+        <div class="d-flex align-items-center gap-2 mb-1">
+            <h3 class="fw-bold mb-0 text-dark tracking-tight"><i class="bi bi-inbox-fill text-warning me-2"></i>Reservation Review Queue</h3>
+            <span class="badge bg-warning-subtle text-warning border border-warning-subtle">ADMIN AUDIT</span>
+        </div>
+        <p class="text-muted mb-0 small">Review incoming facility requests, verify capacity and operating hours, and execute atomic approvals with row locking</p>
+    </div>
+    <div class="d-flex gap-2">
+        <a href="{% url 'admin_panel:schedule_calendar' %}" class="btn btn-outline-secondary btn-sm shadow-sm">
+            <i class="bi bi-calendar3 me-1"></i> Weekly Calendar
+        </a>
     </div>
 </div>
 
