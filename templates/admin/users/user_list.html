@@ -85,18 +85,53 @@
                             <a href="{% url 'admin_panel:user_detail' profile.user.id %}" class="btn btn-sm btn-outline-secondary me-1" title="View History">
                                 <i class="bi bi-clock-history me-1"></i> History
                             </a>
-                            <form method="post" action="{% url 'admin_panel:user_toggle_status' profile.user.id %}" class="d-inline" onsubmit="return confirm('Are you sure you want to change this account status? Deactivating will immediately invalidate active sessions.');">
-                                {% csrf_token %}
-                                {% if profile.is_active_account %}
-                                    <button type="submit" class="btn btn-sm btn-outline-danger" title="Deactivate Account">
-                                        Deactivate
-                                    </button>
-                                {% else %}
-                                    <button type="submit" class="btn btn-sm btn-outline-success" title="Activate Account">
-                                        Activate
-                                    </button>
-                                {% endif %}
-                            </form>
+                            {% if profile.is_active_account %}
+                                <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#toggleUserModal{{ profile.user.id }}" title="Deactivate Account">
+                                    Deactivate
+                                </button>
+                            {% else %}
+                                <button type="button" class="btn btn-sm btn-outline-success" data-bs-toggle="modal" data-bs-target="#toggleUserModal{{ profile.user.id }}" title="Activate Account">
+                                    Activate
+                                </button>
+                            {% endif %}
+
+                            <!-- User Status Modal -->
+                            <div class="modal fade" id="toggleUserModal{{ profile.user.id }}" tabindex="-1" aria-hidden="true">
+                                <div class="modal-dialog text-start">
+                                    <div class="modal-content">
+                                        <div class="modal-header {% if profile.is_active_account %}bg-danger text-white{% else %}bg-success text-white{% endif %}">
+                                            <h5 class="modal-title fs-6">
+                                                <i class="bi {% if profile.is_active_account %}bi-person-dash{% else %}bi-person-check{% endif %} me-2"></i>
+                                                {% if profile.is_active_account %}Confirm Account Deactivation{% else %}Confirm Account Activation{% endif %}
+                                            </h5>
+                                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <p class="mb-2">Are you sure you want to {% if profile.is_active_account %}<strong>deactivate</strong>{% else %}<strong>activate</strong>{% endif %} the account for <strong>{{ profile.user.get_full_name|default:profile.user.username }}</strong> (<code>@{{ profile.user.username }}</code>)?</p>
+                                            {% if profile.is_active_account %}
+                                                <div class="alert alert-warning small mb-0">
+                                                    <i class="bi bi-exclamation-triangle-fill me-1"></i>
+                                                    <strong>Institutional Policy Notice:</strong> Deactivating will immediately invalidate active login sessions via middleware. Historical reservation records will remain safely preserved for audit integrity.
+                                                </div>
+                                            {% else %}
+                                                <div class="alert alert-info small mb-0">
+                                                    <i class="bi bi-info-circle-fill me-1"></i>
+                                                    This will restore the user's ability to sign in and submit new facility reservation requests.
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+                                            <form method="post" action="{% url 'admin_panel:user_toggle_status' profile.user.id %}" class="d-inline">
+                                                {% csrf_token %}
+                                                <button type="submit" class="btn btn-sm {% if profile.is_active_account %}btn-danger{% else %}btn-success{% endif %}">
+                                                    {% if profile.is_active_account %}Yes, Deactivate Account{% else %}Yes, Activate Account{% endif %}
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </td>
                     </tr>
                 {% empty %}

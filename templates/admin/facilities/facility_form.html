@@ -144,12 +144,31 @@
                                     </td>
                                     <td><span class="badge bg-light text-dark border">{{ fa.quantity }}</span></td>
                                     <td class="text-end">
-                                        <form method="post" action="{% url 'admin_panel:facility_amenity_remove' facility.pk fa.amenity.id %}" class="d-inline" onsubmit="return confirm('Remove this amenity from {{ facility.name }}?');">
-                                            {% csrf_token %}
-                                            <button type="submit" class="btn btn-sm btn-outline-danger py-0 px-2">
-                                                <i class="bi bi-trash"></i>
-                                            </button>
-                                        </form>
+                                        <button type="button" class="btn btn-sm btn-outline-danger py-0 px-2" data-bs-toggle="modal" data-bs-target="#removeAmenityModal{{ fa.amenity.id }}" title="Unlink Amenity">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+
+                                        <!-- Remove Amenity Modal -->
+                                        <div class="modal fade" id="removeAmenityModal{{ fa.amenity.id }}" tabindex="-1" aria-hidden="true">
+                                            <div class="modal-dialog text-start">
+                                                <div class="modal-content">
+                                                    <div class="modal-header bg-danger text-white">
+                                                        <h5 class="modal-title fs-6"><i class="bi bi-trash me-2"></i>Unlink Amenity</h5>
+                                                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <p class="mb-0">Are you sure you want to remove <strong>{{ fa.amenity.name }}</strong> ({{ fa.quantity }} units) from <strong>{{ facility.name }}</strong>?</p>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+                                                        <form method="post" action="{% url 'admin_panel:facility_amenity_remove' facility.pk fa.amenity.id %}" class="d-inline">
+                                                            {% csrf_token %}
+                                                            <button type="submit" class="btn btn-danger btn-sm">Yes, Remove Amenity</button>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </td>
                                 </tr>
                             {% empty %}

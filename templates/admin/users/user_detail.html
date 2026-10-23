@@ -13,18 +13,53 @@
             <p class="text-muted mb-0 small">Account details, audit status, and full facility reservation history</p>
         </div>
         <div>
-            <form method="post" action="{% url 'admin_panel:user_toggle_status' target_profile.user.id %}" class="d-inline" onsubmit="return confirm('Toggle active status for this user?');">
-                {% csrf_token %}
-                {% if target_profile.is_active_account %}
-                    <button type="submit" class="btn btn-danger btn-sm">
-                        <i class="bi bi-slash-circle me-1"></i> Deactivate Account
-                    </button>
-                {% else %}
-                    <button type="submit" class="btn btn-success btn-sm">
-                        <i class="bi bi-check-circle me-1"></i> Activate Account
-                    </button>
-                {% endif %}
-            </form>
+            {% if target_profile.is_active_account %}
+                <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#toggleUserDetailModal">
+                    <i class="bi bi-slash-circle me-1"></i> Deactivate Account
+                </button>
+            {% else %}
+                <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#toggleUserDetailModal">
+                    <i class="bi bi-check-circle me-1"></i> Activate Account
+                </button>
+            {% endif %}
+
+            <!-- User Detail Status Modal -->
+            <div class="modal fade" id="toggleUserDetailModal" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog text-start">
+                    <div class="modal-content">
+                        <div class="modal-header {% if target_profile.is_active_account %}bg-danger text-white{% else %}bg-success text-white{% endif %}">
+                            <h5 class="modal-title fs-6">
+                                <i class="bi {% if target_profile.is_active_account %}bi-person-dash{% else %}bi-person-check{% endif %} me-2"></i>
+                                {% if target_profile.is_active_account %}Confirm Account Deactivation{% else %}Confirm Account Activation{% endif %}
+                            </h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p class="mb-2">Are you sure you want to {% if target_profile.is_active_account %}<strong>deactivate</strong>{% else %}<strong>activate</strong>{% endif %} the account for <strong>{{ target_profile.user.get_full_name|default:target_profile.user.username }}</strong>?</p>
+                            {% if target_profile.is_active_account %}
+                                <div class="alert alert-warning small mb-0">
+                                    <i class="bi bi-exclamation-triangle-fill me-1"></i>
+                                    <strong>Institutional Policy Notice:</strong> Deactivating will immediately invalidate active login sessions via middleware. Historical reservation records will remain safely preserved for audit integrity.
+                                </div>
+                            {% else %}
+                                <div class="alert alert-info small mb-0">
+                                    <i class="bi bi-info-circle-fill me-1"></i>
+                                    This will restore the user's ability to sign in and submit new facility reservation requests.
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+                            <form method="post" action="{% url 'admin_panel:user_toggle_status' target_profile.user.id %}" class="d-inline">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-sm {% if target_profile.is_active_account %}btn-danger{% else %}btn-success{% endif %}">
+                                    {% if target_profile.is_active_account %}Yes, Deactivate Account{% else %}Yes, Activate Account{% endif %}
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>

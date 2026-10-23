@@ -115,21 +115,50 @@
         </div>
     </nav>
 
-    <!-- Flash Messages -->
+    <!-- System Notification Messages -->
     {% if messages %}
         <div class="container pt-3">
             {% for message in messages %}
-                <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show shadow-sm" role="alert">
-                    {% if message.tags == 'error' %}
-                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
-                    {% elif message.tags == 'success' %}
-                        <i class="bi bi-check-circle-fill me-2"></i>
-                    {% else %}
-                        <i class="bi bi-info-circle-fill me-2"></i>
-                    {% endif %}
-                    {{ message }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                {% with tag=message.tags|default:"info" %}
+                <div class="alert {% if 'error' in tag %}alert-danger border-start border-danger border-4{% elif 'success' in tag %}alert-success border-start border-success border-4{% elif 'warning' in tag %}alert-warning border-start border-warning border-4{% else %}alert-info border-start border-info border-4{% endif %} alert-dismissible fade show shadow-sm d-flex align-items-center justify-content-between p-3 rounded mb-3 bg-white" role="alert">
+                    <div class="d-flex align-items-center">
+                        {% if 'error' in tag %}
+                            <div class="bg-danger-subtle text-danger rounded-circle p-2 me-3 d-flex align-items-center justify-content-center" style="width: 38px; height: 38px;">
+                                <i class="bi bi-x-circle-fill fs-5"></i>
+                            </div>
+                            <div>
+                                <div class="fw-bold text-danger mb-0" style="font-size: 0.9rem;">Attention Required</div>
+                                <div class="text-dark small">{{ message }}</div>
+                            </div>
+                        {% elif 'success' in tag %}
+                            <div class="bg-success-subtle text-success rounded-circle p-2 me-3 d-flex align-items-center justify-content-center" style="width: 38px; height: 38px;">
+                                <i class="bi bi-check-circle-fill fs-5"></i>
+                            </div>
+                            <div>
+                                <div class="fw-bold text-success mb-0" style="font-size: 0.9rem;">Action Completed Successfully</div>
+                                <div class="text-dark small">{{ message }}</div>
+                            </div>
+                        {% elif 'warning' in tag %}
+                            <div class="bg-warning-subtle text-warning rounded-circle p-2 me-3 d-flex align-items-center justify-content-center" style="width: 38px; height: 38px;">
+                                <i class="bi bi-exclamation-triangle-fill fs-5"></i>
+                            </div>
+                            <div>
+                                <div class="fw-bold text-warning mb-0" style="font-size: 0.9rem;">System Notice</div>
+                                <div class="text-dark small">{{ message }}</div>
+                            </div>
+                        {% else %}
+                            <div class="bg-info-subtle text-info rounded-circle p-2 me-3 d-flex align-items-center justify-content-center" style="width: 38px; height: 38px;">
+                                <i class="bi bi-info-circle-fill fs-5"></i>
+                            </div>
+                            <div>
+                                <div class="fw-bold text-info mb-0" style="font-size: 0.9rem;">Information</div>
+                                <div class="text-dark small">{{ message }}</div>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <button type="button" class="btn-close ms-3 position-relative" data-bs-dismiss="alert" aria-label="Close" style="top: auto; right: auto;"></button>
                 </div>
+                {% endwith %}
             {% endfor %}
         </div>
     {% endif %}

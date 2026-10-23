@@ -73,14 +73,50 @@
                             <a href="{% url 'admin_panel:facility_edit' facility.pk %}" class="btn btn-sm btn-outline-primary me-1">
                                 <i class="bi bi-pencil-square me-1"></i> Edit
                             </a>
-                            <form method="post" action="{% url 'admin_panel:facility_toggle_active' facility.pk %}" class="d-inline" onsubmit="return confirm('Toggle active/archived state for this facility? Past reservations remain preserved.');">
-                                {% csrf_token %}
-                                {% if facility.is_active %}
-                                    <button type="submit" class="btn btn-sm btn-outline-warning" title="Archive Facility">Archive</button>
-                                {% else %}
-                                    <button type="submit" class="btn btn-sm btn-outline-success" title="Unarchive Facility">Activate</button>
-                                {% endif %}
-                            </form>
+                            {% if facility.is_active %}
+                                <button type="button" class="btn btn-sm btn-outline-warning" data-bs-toggle="modal" data-bs-target="#archiveFacilityModal{{ facility.pk }}" title="Archive Facility">
+                                    Archive
+                                </button>
+                            {% else %}
+                                <button type="button" class="btn btn-sm btn-outline-success" data-bs-toggle="modal" data-bs-target="#archiveFacilityModal{{ facility.pk }}" title="Unarchive Facility">
+                                    Activate
+                                </button>
+                            {% endif %}
+
+                            <!-- Facility Archive/Activate Modal -->
+                            <div class="modal fade" id="archiveFacilityModal{{ facility.pk }}" tabindex="-1" aria-hidden="true">
+                                <div class="modal-dialog text-start">
+                                    <div class="modal-content">
+                                        <div class="modal-header {% if facility.is_active %}bg-warning text-dark{% else %}bg-success text-white{% endif %}">
+                                            <h5 class="modal-title fs-6">
+                                                <i class="bi {% if facility.is_active %}bi-archive{% else %}bi-check-circle{% endif %} me-2"></i>
+                                                {% if facility.is_active %}Archive Facility{% else %}Activate Facility{% endif %}
+                                            </h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <p class="mb-2">Are you sure you want to {% if facility.is_active %}<strong>archive</strong>{% else %}<strong>activate</strong>{% endif %} <strong>{{ facility.name }}</strong> (<code>{{ facility.code }}</code>)?</p>
+                                            <div class="alert alert-light border small mb-0">
+                                                <i class="bi bi-info-circle me-1"></i>
+                                                {% if facility.is_active %}
+                                                    Archiving removes this venue from the student reservation dropdown. Existing historical reservations remain permanently preserved.
+                                                {% else %}
+                                                    Activating restores this venue into the student booking catalog and availability calendar.
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+                                            <form method="post" action="{% url 'admin_panel:facility_toggle_active' facility.pk %}" class="d-inline">
+                                                {% csrf_token %}
+                                                <button type="submit" class="btn btn-sm {% if facility.is_active %}btn-warning text-dark{% else %}btn-success{% endif %}">
+                                                    {% if facility.is_active %}Confirm & Archive Facility{% else %}Confirm & Activate Facility{% endif %}
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </td>
                     </tr>
                 {% empty %}

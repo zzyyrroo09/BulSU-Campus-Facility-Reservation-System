@@ -111,12 +111,38 @@
                                 </td>
                                 <td class="text-end">
                                     {% if c.is_active %}
-                                        <form method="post" action="{% url 'admin_panel:closure_archive' c.id %}" class="d-inline" onsubmit="return confirm('Archive this closure block? Slots will be released.');">
-                                            {% csrf_token %}
-                                            <button type="submit" class="btn btn-sm btn-outline-secondary py-0 px-2" style="font-size: 0.75rem;">
-                                                Archive
-                                            </button>
-                                        </form>
+                                        <button type="button" class="btn btn-sm btn-outline-secondary py-0 px-2" style="font-size: 0.75rem;" data-bs-toggle="modal" data-bs-target="#archiveClosureModal{{ c.id }}">
+                                            Archive
+                                        </button>
+
+                                        <!-- Archive Closure Modal -->
+                                        <div class="modal fade" id="archiveClosureModal{{ c.id }}" tabindex="-1" aria-hidden="true">
+                                            <div class="modal-dialog text-start">
+                                                <div class="modal-content">
+                                                    <div class="modal-header bg-secondary text-white">
+                                                        <h5 class="modal-title fs-6"><i class="bi bi-archive me-2"></i>Archive Maintenance Closure</h5>
+                                                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <p class="mb-2">Are you sure you want to archive this maintenance closure for <strong>{{ c.facility.name }}</strong> (<code>{{ c.facility.code }}</code>)?</p>
+                                                        <div class="bg-light p-2 rounded small border mb-3">
+                                                            <div><strong>Scheduled Window:</strong> {{ c.start_time|date:"M d, Y" }} ({{ c.start_time|date:"g:i A" }} - {{ c.end_time|date:"g:i A" }})</div>
+                                                            <div><strong>Reason:</strong> {{ c.reason }}</div>
+                                                        </div>
+                                                        <div class="alert alert-info small mb-0">
+                                                            <i class="bi bi-info-circle-fill me-1"></i> Archiving releases the blocked time slot so it becomes available for new booking requests.
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+                                                        <form method="post" action="{% url 'admin_panel:closure_archive' c.id %}" class="d-inline">
+                                                            {% csrf_token %}
+                                                            <button type="submit" class="btn btn-dark btn-sm">Confirm & Archive Closure</button>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     {% endif %}
                                 </td>
                             </tr>

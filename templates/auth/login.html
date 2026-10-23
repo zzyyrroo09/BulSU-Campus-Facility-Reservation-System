@@ -70,10 +70,13 @@
         <div class="login-body">
             {% if messages %}
                 {% for message in messages %}
-                    <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show small" role="alert">
-                        {{ message }}
+                    {% with tag=message.tags|default:"info" %}
+                    <div class="alert {% if 'error' in tag %}alert-danger border-start border-danger border-4{% elif 'success' in tag %}alert-success border-start border-success border-4{% elif 'warning' in tag %}alert-warning border-start border-warning border-4{% else %}alert-info border-start border-info border-4{% endif %} alert-dismissible fade show small shadow-sm d-flex align-items-center" role="alert">
+                        <i class="bi {% if 'error' in tag %}bi-exclamation-triangle-fill text-danger{% elif 'success' in tag %}bi-check-circle-fill text-success{% else %}bi-info-circle-fill text-info{% endif %} fs-5 me-2"></i>
+                        <div class="flex-grow-1 text-dark">{{ message }}</div>
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
+                    {% endwith %}
                 {% endfor %}
             {% endif %}
 
