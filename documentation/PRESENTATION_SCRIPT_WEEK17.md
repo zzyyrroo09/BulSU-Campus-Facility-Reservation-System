@@ -1,104 +1,171 @@
-# WEEK 17 PRESENTATION SCRIPT & Q&A DEFENSE CHEAT SHEET
-## Campus Facility Reservation and Event Scheduling System
+# 12-MINUTE LIVE DEMONSTRATION SCRIPT & Q&A DEFENSE
+## 5-Member Team Allocation & Live Action Cues
 **Course:** IT 401W &bull; Web Programming and Frameworks (Final Project B)  
+**Institution:** Bulacan State University &bull; College of Information and Communications Technology  
 **Instructor:** Dr. Aaron Paul M. Dela Rosa  
-**Time Limit:** 12 Minutes Demonstration + 3 Minutes Q&A  
+**Time Limit:** Exactly 12 Minutes Live Demonstration + 3 Minutes Q&A  
 
 ---
 
-## 12-MINUTE DEMONSTRATION SCHEDULE
+## DEMO TIMELINE AT A GLANCE (5 MEMBERS)
 
-### Minutes 00:00 &ndash; 02:00: Member 1 &mdash; Project Purpose & Architecture
-- **Speaking Points:**
-  - Introduce the group and the project: *"Campus Facility Reservation and Event Scheduling System for Bulacan State University CICT."*
-  - State the core challenge: *"Eliminating campus venue double-bookings, preventing unauthorized admin escalation, and providing auditable operational tracking."*
-  - Emphasize architectural compliance:
-    - Zero usage of Django admin (`admin.site.urls` and auto-generators are strictly excluded).
-    - Monolithic MTV architecture with two roles: `ADMIN` and `BASIC_USER`.
-    - Real-time time synchronization in `Asia/Manila`.
-  - Show the shared login screen (`/login/`) and explain role-based routing.
+| Speaker | Time Window | Account Used | Core Demonstration Segment |
+| :--- | :--- | :--- | :--- |
+| **Member 1** | `00:00 - 02:30` | `user1` (Basic User) | Project Architecture Intro, Portal Overview, Facility Catalog & Privacy Safeguard |
+| **Member 2** | `02:30 - 05:00` | `user1` (Basic User) | Request Form Validations, Creating Pending Booking & User Cancellation Policy |
+| **Member 3** | `05:00 - 07:30` | `admin@bulsu.edu.ph` | Admin Dashboard, Review Queue & Atomic Concurrency / Conflict Locking |
+| **Member 4** | `07:30 - 10:00` | `admin@bulsu.edu.ph` | Schedule Calendar, Half-Open Intervals, Rescheduling Audit & Event Operations |
+| **Member 5** | `10:00 - 12:00` | `admin@bulsu.edu.ph` | Maintenance Closures, Dynamic ORM Reports (CSV Export) & User Deactivation |
 
 ---
 
-### Minutes 02:00 &ndash; 04:00: Member 2 &mdash; Basic User Portal & Privacy Safeguard
-- **Speaking Points:**
-  - Log in as `user1` (`UserPass123!`). Show the student dashboard (`/portal/dashboard/`).
-  - Demonstrate **Facility Catalog (`/portal/facilities/`)**:
-    - Filter by category and capacity (e.g., CICT Amphitheater, University Gymnasium).
-    - Open the daily slot schedule.
-  - **Key Rubric Defense (PO-n Privacy):**
-    - Point out that occupied slots show strictly as `"Occupied / Reserved Slot"` without disclosing other students' names, event titles, or internal memos.
-  - Show **Profile (`/portal/profile/`)**:
-    - Edit contact details; highlight that the role and activation status fields are strictly uneditable by users.
+## TURN-BY-TURN SCRIPT & ON-SCREEN ACTIONS
+
+### 👤 MEMBER 1: Project Architecture & Student Portal (00:00 &ndash; 02:30)
+
+**[ON-SCREEN ACTION]**: Open browser at `http://127.0.0.1:8000/`. Show the clean BulSU Sign-In screen.
+
+**[SPEAKING SCRIPT]**:
+> *"Good day, Dr. Dela Rosa and classmates. Today, our group presents the **Campus Facility Reservation and Event Scheduling System** for BulSU CICT.*
+> 
+> *Per the strict project requirements, our system **completely excludes Django's built-in `/admin/` and third-party admin wrappers**. We built a 100% custom-coded monolithic MTV architecture with exactly two roles: `ADMIN` and `BASIC_USER`, synchronized to the `Asia/Manila` timezone.*
+> 
+> *I will begin by demonstrating the Basic User experience."*
+
+**[ON-SCREEN ACTION]**: Log in using `user1` (`UserPass123!`). Land on `/portal/dashboard/`. Show the maroon navbar and clean cards.
+
+**[SPEAKING SCRIPT]**:
+> *"When a student or faculty member signs in, they land on the User Portal. I will now navigate to **Browse Facilities**."*
+
+**[ON-SCREEN ACTION]**: Click **Browse Facilities** (`/portal/facilities/`). Filter by category or search "Amphitheater". Click **Check Open Slots** on the CICT Amphitheater.
+
+**[SPEAKING SCRIPT]**:
+> *"Here, students inspect venue capacity, operating hours, and amenities. Notice our **Data Privacy Act (RA 10173)** compliance: slots booked by other campus groups appear strictly as **'Occupied / Reserved Slot'**. Our system completely conceals organizer names, student numbers, and event purposes from other students.*
+> 
+> *I now hand over the demo to Member 2 to demonstrate reservation requests."*
 
 ---
 
-### Minutes 04:00 &ndash; 06:00: Member 3 &mdash; Reservation Request & Business Rules Validation
-- **Speaking Points:**
-  - Navigate to **Request a Facility (`/portal/reserve/`)**.
-  - Demonstrate form validation constraints:
-    - Attempt to submit an event exceeding capacity &rarr; blocked.
-    - Attempt to book beyond facility operating hours &rarr; blocked.
-    - Attempt to request an event longer than 4 hours (system limit) &rarr; blocked.
-  - Submit a valid booking request.
-  - Show that submission results in a **`PENDING`** state with a unique tracking code (e.g., `RES-XXXXXX`) and does **not** prematurely reserve the slot.
-  - Sign out.
+### 👤 MEMBER 2: Request Submission & Validation Rules (02:30 &ndash; 05:00)
+
+**[ON-SCREEN ACTION]**: Click **Request a Facility** (`/portal/reserve/`).
+
+**[SPEAKING SCRIPT]**:
+> *"Thank you. I will now demonstrate the booking validation engine on the Basic User side.*
+> 
+> *Our reservation form enforces all institutional domain constraints on the server side."*
+
+**[ON-SCREEN ACTION]**: 
+1. Select a facility and enter an attendee count that exceeds capacity &rarr; show the capacity validation error.
+2. Enter an end time beyond the facility's daily closing time &rarr; show the operating hours error.
+3. Try entering an event duration longer than 4 hours &rarr; show the maximum duration limit error.
+
+**[SPEAKING SCRIPT]**:
+> *"As seen here, requests violating capacity, daily operating hours, or the 4-hour duration limit are instantly rejected by our validation services.*
+> 
+> *I will now submit a valid reservation for an upcoming event."*
+
+**[ON-SCREEN ACTION]**: Enter valid event details (e.g., "Web Development Hackathon", valid date/time). Click **Submit Reservation Request**.
+
+**[SPEAKING SCRIPT]**:
+> *"Upon submission, our system generates a unique tracking code. Notice that the request is placed in **`PENDING`** status. Per the specification, submitting a request does **not** prematurely reserve or lock the slot.*
+> 
+> *Finally, looking at **My Bookings**, users can track review progress and can cancel their pending or approved bookings strictly before the scheduled start time.*
+> 
+> *I will now sign out so Member 3 can demonstrate the custom administrative workflow."*
+
+**[ON-SCREEN ACTION]**: Click profile &rarr; **Sign Out**.
 
 ---
 
-### Minutes 06:00 &ndash; 08:00: Member 4 &mdash; Custom Admin Review Queue & Concurrency Locking
-- **Speaking Points:**
-  - Log in as `admin@bulsu.edu.ph` (`AdminPass123!`). Show the custom admin dashboard (`/manage/dashboard/`).
-  - Navigate to the **Review Queue (`/manage/queue/`)**.
-  - **Key Rubric Defense (PO-e / PO-g Concurrency & Atomic Locking):**
-    - Show two competing requests for the same facility/slot.
-    - Approve the first request: show the atomic row-level locking modal and successful approval.
-    - Attempt to approve the second competing request: show the system intercepting and blocking it with an approval conflict warning!
-  - Reject an unfeasible request, showing that an administrative reason is mandatory.
+### 👤 MEMBER 3: Admin Review Queue & Concurrency / Conflict Defense (05:00 &ndash; 07:30)
+
+**[ON-SCREEN ACTION]**: Log in as `admin@bulsu.edu.ph` (`AdminPass123!`). Show the dark sidebar and `/manage/dashboard/` with the 4 live cards and Chart.js analytics.
+
+**[SPEAKING SCRIPT]**:
+> *"Thank you. I am now logged into our hand-coded **Custom Admin Console** under `/manage/`. Notice the live KPI cards and dynamic monthly trend charts.*
+> 
+> *I will now proceed to the **Review Queue** to demonstrate our atomic concurrency locking."*
+
+**[ON-SCREEN ACTION]**: Go to **Review Queue** (`/manage/queue/`). Find the pending booking just submitted by Member 2. Click **Approve**.
+
+**[SPEAKING SCRIPT]**:
+> *"When an administrator approves a request, our backend runs `approve_reservation_atomic` in `services.py`. It wraps the operation in a database transaction and applies `select_for_update()` row locking on both the `Reservation` and the `Facility`.*
+> 
+> *Right before committing, it atomically re-checks for half-open interval conflicts. If another administrator or process approved an overlapping slot a millisecond earlier, this transaction will abort and raise a validation error."*
+
+**[ON-SCREEN ACTION]**: Confirm approval &rarr; show the green success banner. Then point out a conflicting booking or attempt an approval on an overlapping slot to show the conflict rejection banner.
+
+**[SPEAKING SCRIPT]**:
+> *"Notice also that when rejecting a request, our form strictly enforces an administrative justification reason.*
+> 
+> *I now pass the floor to Member 4 for the schedule calendar and event operations."*
 
 ---
 
-### Minutes 08:00 &ndash; 10:00: Member 5 &mdash; Schedule Calendar, Rescheduling & Operations
-- **Speaking Points:**
-  - Navigate to **Schedule Calendar (`/manage/calendar/`)**:
-    - Show the weekly view with color-coded slots.
-    - Show **adjacent bookings** (e.g., 08:00–11:00 and 11:00–14:00) meeting at the same boundary without conflict (Half-Open Interval Rule: $[start, end)$).
-  - Open **Reschedule (`/manage/reschedule/<id>/`)**:
-    - Change the event time with an administrative reason.
-    - Show the **Historical Change Log table** demonstrating that the original scheduled time is preserved in the audit history.
-  - Navigate to **Event Operations (`/manage/operations/`)**:
-    - Click **Check In** on an approved event.
-    - Click **Sign-Off Complete**.
-    - Click **Print Slip** &rarr; open the official printable BulSU Reservation Slip & Completion Summary with signature lines!
+### 👤 MEMBER 4: Schedule Calendar, Rescheduling & Operational Check-In (07:30 &ndash; 10:00)
+
+**[ON-SCREEN ACTION]**: Click **Schedule Calendar** (`/manage/calendar/`).
+
+**[SPEAKING SCRIPT]**:
+> *"Thank you. I will now present our auditable calendar and on-site operations console.*
+> 
+> *In this weekly view, our system demonstrates the **Half-Open Interval Rule** $[start, end)$. Notice these adjacent approved bookings at the Gymnasium: from 08:00 to 11:00, and 11:00 to 14:00. Because the boundary endpoint matches, our collision math recognizes that they do not conflict."*
+
+**[ON-SCREEN ACTION]**: Click **Reschedule** on an approved reservation (`/manage/reschedule/<id>/`).
+
+**[SPEAKING SCRIPT]**:
+> *"When administrative rescheduling is necessary, the admin enters the new date/time with a required reason. Crucially, notice the **Historical Change Log table** on the right: our system permanently retains the original scheduled times in `ReservationChange` for complete audit integrity."*
+
+**[ON-SCREEN ACTION]**: Navigate to **Event Operations** (`/manage/operations/`). Click **Check In** on an approved event, then click **Sign-Off Complete**. Click **Print Slip**.
+
+**[SPEAKING SCRIPT]**:
+> *"On event day, administrators record physical arrival via **Check-In**, followed by **Completion Sign-Off** with incident notes. 
+> 
+> By clicking **Print Slip**, our system generates the official BulSU Facility Reservation Slip and Completion Summary, styled for physical printing or PDF export with signature lines for the organizer and administrator.*
+> 
+> *Member 5 will now demonstrate closures, reports, and user governance."*
 
 ---
 
-### Minutes 10:00 &ndash; 12:00: Member 6 &mdash; Maintenance Closures, Reports, Audit & Settings
-- **Speaking Points:**
-  - Show **Maintenance Closures (`/manage/closures/`)**:
-    - Demonstrate overlap rejection when attempting to block a venue with active bookings.
-  - Show **Utilization Reports (`/manage/reports/`)**:
-    - Adjust the date filter: explain that total booked hours and completed events are computed dynamically from ORM models (not static numbers).
-    - Click **Export Report to CSV** and open the downloaded file.
-  - Show **User Accounts (`/manage/users/`)**:
-    - Demonstrate deactivation, explaining that it invalidates active sessions without deleting past records.
-  - Conclude with **Audit Logs (`/manage/audit/`)** and **System Settings (`/manage/settings/`)**.
+### 👤 MEMBER 5: Maintenance Closures, Reports & User Governance (10:00 &ndash; 12:00)
+
+**[ON-SCREEN ACTION]**: Go to **Maintenance Closures** (`/manage/closures/`).
+
+**[SPEAKING SCRIPT]**:
+> *"Thank you. In **Maintenance Closures**, administrators block venue intervals for sanitation or repairs. If an admin attempts to schedule a closure that overlaps an approved booking, the system rejects it, requiring the booking to be rescheduled or cancelled first."*
+
+**[ON-SCREEN ACTION]**: Navigate to **Utilization Reports** (`/manage/reports/`). Change the date filter range and show numbers updating. Click **Export Report to CSV**.
+
+**[SPEAKING SCRIPT]**:
+> *"Under **Utilization Reports**, all metrics—total booked hours, approved count, and completed events—are aggregated dynamically from ORM models using Django's `Sum`, `Count`, and `F` expressions. These are live transactions, not static demonstration values. 
+> 
+> Clicking **Export Report to CSV** generates an immediate, downloadable audit spreadsheet."*
+
+**[ON-SCREEN ACTION]**: Go to **User Accounts** (`/manage/users/`). Click **Deactivate** on a demo account.
+
+**[SPEAKING SCRIPT]**:
+> *"In **User Accounts**, administrators can search and view complete reservation histories. Deactivating an account sets `is_active_account = False`. Our custom `AccountActiveCheckMiddleware` intercepts existing sessions on the very next request and logs the user out, while preserving historical records for university auditability.*
+> 
+> *Finally, our **Audit Log** records every administrative action with actor, IP address, and timestamp.*
+> 
+> *This concludes our 12-minute demonstration. We are now ready for Dr. Dela Rosa's Q&A."*
 
 ---
 
-## 3-MINUTE Q&A DEFENSE PREPARATION (ANTICIPATED QUESTIONS)
+## 3-MINUTE Q&A QUICK-REFERENCE CHEAT SHEET
 
-### Q1: "Why did your group completely remove Django Admin instead of using it?"
-> **Answer:** *"The project specification strictly prohibits `django.contrib.admin`, `admin.site.urls`, and third-party admin generators. In accordance with the 75% custom admin workload requirement, we hand-coded 100% of our admin views, forms, templates, and navigation under `/manage/`, enforcing role checks using our custom `@admin_required` decorator."*
+1. **"Why didn't you use Django's built-in Admin?"**
+   - *"The syllabus strictly prohibits `admin.site.urls` and packages like Jazzmin. We hand-coded 100% of the admin dashboard, queue, and tables under `/manage/` using Django views and ModelForms to fulfill the 75% custom admin workload requirement."*
 
-### Q2: "How does your system prevent race conditions during competing approvals?"
-> **Answer:** *"In `reservations/services.py`, our `approve_reservation_atomic` function wraps the approval in `transaction.atomic()` and applies `select_for_update()` row locking on both the target `Reservation` and the `Facility`. Right before committing, it re-evaluates half-open interval conflicts $[start, end)$. If another approval succeeded a millisecond earlier, the second transaction is blocked and raises a `ValidationError`."*
+2. **"How did you implement concurrency and race condition prevention?"**
+   - *"In `reservations/services.py`, `approve_reservation_atomic` executes within `transaction.atomic()` and locks database rows using `select_for_update()` on both the `Reservation` and the `Facility`. It re-verifies $[start, end)$ overlap immediately before committing."*
 
-### Q3: "What mathematical logic governs your conflict detection?"
-> **Answer:** *"We treat intervals as half-open: $[start, end)$. Two intervals $A$ and $B$ collide if and only if $start_A < end_B$ and $end_A > start_B$. This ensures that adjacent reservations meeting at the exact same minute—such as an 08:00 to 10:00 booking followed by a 10:00 to 12:00 booking—do not conflict."*
+3. **"Explain the mathematical logic of your conflict detection."**
+   - *"Intervals are treated as half-open: $[start, end)$. Two intervals $A$ and $B$ collide if and only if $start_A < end_B \text{ and } end_A > start_B$. If $end_A == start_B$, they meet at a point and do not overlap."*
 
-### Q4: "How does your system comply with the Data Privacy Act (RA 10173)?"
-> **Answer:** *"Under the principle of proportionality, basic users inspecting venue availability see unavailable time blocks strictly labeled as 'Occupied / Reserved Slot'. Other students' names, student numbers, event purposes, and administrative notes are scrubbed from the response to prevent data leakage."*
+4. **"How does your application uphold Data Privacy (RA 10173)?"**
+   - *"When basic users view calendar availability, occupied slots are sanitized to show only 'Occupied / Reserved Slot' without displaying organizer identities, student numbers, or event details."*
 
-### Q5: "How does deactivating a user protect the system?"
-> **Answer:** *"Deactivating a user sets `is_active_account = False` while preserving their past reservation history for institutional auditability. Our custom `AccountActiveCheckMiddleware` checks this flag on every HTTP request; if a deactivated user attempts to submit a transaction via an existing session, the middleware terminates the session, logs them out, and redirects to login."*
+5. **"What happens when a user is deactivated?"**
+   - *"Deactivation blocks new sign-ins and uses `AccountActiveCheckMiddleware` to invalidate active sessions immediately. However, past reservation records are preserved to protect audit trail integrity."*

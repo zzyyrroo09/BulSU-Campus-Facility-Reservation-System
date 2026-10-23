@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Diagrams Viewer - BulSU Facility Reservation System</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <!-- Mermaid.js for visual diagram rendering -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'default',
+            securityLevel: 'loose',
+            fontFamily: '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif'
+        });
+    </script>
+    <style>
+        :root {
+            --bsu-maroon: #800000;
+            --bsu-gold: #f8b400;
+        }
+        body {
+            background-color: #f8fafc;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            color: #1e293b;
+        }
+        .header-banner {
+            background: linear-gradient(135deg, var(--bsu-maroon), #4a0000);
+            color: #fff;
+            padding: 2rem 0;
+            border-bottom: 4px solid var(--bsu-gold);
+        }
+        .diagram-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            margin-bottom: 2.5rem;
+            overflow: hidden;
+        }
+        .diagram-header {
+            background: #ffffff;
+            border-bottom: 2px solid #f1f5f9;
+            padding: 1.25rem 1.75rem;
+        }
+        .diagram-body {
+            padding: 2rem;
+            background: #ffffff;
+            display: flex;
+            justify-content: center;
+            overflow-x: auto;
+        }
+        .mermaid {
+            width: 100%;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header-banner">
+        <div class="container">
+            <span class="badge bg-warning text-dark px-3 py-2 fw-bold text-uppercase mb-2">Academic Evidence & System Architecture</span>
+            <h2 class="fw-bold mb-1">Campus Facility Reservation & Event Scheduling System</h2>
+            <p class="mb-0 text-white-50">Bulacan State University &bull; College of Information and Communications Technology (IT 401W Final Project B)</p>
+        </div>
+    </header>
+
+    <main class="container py-4">
+
+        <div class="alert alert-info d-flex align-items-center gap-2 mb-4">
+            <i class="bi bi-info-circle-fill fs-4"></i>
+            <div>
+                <strong>How to use these diagrams:</strong> These diagrams are rendered in real-time. You can take a screenshot or right-click to copy and paste them directly into your <strong>PowerPoint presentation</strong> or <strong>final project documentation</strong> for Dr. Dela Rosa.
+            </div>
+        </div>
+
+        <!-- DIAGRAM 1: MTV ARCHITECTURE -->
+        <div class="diagram-card">
+            <div class="diagram-header d-flex justify-content-between align-items-center">
+                <div>
+                    <span class="badge bg-primary text-uppercase px-2 py-1 mb-1">Diagram 1</span>
+                    <h4 class="fw-bold mb-0 text-dark">Model-Template-View (MTV) Architecture Diagram</h4>
+                    <small class="text-muted">Demonstrates request dispatching, two-role RBAC routing, atomic services, and server-rendered templates.</small>
+                </div>
+            </div>
+            <div class="diagram-body">
+                <div class="mermaid">
+flowchart TD
+    User([Browser Client]) -->|HTTP Request| URLConf[Django URL Dispatcher urls.py]
+    URLConf -->|/manage/*| AdminMW[AccountActiveCheckMiddleware & @admin_required]
+    URLConf -->|/portal/*| UserMW[AccountActiveCheckMiddleware & @user_required]
+    
+    AdminMW --> AdminViews[Custom Admin Views admin_views.py]
+    UserMW --> UserViews[Basic User Views user_views.py]
+    
+    AdminViews --> Services[Domain Services services.py: Interval Math & Atomic Locking]
+    UserViews --> Services
+    
+    Services --> Models[ORM Models models.py: select_for_update & atomic]
+    Models --> DB[(SQLite Database db.sqlite3)]
+    
+    Models --> TemplateContext[Context Processor & Model Data]
+    TemplateContext --> Templates[Templates: base_admin.html / base_user.html]
+    Templates -->|Rendered HTML / CSV| User
+                </div>
+            </div>
+            <div class="card-footer bg-light p-3 small text-muted">
+                <strong>Key Architectural Highlights:</strong> Pure server-rendered MTV pattern. Prohibits Django's built-in admin by routing `/manage/` to custom-coded administrative views, protected by session-invalidating active checks.
+            </div>
+        </div>
+
+        <!-- DIAGRAM 2: DATABASE ERD -->
+        <div class="diagram-card">
+            <div class="diagram-header d-flex justify-content-between align-items-center">
+                <div>
+                    <span class="badge bg-success text-uppercase px-2 py-1 mb-1">Diagram 2</span>
+                    <h4 class="fw-bold mb-0 text-dark">Database Entity-Relationship Diagram (ERD)</h4>
+                    <small class="text-muted">Complete logical data model covering all 11 entities, primary keys, foreign keys, and cardinalities.</small>
+                </div>
+            </div>
+            <div class="diagram-body">
+                <div class="mermaid">
+erDiagram
+    User ||--|| Profile : has
+    FacilityCategory ||--o{ Facility : categorizes
+    Facility ||--o{ FacilityAmenity : equips
+    Amenity ||--o{ FacilityAmenity : cataloged_in
+    Facility ||--o{ Reservation : reserves
+    User ||--o{ Reservation : requests
+    Facility ||--o{ ClosureBlock : blocks
+    User ||--o{ ClosureBlock : created_by
+    Reservation ||--o{ ReservationChange : tracks_history
+    User ||--o{ ReservationChange : adjusted_by
+    Reservation ||--|| EventRecord : operational_log
+    User ||--o{ AuditLog : audits
+    SystemSetting ||--|| SystemSetting : singleton
+
+    User {
+        int id PK
+        string username
+        string email
+        string first_name
+        string last_name
+    }
+
+    Profile {
+        int id PK
+        int user_id FK
+        string role "BASIC_USER | ADMIN"
+        string contact_number
+        string department
+        boolean is_active_account
+    }
+
+    Facility {
+        int id PK
+        string code UK
+        string name
+        int category_id FK
+        string location
+        int capacity
+        time operating_start_time
+        time operating_end_time
+        boolean is_active
+    }
+
+    Reservation {
+        int id PK
+        string tracking_code UK
+        int user_id FK
+        int facility_id FK
+        string title
+        text purpose
+        int participants_count
+        datetime start_time
+        datetime end_time
+        string status "PENDING|APPROVED|CHECKED_IN|COMPLETED|NO_SHOW|REJECTED|CANCELLED"
+        int decision_actor_id FK
+        datetime decision_timestamp
+        text decision_reason
+    }
+
+    ClosureBlock {
+        int id PK
+        int facility_id FK
+        datetime start_time
+        datetime end_time
+        string reason
+        boolean is_active
+        int created_by_id FK
+    }
+
+    ReservationChange {
+        int id PK
+        int reservation_id FK
+        datetime previous_start
+        datetime previous_end
+        datetime new_start
+        datetime new_end
+        text reason
+        int actor_id FK
+        datetime timestamp
+    }
+
+    EventRecord {
+        int id PK
+        int reservation_id FK
+        datetime check_in_time
+        datetime actual_start_time
+        datetime actual_end_time
+        string operational_status
+        text incident_notes
+    }
+
+    AuditLog {
+        int id PK
+        int actor_id FK
+        string action_type
+        string reference_model
+        string reference_id
+        text description
+        datetime timestamp
+        string ip_address
+    }
+                </div>
+            </div>
+            <div class="card-footer bg-light p-3 small text-muted">
+                <strong>Entity Relationships:</strong> Demonstrates relational normalization, composite uniqueness on `FacilityAmenity`, one-to-one mapping for `EventRecord`, and complete audit trail retention across `ReservationChange` and `AuditLog`.
+            </div>
+        </div>
+
+        <!-- DIAGRAM 3: STATE MACHINE WORKFLOW -->
+        <div class="diagram-card">
+            <div class="diagram-header d-flex justify-content-between align-items-center">
+                <div>
+                    <span class="badge bg-danger text-uppercase px-2 py-1 mb-1">Diagram 3</span>
+                    <h4 class="fw-bold mb-0 text-dark">Reservation Lifecycle State Machine Workflow</h4>
+                    <small class="text-muted">Finite state machine detailing valid state transitions, check-in validation, and terminal states.</small>
+                </div>
+            </div>
+            <div class="diagram-body">
+                <div class="mermaid">
+stateDiagram-v2
+    [*] --> PENDING : User Submits Reservation Request
+    
+    PENDING --> APPROVED : Admin Approves (Atomic Lock & Conflict Check)
+    PENDING --> REJECTED : Admin Rejects (Reason Mandatory)
+    PENDING --> CANCELLED : User Cancels (Prior to Start Time)
+    
+    APPROVED --> CHECKED_IN : Admin Records Physical Arrival on Event Day
+    APPROVED --> CANCELLED : User / Admin Cancels (Prior to Start Time)
+    APPROVED --> NO_SHOW : Event End Passed Without Check-In
+    
+    CHECKED_IN --> COMPLETED : Admin Concludes Event & Inspects Venue
+    
+    REJECTED --> [*]
+    CANCELLED --> [*]
+    NO_SHOW --> [*]
+    COMPLETED --> [*]
+                </div>
+            </div>
+            <div class="card-footer bg-light p-3 small text-muted">
+                <strong>Business Rules Enforced:</strong> 
+                1. Requests start as `PENDING` (no slot reserved). 
+                2. Only `APPROVED` events can be checked in. 
+                3. Events cannot reach `COMPLETED` without prior check-in. 
+                4. Terminal states (`COMPLETED`, `REJECTED`, `NO_SHOW`, `CANCELLED`) cannot be arbitrarily reopened.
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="bg-white border-top py-3 text-center text-muted small">
+        Bulacan State University &bull; College of Information and Communications Technology &bull; IT 401W Final Project B
+    </footer>
+
+</body>
+</html>
