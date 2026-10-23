@@ -65,12 +65,12 @@
                     <tr>
                         <td>
                             <code>{{ res.tracking_code }}</code>
-                            <div class="text-muted small">{{ res.created_at|date:"M d, Y H:i" }}</div>
+                            <div class="text-muted small">{{ res.created_at|date:"M d, Y, g:i A" }}</div>
                         </td>
                         <td>
                             <div class="fw-bold text-dark">{{ res.facility.name }}</div>
                             <span class="badge bg-secondary-subtle text-secondary border">{{ res.facility.code }}</span>
-                            <div class="small text-muted">Cap: {{ res.facility.capacity }} | {{ res.facility.operating_start_time|time:"H:i" }}-{{ res.facility.operating_end_time|time:"H:i" }}</div>
+                            <div class="small text-muted">Cap: {{ res.facility.capacity }} | {{ res.facility.operating_start_time|time:"g:i A" }} - {{ res.facility.operating_end_time|time:"g:i A" }}</div>
                         </td>
                         <td style="max-width: 280px;">
                             <div class="fw-bold text-dark">{{ res.title }}</div>
@@ -83,7 +83,7 @@
                         </td>
                         <td>
                             <div class="fw-bold">{{ res.start_time|date:"M d, Y" }}</div>
-                            <div class="text-secondary small">{{ res.start_time|date:"H:i" }} - {{ res.end_time|date:"H:i" }} ({{ res.duration_hours }}h)</div>
+                            <div class="text-secondary small">{{ res.start_time|date:"g:i A" }} - {{ res.end_time|date:"g:i A" }} ({{ res.duration_hours }}h)</div>
                         </td>
                         <td>
                             <span class="badge-status status-{{ res.status }}">{{ res.get_status_display }}</span>
@@ -121,7 +121,7 @@
                                             <p class="mb-2">You are approving <strong>{{ res.title }}</strong> for <strong>{{ res.facility.name }}</strong>.</p>
                                             <ul class="list-unstyled small text-muted bg-light p-3 rounded mb-3 border">
                                                 <li><strong>Tracking:</strong> {{ res.tracking_code }}</li>
-                                                <li><strong>Schedule:</strong> {{ res.start_time|date:"M d, Y H:i" }} to {{ res.end_time|date:"H:i" }}</li>
+                                                <li><strong>Schedule:</strong> {{ res.start_time|date:"M d, Y, g:i A" }} to {{ res.end_time|date:"g:i A" }}</li>
                                                 <li><strong>Attendees:</strong> {{ res.participants_count }} / {{ res.facility.capacity }} max capacity</li>
                                             </ul>
                                             <div class="alert alert-warning small py-2">

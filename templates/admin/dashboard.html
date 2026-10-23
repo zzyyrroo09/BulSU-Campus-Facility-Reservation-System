@@ -131,7 +131,7 @@
                     <tbody>
                         {% for event in todays_events %}
                             <tr>
-                                <td class="fw-semibold">{{ event.start_time|date:"H:i" }} - {{ event.end_time|date:"H:i" }}</td>
+                                <td class="fw-semibold">{{ event.start_time|date:"g:i A" }} - {{ event.end_time|date:"g:i A" }}</td>
                                 <td>{{ event.facility.name }}</td>
                                 <td>
                                     <div class="fw-bold text-dark">{{ event.title }}</div>
@@ -190,7 +190,7 @@
                             <tr>
                                 <td>
                                     <div class="fw-bold">{{ req.start_time|date:"M d, Y" }}</div>
-                                    <div class="text-muted">{{ req.start_time|date:"H:i" }} - {{ req.end_time|date:"H:i" }}</div>
+                                    <div class="text-muted">{{ req.start_time|date:"g:i A" }} - {{ req.end_time|date:"g:i A" }}</div>
                                 </td>
                                 <td>{{ req.facility.name }}</td>
                                 <td>

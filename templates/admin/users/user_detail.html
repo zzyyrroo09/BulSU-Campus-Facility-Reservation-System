@@ -67,7 +67,7 @@
                     </li>
                     <li class="list-group-item d-flex justify-content-between px-0">
                         <span class="text-muted">Registered On:</span>
-                        <span>{{ target_profile.user.date_joined|date:"M d, Y H:i" }}</span>
+                        <span>{{ target_profile.user.date_joined|date:"M d, Y, g:i A" }}</span>
                     </li>
                 </ul>
             </div>
@@ -102,7 +102,7 @@
                                 </td>
                                 <td>
                                     <div>{{ res.start_time|date:"M d, Y" }}</div>
-                                    <small class="text-muted">{{ res.start_time|date:"H:i" }} - {{ res.end_time|date:"H:i" }}</small>
+                                    <small class="text-muted">{{ res.start_time|date:"g:i A" }} - {{ res.end_time|date:"g:i A" }}</small>
                                 </td>
                                 <td>
                                     <span class="badge-status status-{{ res.status }}">{{ res.get_status_display }}</span>

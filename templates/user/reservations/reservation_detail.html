@@ -49,7 +49,7 @@
                     </div>
                     <div class="col-sm-6">
                         <span class="text-muted d-block">Time Slot:</span>
-                        <div class="fw-semibold">{{ reservation.start_time|date:"H:i" }} &ndash; {{ reservation.end_time|date:"H:i" }} ({{ reservation.duration_hours }}h)</div>
+                        <div class="fw-semibold">{{ reservation.start_time|date:"g:i A" }} &ndash; {{ reservation.end_time|date:"g:i A" }} ({{ reservation.duration_hours }}h)</div>
                     </div>
                     <div class="col-sm-6">
                         <span class="text-muted d-block">Participants:</span>
@@ -57,7 +57,7 @@
                     </div>
                     <div class="col-sm-6">
                         <span class="text-muted d-block">Submitted On:</span>
-                        <div>{{ reservation.created_at|date:"M d, Y H:i" }}</div>
+                        <div>{{ reservation.created_at|date:"M d, Y, g:i A" }}</div>
                     </div>
                 </div>
 
@@ -72,7 +72,7 @@
                         <div class="alert alert-light border small mb-0">
                             {{ reservation.decision_reason }}
                             <div class="text-muted mt-1" style="font-size: 0.75rem;">
-                                Reviewed by Administrator on {{ reservation.decision_timestamp|date:"M d, Y H:i" }}
+                                Reviewed by Administrator on {{ reservation.decision_timestamp|date:"M d, Y, g:i A" }}
                             </div>
                         </div>
                     </div>
@@ -92,9 +92,9 @@
                     <ul class="list-group list-group-flush small">
                         {% for chg in reschedule_history %}
                             <li class="list-group-item">
-                                <div class="text-muted" style="font-size: 0.75rem;">{{ chg.timestamp|date:"M d, Y H:i" }}</div>
-                                <div><strong>Previous:</strong> {{ chg.previous_start|date:"M d, Y H:i" }} &ndash; {{ chg.previous_end|date:"H:i" }}</div>
-                                <div class="text-success"><strong>Updated:</strong> {{ chg.new_start|date:"M d, Y H:i" }} &ndash; {{ chg.new_end|date:"H:i" }}</div>
+                                <div class="text-muted" style="font-size: 0.75rem;">{{ chg.timestamp|date:"M d, Y, g:i A" }}</div>
+                                <div><strong>Previous:</strong> {{ chg.previous_start|date:"M d, Y, g:i A" }} &ndash; {{ chg.previous_end|date:"g:i A" }}</div>
+                                <div class="text-success"><strong>Updated:</strong> {{ chg.new_start|date:"M d, Y, g:i A" }} &ndash; {{ chg.new_end|date:"g:i A" }}</div>
                                 <div class="text-secondary mt-1"><em>Reason: {{ chg.reason }}</em></div>
                             </li>
                         {% endfor %}

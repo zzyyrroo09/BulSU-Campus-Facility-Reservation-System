@@ -8,6 +8,29 @@ from .models import (
 )
 
 
+def format_time_ampm(val):
+    """
+    Format a time or datetime object into a clean 12-hour AM/PM string without leading zero.
+    e.g. 8:00 AM, 5:00 PM, 12:30 PM.
+    """
+    if not val:
+        return ""
+    if hasattr(val, 'time'):
+        val = val.time()
+    return val.strftime('%I:%M %p').lstrip('0')
+
+
+def format_datetime_ampm(dt):
+    """
+    Format a datetime object into 'YYYY-MM-DD h:mm AM/PM'.
+    """
+    if not dt:
+        return ""
+    date_part = dt.strftime('%Y-%m-%d')
+    time_part = dt.strftime('%I:%M %p').lstrip('0')
+    return f"{date_part} {time_part}"
+
+
 def log_audit(actor, action_type, reference_model, reference_id, description, ip_address=None):
     """
     Creates an immutable audit log record.
@@ -91,7 +114,7 @@ def validate_booking_rules(facility, start_time, end_time, participants_count, e
     # Operating hours
     if start_time.time() < facility.operating_start_time or end_time.time() > facility.operating_end_time:
         raise ValidationError(
-            f"Requested time is outside facility operating hours ({facility.operating_start_time:%H:%M} to {facility.operating_end_time:%H:%M})."
+            f"Requested time is outside facility operating hours ({format_time_ampm(facility.operating_start_time)} to {format_time_ampm(facility.operating_end_time)})."
         )
 
     # Capacity
@@ -251,7 +274,7 @@ def reschedule_reservation_atomic(reservation_id, new_start, new_end, admin_user
             action_type='RESCHEDULE_RESERVATION',
             reference_model='Reservation',
             reference_id=reservation.id,
-            description=f"Rescheduled {reservation.tracking_code} to {new_start:%Y-%m-%d %H:%M} - {new_end:%H:%M}. Reason: {reason.strip()}"
+            description=f"Rescheduled {reservation.tracking_code} to {format_datetime_ampm(new_start)} - {format_time_ampm(new_end)}. Reason: {reason.strip()}"
         )
 
         return reservation
@@ -280,7 +303,7 @@ def create_closure_block(facility, start_time, end_time, reason, admin_user):
         first = conflicts.first()
         raise ValidationError(
             f"Cannot create closure block: Overlaps with active booking '{first.title}' [{first.tracking_code}] "
-            f"scheduled from {first.start_time:%Y-%m-%d %H:%M} to {first.end_time:%H:%M}. "
+            f"scheduled from {format_datetime_ampm(first.start_time)} to {format_time_ampm(first.end_time)}. "
             "Please reschedule or cancel that booking first."
         )
 
@@ -298,7 +321,7 @@ def create_closure_block(facility, start_time, end_time, reason, admin_user):
         action_type='CREATE_CLOSURE',
         reference_model='ClosureBlock',
         reference_id=closure.id,
-        description=f"Created closure for {facility.name} from {start_time:%Y-%m-%d %H:%M} to {end_time:%H:%M}. Reason: {reason}"
+        description=f"Created closure for {facility.name} from {format_datetime_ampm(start_time)} to {format_time_ampm(end_time)}. Reason: {reason}"
     )
 
     return closure

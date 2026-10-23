@@ -31,6 +31,7 @@
                             <label class="form-label small fw-semibold">Target Facility *</label>
                             {{ form.facility }}
                             {% if form.facility.errors %}<div class="text-danger small">{{ form.facility.errors.0 }}</div>{% endif %}
+                            <div class="form-text small text-muted">Each facility lists its daily operating hours and capacity limit.</div>
                         </div>
 
                         <div class="col-md-4">
@@ -62,12 +63,14 @@
                             <label class="form-label small fw-semibold">Start Time *</label>
                             {{ form.start_time_input }}
                             {% if form.start_time_input.errors %}<div class="text-danger small">{{ form.start_time_input.errors.0 }}</div>{% endif %}
+                            <div class="form-text small text-muted">12-hour AM/PM format (e.g. 08:00 AM)</div>
                         </div>
 
                         <div class="col-md-4">
                             <label class="form-label small fw-semibold">End Time *</label>
                             {{ form.end_time_input }}
                             {% if form.end_time_input.errors %}<div class="text-danger small">{{ form.end_time_input.errors.0 }}</div>{% endif %}
+                            <div class="form-text small text-muted">12-hour AM/PM format (e.g. 05:00 PM)</div>
                         </div>
                     </div>
 

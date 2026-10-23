@@ -35,7 +35,7 @@
                     </li>
                     <li class="list-group-item d-flex justify-content-between px-0">
                         <span class="text-muted">Operating Hours:</span>
-                        <span class="fw-semibold">{{ facility.operating_start_time|time:"H:i" }} &ndash; {{ facility.operating_end_time|time:"H:i" }}</span>
+                        <span class="fw-semibold">{{ facility.operating_start_time|time:"g:i A" }} &ndash; {{ facility.operating_end_time|time:"g:i A" }}</span>
                     </li>
                     <li class="list-group-item d-flex justify-content-between px-0">
                         <span class="text-muted">Overnight Bookings:</span>
@@ -87,7 +87,7 @@
                 <div class="alert alert-light border small d-flex justify-content-between align-items-center mb-3">
                     <span>
                         <i class="bi bi-clock-history me-1 text-primary"></i>
-                        Daily Facility Operating Hours: <strong>{{ facility.operating_start_time|time:"H:i" }} &ndash; {{ facility.operating_end_time|time:"H:i" }}</strong>
+                        Daily Facility Operating Hours: <strong>{{ facility.operating_start_time|time:"g:i A" }} &ndash; {{ facility.operating_end_time|time:"g:i A" }}</strong>
                     </span>
                     <span class="badge bg-success-subtle text-success border border-success-subtle">Asia/Manila Timezone</span>
                 </div>
@@ -105,7 +105,7 @@
                                 <div>
                                     <div class="fw-bold">{{ block.label }}</div>
                                     <div class="small text-muted">
-                                        <i class="bi bi-clock me-1"></i>{{ block.start_time|date:"H:i" }} to {{ block.end_time|date:"H:i" }}
+                                        <i class="bi bi-clock me-1"></i>{{ block.start_time|date:"g:i A" }} to {{ block.end_time|date:"g:i A" }}
                                     </div>
                                 </div>
                                 <span class="badge {% if block.type == 'closure' %}bg-danger{% else %}bg-warning text-dark{% endif %} text-uppercase small">

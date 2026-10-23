@@ -14,7 +14,7 @@
 
                 <div class="bg-light p-3 rounded mb-3 small border">
                     <div><strong>Facility:</strong> {{ reservation.facility.name }}</div>
-                    <div><strong>Scheduled Time:</strong> {{ reservation.start_time|date:"F d, Y H:i" }} &ndash; {{ reservation.end_time|date:"H:i" }}</div>
+                    <div><strong>Scheduled Time:</strong> {{ reservation.start_time|date:"F d, Y, g:i A" }} &ndash; {{ reservation.end_time|date:"g:i A" }}</div>
                     <div><strong>Current Status:</strong> <span class="badge-status status-{{ reservation.status }}">{{ reservation.get_status_display }}</span></div>
                 </div>
 

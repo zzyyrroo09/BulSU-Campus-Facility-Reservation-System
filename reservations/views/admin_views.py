@@ -549,7 +549,7 @@ def reschedule_reservation_view(request, pk):
                 )
                 messages.success(
                     request,
-                    f"Reservation {reservation.tracking_code} rescheduled successfully to {new_start:%b %d, %Y %H:%M}."
+                    f"Reservation {reservation.tracking_code} rescheduled successfully to {new_start.strftime('%b %d, %Y, %I:%M %p').replace(' 0', ' ')}."
                 )
                 return redirect('admin_panel:schedule_calendar')
             except ValidationError as e:

@@ -31,7 +31,7 @@
                     <option value="">All Campus Facilities</option>
                     {% for f in facilities %}
                         <option value="{{ f.id }}" {% if selected_facility == f.id|stringformat:"s" %}selected{% endif %}>
-                            {{ f.name }} ({{ f.code }}) - Hours: {{ f.operating_start_time|time:"H:i" }} to {{ f.operating_end_time|time:"H:i" }}
+                            {{ f.name }} ({{ f.code }}) - Hours: {{ f.operating_start_time|time:"g:i A" }} to {{ f.operating_end_time|time:"g:i A" }}
                         </option>
                     {% endfor %}
                 </select>
@@ -62,7 +62,7 @@
                             <div class="p-2 mb-2 rounded bg-danger-subtle border border-danger-subtle small">
                                 <div class="fw-bold text-danger"><i class="bi bi-slash-circle-fill me-1"></i>Closure / Maintenance</div>
                                 <div class="text-dark fw-semibold">{{ closure.facility.code }}</div>
-                                <div class="text-muted">{{ closure.start_time|date:"H:i" }} - {{ closure.end_time|date:"H:i" }}</div>
+                                <div class="text-muted">{{ closure.start_time|date:"g:i A" }} - {{ closure.end_time|date:"g:i A" }}</div>
                                 <div class="text-secondary fst-italic">{{ closure.reason }}</div>
                             </div>
                         {% endif %}
@@ -77,7 +77,7 @@
                                     <code>{{ res.facility.code }}</code>
                                 </div>
                                 <div class="fw-bold text-dark text-truncate" title="{{ res.title }}">{{ res.title }}</div>
-                                <div class="text-muted"><i class="bi bi-clock me-1"></i>{{ res.start_time|date:"H:i" }} - {{ res.end_time|date:"H:i" }}</div>
+                                <div class="text-muted"><i class="bi bi-clock me-1"></i>{{ res.start_time|date:"g:i A" }} - {{ res.end_time|date:"g:i A" }}</div>
                                 <div class="text-muted"><i class="bi bi-person me-1"></i>{{ res.user.get_full_name|default:res.user.username }}</div>
                                 
                                 {% if res.status == 'APPROVED' %}

@@ -68,7 +68,7 @@
                         </td>
                         <td>
                             <div class="fw-semibold">{{ res.start_time|date:"M d, Y" }}</div>
-                            <small class="text-muted">{{ res.start_time|date:"H:i" }} &ndash; {{ res.end_time|date:"H:i" }} ({{ res.duration_hours }}h)</small>
+                            <small class="text-muted">{{ res.start_time|date:"g:i A" }} &ndash; {{ res.end_time|date:"g:i A" }} ({{ res.duration_hours }}h)</small>
                         </td>
                         <td>
                             <span class="badge-status status-{{ res.status }}">{{ res.get_status_display }}</span>

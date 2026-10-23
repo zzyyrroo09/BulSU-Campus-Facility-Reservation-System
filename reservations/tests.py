@@ -279,3 +279,63 @@ class CalendarViewTestCase(TestCase):
         # Test invalid non-numeric string
         res_invalid = self.client.get('/manage/calendar/?date=2026-10-30&facility=invalid')
         self.assertEqual(res_invalid.status_code, 200)
+
+
+class TimeFormatAndValidationTestCase(TestCase):
+    """
+    Test AM/PM time formatting in validation messages and form parsing.
+    """
+    def setUp(self):
+        self.tz = timezone.get_current_timezone()
+        self.category = FacilityCategory.objects.create(name="Conference Rooms")
+        self.facility = Facility.objects.create(
+            code="CONF-01",
+            category=self.category,
+            name="E-Library Conference Suite",
+            location="Library 2F",
+            capacity=60,
+            operating_start_time=time(8, 0),
+            operating_end_time=time(17, 0),
+            is_active=True
+        )
+
+    def test_validation_error_uses_ampm(self):
+        """
+        Validation error for out-of-operating-hours must format hours in 12-hour AM/PM format.
+        """
+        future_date = (timezone.now() + timedelta(days=2)).date()
+        # Event from 1:00 PM to 5:30 PM (past 5:00 PM closing)
+        start_dt = timezone.make_aware(timezone.datetime.combine(future_date, time(13, 0)), self.tz)
+        end_dt = timezone.make_aware(timezone.datetime.combine(future_date, time(17, 30)), self.tz)
+
+        with self.assertRaises(ValidationError) as ctx:
+            from reservations.services import validate_booking_rules
+            validate_booking_rules(
+                facility=self.facility,
+                start_time=start_dt,
+                end_time=end_dt,
+                participants_count=30,
+                enforce_future=True
+            )
+
+        err_msg = str(ctx.exception)
+        self.assertIn("8:00 AM to 5:00 PM", err_msg)
+        self.assertNotIn("08:00 to 17:00", err_msg)
+
+    def test_reservation_form_accepts_ampm_and_24hr(self):
+        """
+        Form time fields must cleanly accept AM/PM strings and standard 24hr strings.
+        """
+        from reservations.forms import ReservationRequestForm
+        future_date = (timezone.now() + timedelta(days=2)).date()
+
+        form = ReservationRequestForm(data={
+            'facility': self.facility.id,
+            'title': 'Test AM/PM Meeting',
+            'purpose': 'Discuss project',
+            'participants_count': 20,
+            'booking_date': future_date.strftime('%Y-%m-%d'),
+            'start_time_input': '01:00 PM',
+            'end_time_input': '03:00 PM',
+        })
+        self.assertTrue(form.is_valid(), form.errors.as_json())

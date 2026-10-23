@@ -169,19 +169,45 @@ class FacilityAmenityForm(forms.ModelForm):
         }
 
 
+TIME_FIELD_INPUT_FORMATS = [
+    '%H:%M:%S',
+    '%H:%M',
+    '%I:%M %p',
+    '%I:%M%p',
+    '%I:%M %P',
+    '%I:%M%P',
+    '%H:%M:%S.%f',
+]
+
+
+class FacilityChoiceField(forms.ModelChoiceField):
+    def label_from_instance(self, obj):
+        start_str = obj.operating_start_time.strftime('%I:%M %p').lstrip('0') if obj.operating_start_time else ''
+        end_str = obj.operating_end_time.strftime('%I:%M %p').lstrip('0') if obj.operating_end_time else ''
+        hours_str = f" [Hours: {start_str} - {end_str}, Cap: {obj.capacity}]" if start_str and end_str else ''
+        return f"{obj.name} ({obj.code}){hours_str}"
+
+
 class ReservationRequestForm(forms.ModelForm):
     """
     Basic user reservation booking form with comprehensive domain validation.
     """
+    facility = FacilityChoiceField(
+        queryset=Facility.objects.none(),
+        widget=forms.Select(attrs={'class': 'form-select'}),
+        label="Target Facility"
+    )
     booking_date = forms.DateField(
         widget=forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
         help_text="Events must occur within operating hours on this date."
     )
     start_time_input = forms.TimeField(
+        input_formats=TIME_FIELD_INPUT_FORMATS,
         widget=forms.TimeInput(attrs={'class': 'form-control', 'type': 'time'}),
         label="Start Time"
     )
     end_time_input = forms.TimeField(
+        input_formats=TIME_FIELD_INPUT_FORMATS,
         widget=forms.TimeInput(attrs={'class': 'form-control', 'type': 'time'}),
         label="End Time"
     )
@@ -190,7 +216,6 @@ class ReservationRequestForm(forms.ModelForm):
         model = Reservation
         fields = ['facility', 'title', 'purpose', 'participants_count']
         widgets = {
-            'facility': forms.Select(attrs={'class': 'form-select'}),
             'title': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Event Title'}),
             'purpose': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Detailed objective of the event...'}),
             'participants_count': forms.NumberInput(attrs={'class': 'form-control', 'min': 1}),
@@ -244,10 +269,12 @@ class AdminRescheduleForm(forms.Form):
         label="New Date"
     )
     start_time_input = forms.TimeField(
+        input_formats=TIME_FIELD_INPUT_FORMATS,
         widget=forms.TimeInput(attrs={'class': 'form-control', 'type': 'time'}),
         label="New Start Time"
     )
     end_time_input = forms.TimeField(
+        input_formats=TIME_FIELD_INPUT_FORMATS,
         widget=forms.TimeInput(attrs={'class': 'form-control', 'type': 'time'}),
         label="New End Time"
     )
@@ -262,15 +289,22 @@ class ClosureBlockForm(forms.ModelForm):
     """
     Facility maintenance / closure form with date and time pickers.
     """
+    facility = FacilityChoiceField(
+        queryset=Facility.objects.none(),
+        widget=forms.Select(attrs={'class': 'form-select'}),
+        label="Facility"
+    )
     closure_date = forms.DateField(
         widget=forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
         label="Date"
     )
     start_time_input = forms.TimeField(
+        input_formats=TIME_FIELD_INPUT_FORMATS,
         widget=forms.TimeInput(attrs={'class': 'form-control', 'type': 'time'}),
         label="Start Time"
     )
     end_time_input = forms.TimeField(
+        input_formats=TIME_FIELD_INPUT_FORMATS,
         widget=forms.TimeInput(attrs={'class': 'form-control', 'type': 'time'}),
         label="End Time"
     )
@@ -279,9 +313,12 @@ class ClosureBlockForm(forms.ModelForm):
         model = ClosureBlock
         fields = ['facility', 'reason']
         widgets = {
-            'facility': forms.Select(attrs={'class': 'form-select'}),
             'reason': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'e.g. Electrical maintenance, Floor sanitation'}),
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['facility'].queryset = Facility.objects.filter(is_active=True)
 
 
 class SystemSettingForm(forms.ModelForm):

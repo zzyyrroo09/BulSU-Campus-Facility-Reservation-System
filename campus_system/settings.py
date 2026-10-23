@@ -91,6 +91,17 @@ TIME_ZONE = 'Asia/Manila'
 USE_I18N = True
 USE_TZ = True
 
+TIME_INPUT_FORMATS = [
+    '%H:%M:%S',
+    '%H:%M:%S.%f',
+    '%H:%M',
+    '%I:%M %p',
+    '%I:%M%p',
+    '%I:%M %P',
+    '%I:%M%P',
+]
+TIME_FORMAT = 'g:i A'
+
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
