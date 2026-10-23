@@ -457,22 +457,133 @@ code, kbd, samp, pre {
 }
 
 /* ==========================================================================
-   RESPONSIVENESS
+   RESPONSIVENESS & ADAPTIVE LAYOUT
    ========================================================================== */
+
+/* Mobile Sidebar Backdrop */
+.admin-sidebar-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(15, 23, 42, 0.65);
+    backdrop-filter: blur(3px);
+    z-index: 999;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.25s ease, visibility 0.25s ease;
+}
+
+.admin-sidebar-backdrop.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Touch-optimized smooth table scrolling */
+.table-responsive {
+    -webkit-overflow-scrolling: touch;
+}
+
+.table-responsive::-webkit-scrollbar {
+    height: 6px;
+    width: 6px;
+}
+
+.table-responsive::-webkit-scrollbar-track {
+    background: #f1f5f9;
+}
+
+.table-responsive::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 9999px;
+}
+
+.table-responsive::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
 @media (max-width: 992px) {
     .admin-sidebar {
-        margin-left: -260px;
-    }
-    .admin-sidebar.show {
+        left: 0;
         margin-left: 0;
+        transform: translateX(-100%);
+        transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
     }
+    
+    .admin-sidebar.show {
+        transform: translateX(0);
+    }
+    
     .admin-main-wrapper {
         margin-left: 0;
     }
+    
     .admin-topbar {
         padding: 0 1rem;
     }
+    
     .admin-content {
         padding: 1.25rem;
+    }
+}
+
+@media (max-width: 768px) {
+    h3, .h3 {
+        font-size: 1.35rem;
+    }
+    
+    .stat-card {
+        padding: 1.1rem;
+    }
+    
+    .stat-card .stat-value {
+        font-size: 1.55rem;
+    }
+    
+    .stat-card .stat-icon {
+        width: 42px;
+        height: 42px;
+        font-size: 1.2rem;
+        border-radius: 10px;
+    }
+    
+    .table thead th {
+        padding: 0.7rem 0.85rem;
+        font-size: 0.7rem;
+    }
+    
+    .table tbody td {
+        padding: 0.75rem 0.85rem;
+        font-size: 0.82rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .admin-content {
+        padding: 0.85rem 0.65rem;
+    }
+    
+    .admin-topbar {
+        padding: 0 0.75rem;
+        height: 58px;
+    }
+    
+    .card-body {
+        padding: 0.95rem;
+    }
+    
+    .card-header, .card-footer {
+        padding: 0.75rem 0.95rem;
+    }
+    
+    .badge-status {
+        font-size: 0.65rem;
+        padding: 0.22rem 0.55rem;
+    }
+    
+    .btn-sm {
+        padding: 0.38rem 0.75rem;
+        font-size: 0.82rem;
     }
 }

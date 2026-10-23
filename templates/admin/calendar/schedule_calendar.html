@@ -11,9 +11,9 @@
         </div>
         <p class="text-muted mb-0 small">Auditable schedule view of approved bookings, checked-in events, and maintenance closures</p>
     </div>
-    <div class="d-flex align-items-center gap-2">
+    <div class="d-flex flex-wrap align-items-center justify-content-between justify-content-md-end gap-2 w-100 w-md-auto">
         <a href="?date={{ prev_week }}{% if selected_facility %}&facility={{ selected_facility }}{% endif %}" class="btn btn-outline-secondary btn-sm shadow-sm">
-            <i class="bi bi-chevron-left"></i> Previous Week
+            <i class="bi bi-chevron-left"></i> Prev Week
         </a>
         <span class="badge bg-white text-dark border px-3 py-2 fw-bold shadow-2xs">
             <i class="bi bi-calendar-range text-primary me-1"></i> {{ start_of_week|date:"M d" }} &ndash; {{ end_of_week|date:"M d, Y" }}
@@ -52,7 +52,7 @@
 <!-- Weekly Grid -->
 <div class="row g-3">
     {% for day in week_days %}
-        <div class="col-xl">
+        <div class="col-12 col-md-6 col-lg-4 col-xl">
             <div class="card shadow-sm h-100 {% if day == view_date %}border-danger border-2{% endif %}">
                 <div class="card-header bg-white py-2 text-center border-bottom">
                     <div class="fw-bold text-uppercase small text-muted">{{ day|date:"D" }}</div>

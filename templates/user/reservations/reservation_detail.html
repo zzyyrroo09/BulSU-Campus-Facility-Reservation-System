@@ -7,14 +7,14 @@
     <a href="{% url 'user_portal:my_reservations' %}" class="text-decoration-none small text-secondary">
         <i class="bi bi-arrow-left me-1"></i> Back to My Bookings
     </a>
-    <div class="d-flex justify-content-between align-items-center mt-2">
+    <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3 mt-2">
         <div>
             <h3 class="fw-bold mb-1 text-dark">{{ reservation.title }}</h3>
             <p class="text-muted mb-0 small">Tracking Reference: <code>{{ reservation.tracking_code }}</code></p>
         </div>
         <div>
             {% if reservation.can_be_cancelled_by_user %}
-                <a href="{% url 'user_portal:cancel_reservation' reservation.id %}" class="btn btn-outline-danger btn-sm">
+                <a href="{% url 'user_portal:cancel_reservation' reservation.id %}" class="btn btn-outline-danger btn-sm d-inline-flex align-items-center">
                     <i class="bi bi-x-circle me-1"></i> Cancel Booking
                 </a>
             {% endif %}

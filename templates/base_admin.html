@@ -20,16 +20,24 @@
     {% block extra_head %}{% endblock %}
 </head>
 <body>
+    <!-- Mobile Sidebar Backdrop -->
+    <div class="admin-sidebar-backdrop d-lg-none" id="adminSidebarBackdrop" onclick="toggleSidebar()"></div>
+
     <!-- Sidebar Navigation -->
     <nav class="admin-sidebar" id="adminSidebar">
-        <div class="brand">
-            <div class="bg-warning text-dark rounded-3 d-flex align-items-center justify-content-center p-2 shadow-sm" style="width: 38px; height: 38px;">
-                <i class="bi bi-shield-shaded fs-5"></i>
+        <div class="brand d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center gap-2">
+                <div class="bg-warning text-dark rounded-3 d-flex align-items-center justify-content-center p-2 shadow-sm" style="width: 38px; height: 38px;">
+                    <i class="bi bi-shield-shaded fs-5"></i>
+                </div>
+                <div>
+                    <div class="fw-bold tracking-tight" style="font-size: 1.05rem;">BulSU CICT</div>
+                    <div style="font-size: 0.72rem; opacity: 0.85; font-weight: 500;">Facility Admin Console</div>
+                </div>
             </div>
-            <div>
-                <div class="fw-bold tracking-tight" style="font-size: 1.05rem;">BulSU CICT</div>
-                <div style="font-size: 0.72rem; opacity: 0.85; font-weight: 500;">Facility Admin Console</div>
-            </div>
+            <button type="button" class="btn btn-link text-white-50 p-1 d-lg-none" onclick="toggleSidebar()" aria-label="Close navigation" style="text-decoration: none;">
+                <i class="bi bi-x-lg fs-5"></i>
+            </button>
         </div>
 
         <div class="nav-section-title">Core Management</div>
@@ -136,11 +144,11 @@
         <!-- Topbar -->
         <header class="admin-topbar">
             <div class="d-flex align-items-center gap-3">
-                <button class="btn btn-outline-secondary btn-sm d-lg-none" onclick="document.getElementById('adminSidebar').classList.toggle('show')">
+                <button class="btn btn-outline-secondary btn-sm d-lg-none" onclick="toggleSidebar()" aria-label="Toggle navigation">
                     <i class="bi bi-list fs-5"></i>
                 </button>
                 <div class="d-flex align-items-center gap-2">
-                    <span class="badge bg-light text-secondary border px-2 py-1">
+                    <span class="badge bg-light text-secondary border px-2 py-1 text-truncate" style="max-width: 170px;">
                         <i class="bi bi-geo-alt-fill text-danger me-1"></i> BulSU Main Campus
                     </span>
                     <span class="text-muted d-none d-sm-inline" style="font-size: 0.82rem;">|</span>
@@ -258,6 +266,24 @@
 
     <!-- Bootstrap 5 Bundle JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('adminSidebar');
+            const backdrop = document.getElementById('adminSidebarBackdrop');
+            if (sidebar) sidebar.classList.toggle('show');
+            if (backdrop) backdrop.classList.toggle('show');
+        }
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                const sidebar = document.getElementById('adminSidebar');
+                const backdrop = document.getElementById('adminSidebarBackdrop');
+                if (sidebar && sidebar.classList.contains('show')) {
+                    sidebar.classList.remove('show');
+                    if (backdrop) backdrop.classList.remove('show');
+                }
+            }
+        });
+    </script>
     {% block extra_scripts %}{% endblock %}
 </body>
 </html>
