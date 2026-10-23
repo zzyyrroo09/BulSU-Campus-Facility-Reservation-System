@@ -17,7 +17,7 @@
     <link href="{% static 'css/modern_theme.css' %}" rel="stylesheet">
     {% block extra_head %}{% endblock %}
 </head>
-<body>
+<body class="d-flex flex-column min-vh-100">
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg user-navbar navbar-dark sticky-top shadow-sm py-2">
         <div class="container">
@@ -139,10 +139,29 @@
     </main>
 
     <!-- Footer -->
-    <footer class="bg-white border-top py-3 text-center text-muted small mt-auto">
+    <footer class="bg-white border-top py-4 mt-auto text-secondary small">
         <div class="container">
-            &copy; {% now "Y" %} Bulacan State University - College of Information and Communications Technology.<br>
-            Campus Facility Reservation and Event Scheduling System (IT 401W Final Project B).
+            <div class="row align-items-center gy-2">
+                <div class="col-md-6 text-center text-md-start">
+                    <div class="fw-bold text-dark d-flex align-items-center justify-content-center justify-content-md-start gap-2">
+                        <i class="bi bi-shield-check text-danger"></i>
+                        <span>Bulacan State University &bull; CICT</span>
+                    </div>
+                    <div class="text-muted mt-1" style="font-size: 0.78rem;">
+                        Campus Facility Reservation & Event Scheduling System (IT 401W Final Project B)
+                    </div>
+                </div>
+                <div class="col-md-6 text-center text-md-end">
+                    <div class="d-flex justify-content-center justify-content-md-end gap-3 text-muted" style="font-size: 0.78rem;">
+                        <span><i class="bi bi-lock me-1"></i> RA 10173 Privacy Compliant</span>
+                        <span>&bull;</span>
+                        <span><i class="bi bi-clock me-1"></i> Asia/Manila (GMT+8)</span>
+                    </div>
+                    <div class="text-muted mt-1" style="font-size: 0.75rem;">
+                        &copy; {% now "Y" %} BulSU College of Information and Communications Technology. All rights reserved.
+                    </div>
+                </div>
+            </div>
         </div>
     </footer>
 

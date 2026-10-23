@@ -43,6 +43,10 @@
 }
 
 /* Base Document Styling */
+html {
+    height: 100%;
+}
+
 body {
     background-color: var(--bsu-canvas-bg);
     font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -50,6 +54,17 @@ body {
     line-height: 1.5;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+body > main {
+    flex: 1 0 auto;
+}
+
+body > footer {
+    margin-top: auto;
 }
 
 code, kbd, samp, pre {

@@ -241,9 +241,18 @@
             {% block content %}{% endblock %}
         </main>
 
-        <footer class="bg-white border-top py-3 px-4 text-center text-muted small mt-auto">
-            &copy; {% now "Y" %} Bulacan State University - College of Information and Communications Technology.
-            Custom Campus Facility Reservation System. Built in compliance with IT 401W Specifications.
+        <footer class="bg-white border-top py-3 px-4 mt-auto small">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-2 text-muted" style="font-size: 0.78rem;">
+                <div class="d-flex align-items-center gap-2">
+                    <i class="bi bi-shield-lock-fill text-danger"></i>
+                    <span><strong>BulSU CICT Facility Administration Console</strong> &bull; Custom Monolithic MTV Architecture</span>
+                </div>
+                <div class="d-flex align-items-center gap-3">
+                    <span><i class="bi bi-clock me-1"></i> Asia/Manila (GMT+8)</span>
+                    <span>&bull;</span>
+                    <span>&copy; {% now "Y" %} Bulacan State University</span>
+                </div>
+            </div>
         </footer>
     </div>
 
