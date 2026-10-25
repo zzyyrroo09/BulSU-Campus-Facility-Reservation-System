@@ -3,14 +3,14 @@
 {% block title %}Utilization Reports & Analytics - Admin Console{% endblock %}
 
 {% block content %}
-<div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3 mb-4 pb-2 border-bottom">
-    <div>
+<div class="console-header-container mb-4 pb-2 border-bottom">
+    <div class="console-header-info">
         <h3 class="fw-bold mb-1 text-dark"><i class="bi bi-bar-chart-line-fill text-danger me-2"></i>Facility Utilization Reports</h3>
         <p class="text-muted mb-0 small">Comprehensive institutional analytics on facility occupancy hours, completion metrics, and demand patterns</p>
     </div>
-    <div>
-        <a href="{% url 'admin_panel:export_reports_csv' %}?date_from={{ date_from }}&date_to={{ date_to }}" class="btn btn-success btn-sm shadow-sm d-inline-flex align-items-center">
-            <i class="bi bi-file-earmark-spreadsheet-fill me-1"></i> Export Report to CSV
+    <div class="console-header-btn-group">
+        <a href="{% url 'admin_panel:export_reports_csv' %}?date_from={{ date_from }}&date_to={{ date_to }}" class="btn btn-success shadow-sm btn-header-action">
+            <i class="bi bi-file-earmark-spreadsheet-fill"></i> Export Report to CSV
         </a>
     </div>
 </div>
@@ -37,30 +37,36 @@
 
 <!-- Report Summary Metrics -->
 <div class="row g-3 mb-4">
-    <div class="col-md-4">
-        <div class="card shadow-sm border-start border-4 border-primary">
-            <div class="card-body">
-                <div class="text-muted small fw-semibold text-uppercase">Total Requests in Window</div>
-                <h3 class="fw-bold mb-0 text-dark">{{ total_bookings }}</h3>
-                <div class="small text-muted mt-1">Spanning all facilities</div>
+    <div class="col-12 col-md-4 d-flex">
+        <div class="stat-card w-100 h-100 border-start border-4 border-primary">
+            <div>
+                <div class="stat-label">Total Requests in Window</div>
+                <div class="stat-value text-dark">{{ total_bookings }}</div>
+            </div>
+            <div class="stat-sub text-muted">
+                <i class="bi bi-buildings me-1"></i>Spanning all facilities
             </div>
         </div>
     </div>
-    <div class="col-md-4">
-        <div class="card shadow-sm border-start border-4 border-success">
-            <div class="card-body">
-                <div class="text-muted small fw-semibold text-uppercase">Completed Events</div>
-                <h3 class="fw-bold mb-0 text-success">{{ total_completed }}</h3>
-                <div class="small text-muted mt-1">Successfully concluded</div>
+    <div class="col-12 col-md-4 d-flex">
+        <div class="stat-card w-100 h-100 border-start border-4 border-success">
+            <div>
+                <div class="stat-label">Completed Events</div>
+                <div class="stat-value text-success">{{ total_completed }}</div>
+            </div>
+            <div class="stat-sub text-muted">
+                <i class="bi bi-check2-circle me-1"></i>Successfully concluded
             </div>
         </div>
     </div>
-    <div class="col-md-4">
-        <div class="card shadow-sm border-start border-4 border-warning">
-            <div class="card-body">
-                <div class="text-muted small fw-semibold text-uppercase">Total Booked Occupancy Hours</div>
-                <h3 class="fw-bold mb-0 text-dark">{{ total_hours }} <span class="fs-6 fw-normal text-muted">hrs</span></h3>
-                <div class="small text-muted mt-1">Calculated from ORM reservations</div>
+    <div class="col-12 col-md-4 d-flex">
+        <div class="stat-card w-100 h-100 border-start border-4 border-warning">
+            <div>
+                <div class="stat-label">Total Booked Occupancy Hours</div>
+                <div class="stat-value text-dark">{{ total_hours }} <span class="fs-6 fw-normal text-muted">hrs</span></div>
+            </div>
+            <div class="stat-sub text-muted">
+                <i class="bi bi-clock me-1"></i>Calculated from ORM reservations
             </div>
         </div>
     </div>

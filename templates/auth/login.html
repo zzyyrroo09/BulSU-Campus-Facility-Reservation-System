@@ -16,59 +16,99 @@
     <link href="{% static 'css/modern_theme.css' %}" rel="stylesheet">
     <style>
         body {
-            background: radial-gradient(circle at top right, #3d0000 0%, #111827 60%, #030712 100%);
+            background-color: #0b0f19;
+            background-image: 
+                radial-gradient(ellipse 80% 50% at 50% -10%, rgba(128, 0, 0, 0.5) 0%, transparent 70%),
+                radial-gradient(ellipse 60% 40% at 90% 100%, rgba(245, 158, 11, 0.08) 0%, transparent 60%),
+                linear-gradient(155deg, #180303 0%, #0f172a 50%, #070b14 100%);
+            background-attachment: fixed;
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 2rem 1.25rem;
+            padding: 1.5rem 1rem;
+            margin: 0;
+            overflow-y: auto;
         }
         .login-card {
             width: 100%;
-            max-width: 440px;
+            max-width: 420px;
             background: #ffffff;
-            border-radius: var(--bsu-radius-lg);
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.45);
+            border-radius: var(--bsu-radius);
+            box-shadow: 0 20px 45px -10px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.08);
             overflow: hidden;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: none;
+            margin: auto;
         }
         .login-header {
             background: linear-gradient(135deg, var(--bsu-maroon), #4a0000);
             color: #ffffff;
-            padding: 2.25rem 2rem 2rem;
+            padding: 1.5rem 1.5rem 1.25rem;
             text-align: center;
             border-bottom: 3px solid var(--bsu-gold);
             position: relative;
         }
         .login-body {
-            padding: 2.25rem 2rem;
+            padding: 1.5rem;
+        }
+        .login-body .form-control {
+            height: 40px;
+            padding: 0.5rem 0.85rem;
+            font-size: 0.9rem;
+            border-radius: 0 var(--bsu-radius-sm) var(--bsu-radius-sm) 0;
+        }
+        .login-body .input-group-text {
+            height: 40px;
+            padding: 0.5rem 0.85rem;
+            font-size: 0.95rem;
+            background-color: #f8fafc;
+            color: #64748b;
+            border-radius: var(--bsu-radius-sm) 0 0 var(--bsu-radius-sm);
+        }
+        .login-body .form-label {
+            font-size: 0.82rem;
+            margin-bottom: 0.35rem;
+            font-weight: 600;
+            color: #334155;
         }
         .demo-box {
             background-color: #f8fafc;
-            border: 1px dashed #cbd5e1;
+            border: 1px solid #e2e8f0;
             border-radius: var(--bsu-radius-sm);
-            padding: 1rem;
-            font-size: 0.8rem;
+            padding: 0.85rem 1rem;
+        }
+        .demo-btn {
+            height: 36px !important;
+            min-height: 36px !important;
+            padding: 0 0.85rem !important;
+            font-size: 0.8rem !important;
+            background-color: #ffffff;
+            border: 1px solid #cbd5e1;
+            transition: all 0.15s ease;
+        }
+        .demo-btn:hover {
+            background-color: #f1f5f9;
+            border-color: #94a3b8;
         }
     </style>
 </head>
 <body>
     <div class="login-card">
         <div class="login-header">
-            <div class="bg-warning text-dark rounded-circle d-inline-flex align-items-center justify-content-center p-3 mb-3 shadow" style="width: 56px; height: 56px;">
-                <i class="bi bi-buildings-fill fs-3 text-dark"></i>
+            <div class="bg-warning text-dark rounded-circle d-inline-flex align-items-center justify-content-center mb-2 shadow-sm" style="width: 48px; height: 48px;">
+                <i class="bi bi-buildings-fill fs-5 text-dark"></i>
             </div>
-            <h4 class="fw-bold mb-1 tracking-tight">BulSU CICT</h4>
-            <div class="small text-white-50 fw-medium">Campus Facility Reservation & Scheduling System</div>
+            <h5 class="fw-bold mb-1 tracking-tight" style="font-size: 1.25rem;">BulSU CICT</h5>
+            <div class="small text-white-50 fw-medium" style="font-size: 0.78rem;">Campus Facility Reservation &amp; Scheduling System</div>
         </div>
 
         <div class="login-body">
             {% if messages %}
                 {% for message in messages %}
                     {% with tag=message.tags|default:"info" %}
-                    <div class="alert {% if 'error' in tag %}alert-danger border-start border-danger border-4{% elif 'success' in tag %}alert-success border-start border-success border-4{% elif 'warning' in tag %}alert-warning border-start border-warning border-4{% else %}alert-info border-start border-info border-4{% endif %} alert-dismissible fade show small shadow-sm d-flex align-items-center mb-3" role="alert">
-                        <i class="bi {% if 'error' in tag %}bi-exclamation-triangle-fill text-danger{% elif 'success' in tag %}bi-check-circle-fill text-success{% else %}bi-info-circle-fill text-info{% endif %} fs-5 me-2"></i>
-                        <div class="flex-grow-1 text-dark">{{ message }}</div>
+                    <div class="alert {% if 'error' in tag %}alert-danger border-start border-danger border-4{% elif 'success' in tag %}alert-success border-start border-success border-4{% elif 'warning' in tag %}alert-warning border-start border-warning border-4{% else %}alert-info border-start border-info border-4{% endif %} alert-dismissible fade show small shadow-sm d-flex align-items-center py-2 px-3 mb-3" role="alert">
+                        <i class="bi {% if 'error' in tag %}bi-exclamation-triangle-fill text-danger{% elif 'success' in tag %}bi-check-circle-fill text-success{% else %}bi-info-circle-fill text-info{% endif %} fs-6 me-2"></i>
+                        <div class="flex-grow-1 text-dark small">{{ message }}</div>
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                     {% endwith %}
@@ -80,7 +120,7 @@
                 <div class="mb-3">
                     <label for="id_username" class="form-label">Username or Institutional Email</label>
                     <div class="input-group">
-                        <span class="input-group-text bg-light text-muted border-end-0"><i class="bi bi-person"></i></span>
+                        <span class="input-group-text border-end-0"><i class="bi bi-person"></i></span>
                         <input type="text" name="username" class="form-control border-start-0 ps-1" id="id_username" placeholder="e.g. admin@bulsu.edu.ph or user1" required autofocus>
                     </div>
                 </div>
@@ -88,36 +128,38 @@
                 <div class="mb-3">
                     <label for="id_password" class="form-label">Account Password</label>
                     <div class="input-group">
-                        <span class="input-group-text bg-light text-muted border-end-0"><i class="bi bi-lock"></i></span>
+                        <span class="input-group-text border-end-0"><i class="bi bi-lock"></i></span>
                         <input type="password" name="password" class="form-control border-start-0 ps-1" id="id_password" placeholder="Enter password" required>
                     </div>
                 </div>
 
-                <button type="submit" class="btn btn-bsu w-100 py-2 mt-2 shadow-sm d-flex align-items-center justify-content-center gap-2">
+                <button type="submit" class="btn btn-bsu w-100 shadow-sm d-flex align-items-center justify-content-center gap-2 mb-3" style="height: 40px; font-size: 0.9rem;">
                     <i class="bi bi-box-arrow-in-right"></i>
                     <span>Sign In to Portal</span>
                 </button>
             </form>
 
-            <div class="mt-4 pt-3 border-top text-center">
-                <span class="text-muted small">Need a campus account?</span>
-                <a href="{% url 'register' %}" class="fw-semibold text-decoration-none ms-1 text-danger">Register as Student / Faculty</a>
+            <div class="pt-3 border-top text-center mb-3" style="font-size: 0.85rem;">
+                <span class="text-muted">Need a campus account?</span>
+                <a href="{% url 'register' %}" class="fw-semibold text-decoration-none ms-1 text-danger">Register as Student</a>
             </div>
 
             <!-- 1-Click Fast Demonstration Credentials Helper -->
-            <div class="demo-box mt-4">
+            <div class="demo-box">
                 <div class="d-flex justify-content-between align-items-center mb-2">
-                    <span class="fw-bold text-dark"><i class="bi bi-stars text-warning me-1"></i> Quick Demo Logins:</span>
-                    <span class="badge bg-light text-muted border">1-Click Fill</span>
+                    <span class="fw-bold text-dark" style="font-size: 0.78rem;">
+                        <i class="bi bi-stars text-warning me-1"></i> Quick Demo Logins:
+                    </span>
+                    <span class="badge bg-secondary-subtle text-secondary border px-2 py-1" style="font-size: 0.7rem;">1-Click Fill</span>
                 </div>
                 <div class="d-grid gap-2">
-                    <button type="button" class="btn btn-light btn-sm border d-flex justify-content-between align-items-center text-start py-1 px-2" onclick="fillCreds('admin@bulsu.edu.ph', 'AdminPass123!')">
-                        <span><strong class="text-danger">Admin:</strong> <code>admin@bulsu.edu.ph</code></span>
-                        <span class="badge bg-danger-subtle text-danger">Use Admin &rarr;</span>
+                    <button type="button" class="btn demo-btn d-flex justify-content-between align-items-center text-start" onclick="fillCreds('admin@bulsu.edu.ph', 'AdminPass123!')">
+                        <span class="text-truncate"><strong class="text-danger">Admin:</strong> <code class="small text-dark">admin@bulsu.edu.ph</code></span>
+                        <span class="badge bg-danger-subtle text-danger py-1 px-2 ms-2">Use Admin &rarr;</span>
                     </button>
-                    <button type="button" class="btn btn-light btn-sm border d-flex justify-content-between align-items-center text-start py-1 px-2" onclick="fillCreds('user1', 'UserPass123!')">
-                        <span><strong class="text-primary">Student:</strong> <code>user1</code></span>
-                        <span class="badge bg-primary-subtle text-primary">Use User &rarr;</span>
+                    <button type="button" class="btn demo-btn d-flex justify-content-between align-items-center text-start" onclick="fillCreds('user1', 'UserPass123!')">
+                        <span class="text-truncate"><strong class="text-primary">Student:</strong> <code class="small text-dark">user1</code></span>
+                        <span class="badge bg-primary-subtle text-primary py-1 px-2 ms-2">Use User &rarr;</span>
                     </button>
                 </div>
             </div>

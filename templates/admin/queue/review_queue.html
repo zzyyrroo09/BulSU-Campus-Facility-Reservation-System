@@ -3,17 +3,17 @@
 {% block title %}Request Review & Approval Queue - Admin Console{% endblock %}
 
 {% block content %}
-<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4 pb-2 border-bottom">
-    <div>
+<div class="console-header-container mb-4 pb-2 border-bottom">
+    <div class="console-header-info">
         <div class="d-flex align-items-center gap-2 mb-1">
             <h3 class="fw-bold mb-0 text-dark tracking-tight"><i class="bi bi-inbox-fill text-warning me-2"></i>Reservation Review Queue</h3>
             <span class="badge bg-warning-subtle text-warning border border-warning-subtle">ADMIN AUDIT</span>
         </div>
         <p class="text-muted mb-0 small">Review incoming facility requests, verify capacity and operating hours, and execute atomic approvals with row locking</p>
     </div>
-    <div class="d-flex gap-2">
-        <a href="{% url 'admin_panel:schedule_calendar' %}" class="btn btn-outline-secondary btn-sm shadow-sm">
-            <i class="bi bi-calendar3 me-1"></i> Weekly Calendar
+    <div class="console-header-btn-group">
+        <a href="{% url 'admin_panel:schedule_calendar' %}" class="btn btn-outline-secondary shadow-sm btn-header-action">
+            <i class="bi bi-calendar3"></i> Weekly Calendar
         </a>
     </div>
 </div>
@@ -96,16 +96,18 @@
                         <td>
                             <span class="badge-status status-{{ res.status }}">{{ res.get_status_display }}</span>
                         </td>
-                        <td class="text-end">
+                        <td class="text-end text-nowrap" style="min-width: 200px;">
                             {% if res.status == 'PENDING' %}
-                                <button type="button" class="btn btn-sm btn-success me-1" data-bs-toggle="modal" data-bs-target="#approveModal{{ res.id }}" title="Approve with Atomic Lock">
-                                    <i class="bi bi-check-lg"></i> Approve
-                                </button>
-                                <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#rejectModal{{ res.id }}" title="Reject Request">
-                                    <i class="bi bi-x-lg"></i> Reject
-                                </button>
+                                <div class="d-inline-flex gap-2 justify-content-end">
+                                    <button type="button" class="btn btn-sm btn-success table-action-btn" data-bs-toggle="modal" data-bs-target="#approveModal{{ res.id }}" title="Approve with Atomic Lock">
+                                        <i class="bi bi-check-lg"></i> Approve
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-outline-danger table-action-btn" data-bs-toggle="modal" data-bs-target="#rejectModal{{ res.id }}" title="Reject Request">
+                                        <i class="bi bi-x-lg"></i> Reject
+                                    </button>
+                                </div>
                             {% elif res.status == 'APPROVED' %}
-                                <a href="{% url 'admin_panel:reschedule_reservation' res.id %}" class="btn btn-sm btn-outline-warning">
+                                <a href="{% url 'admin_panel:reschedule_reservation' res.id %}" class="btn btn-sm btn-outline-warning table-action-btn-wide">
                                     <i class="bi bi-arrow-repeat"></i> Reschedule
                                 </a>
                             {% else %}

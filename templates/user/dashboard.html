@@ -3,19 +3,19 @@
 {% block title %}My Dashboard - BulSU Facility Portal{% endblock %}
 
 {% block content %}
-<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4 pb-2 border-bottom">
-    <div>
+<div class="console-header-container mb-4 pb-2 border-bottom">
+    <div class="console-header-info">
         <div class="d-flex align-items-center gap-2 mb-1">
             <h3 class="fw-bold mb-0 text-dark tracking-tight">Welcome back, {{ request.user.first_name|default:request.user.username }}!</h3>
             <span class="badge bg-primary-subtle text-primary border border-primary-subtle">STUDENT PORTAL</span>
         </div>
         <p class="text-muted mb-0 small">CICT Facility Reservation & Availability Verification System &bull; Asia/Manila</p>
     </div>
-    <div class="d-flex gap-2">
-        <a href="{% url 'user_portal:reserve' %}" class="btn btn-bsu btn-sm shadow-sm d-inline-flex align-items-center gap-1">
+    <div class="console-header-btn-group">
+        <a href="{% url 'user_portal:reserve' %}" class="btn btn-bsu shadow-sm btn-header-action">
             <i class="bi bi-calendar-plus"></i> Request a Facility
         </a>
-        <a href="{% url 'user_portal:facility_catalog' %}" class="btn btn-outline-secondary btn-sm shadow-sm d-inline-flex align-items-center gap-1">
+        <a href="{% url 'user_portal:facility_catalog' %}" class="btn btn-outline-secondary shadow-sm btn-header-action">
             <i class="bi bi-building"></i> Browse Venues
         </a>
     </div>
@@ -23,45 +23,51 @@
 
 <!-- Quick Stats -->
 <div class="row g-3 mb-4">
-    <div class="col-md-4">
-        <div class="stat-card border-start border-4 border-warning">
-            <div class="d-flex justify-content-between align-items-start">
-                <div>
+    <div class="col-12 col-md-4 d-flex">
+        <div class="stat-card w-100 h-100 border-start border-4 border-warning">
+            <div class="d-flex justify-content-between align-items-start gap-2">
+                <div class="flex-grow-1 min-w-0">
                     <div class="stat-label">Pending Review</div>
-                    <div class="stat-value text-dark mt-1">{{ pending_count }}</div>
-                    <div class="small text-warning mt-1 fw-semibold"><i class="bi bi-hourglass-split me-1"></i>Awaiting administrator</div>
+                    <div class="stat-value text-dark">{{ pending_count }}</div>
                 </div>
-                <div class="stat-icon bg-warning-subtle text-warning">
+                <div class="stat-icon bg-warning-subtle text-warning flex-shrink-0">
                     <i class="bi bi-clock-history"></i>
                 </div>
             </div>
-        </div>
-    </div>
-    <div class="col-md-4">
-        <div class="stat-card border-start border-4 border-success">
-            <div class="d-flex justify-content-between align-items-start">
-                <div>
-                    <div class="stat-label">Upcoming Approved</div>
-                    <div class="stat-value text-dark mt-1">{{ upcoming_approved }}</div>
-                    <div class="small text-success mt-1 fw-semibold"><i class="bi bi-check-circle-fill me-1"></i>Ready for physical event</div>
-                </div>
-                <div class="stat-icon bg-success-subtle text-success">
-                    <i class="bi bi-bookmark-check-fill"></i>
-                </div>
+            <div class="stat-sub text-warning fw-semibold">
+                <i class="bi bi-hourglass-split me-1"></i>Awaiting administrator
             </div>
         </div>
     </div>
-    <div class="col-md-4">
-        <div class="stat-card border-start border-4 border-primary">
-            <div class="d-flex justify-content-between align-items-start">
-                <div>
+    <div class="col-12 col-md-4 d-flex">
+        <div class="stat-card w-100 h-100 border-start border-4 border-success">
+            <div class="d-flex justify-content-between align-items-start gap-2">
+                <div class="flex-grow-1 min-w-0">
+                    <div class="stat-label">Upcoming Approved</div>
+                    <div class="stat-value text-dark">{{ upcoming_approved }}</div>
+                </div>
+                <div class="stat-icon bg-success-subtle text-success flex-shrink-0">
+                    <i class="bi bi-bookmark-check-fill"></i>
+                </div>
+            </div>
+            <div class="stat-sub text-success fw-semibold">
+                <i class="bi bi-check-circle-fill me-1"></i>Ready for physical event
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-md-4 d-flex">
+        <div class="stat-card w-100 h-100 border-start border-4 border-primary">
+            <div class="d-flex justify-content-between align-items-start gap-2">
+                <div class="flex-grow-1 min-w-0">
                     <div class="stat-label">Completed Events</div>
-                    <div class="stat-value text-dark mt-1">{{ completed_count }}</div>
-                    <div class="small text-primary mt-1 fw-semibold"><i class="bi bi-award-fill me-1"></i>Past successful bookings</div>
+                    <div class="stat-value text-dark">{{ completed_count }}</div>
                 </div>
-                <div class="stat-icon bg-primary-subtle text-primary">
-                    <i class="bi bi-check2-all"></i>
+                <div class="stat-icon bg-primary-subtle text-primary flex-shrink-0">
+                    <i class="bi bi-award-fill"></i>
                 </div>
+            </div>
+            <div class="stat-sub text-primary fw-semibold">
+                <i class="bi bi-check2-all me-1"></i>Past successful bookings
             </div>
         </div>
     </div>
@@ -140,9 +146,9 @@
                         <td>
                             <span class="badge-status status-{{ res.status }}">{{ res.get_status_display }}</span>
                         </td>
-                        <td class="text-end">
-                            <a href="{% url 'user_portal:reservation_detail' res.id %}" class="btn btn-sm btn-outline-secondary">
-                                Details
+                        <td class="text-end text-nowrap" style="min-width: 120px;">
+                            <a href="{% url 'user_portal:reservation_detail' res.id %}" class="btn btn-sm btn-outline-secondary table-action-btn">
+                                <i class="bi bi-eye"></i> Details
                             </a>
                         </td>
                     </tr>

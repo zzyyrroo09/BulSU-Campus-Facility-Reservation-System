@@ -3,25 +3,25 @@
 {% block title %}Admin Dashboard - BulSU Facility Management{% endblock %}
 
 {% block content %}
-<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4 pb-2 border-bottom">
-    <div>
+<div class="console-header-container mb-4 pb-2 border-bottom">
+    <div class="console-header-info">
         <div class="d-flex align-items-center gap-2 mb-1">
             <h3 class="fw-bold mb-0 text-dark tracking-tight">Administrative Console</h3>
             <span class="badge bg-danger-subtle text-danger border border-danger-subtle">LIVE ORM</span>
         </div>
         <p class="text-muted mb-0 small">Real-time telemetry of facility reservations, concurrency queues, and on-site event operations</p>
     </div>
-    <div class="d-flex flex-wrap gap-2">
-        <a href="{% url 'admin_panel:review_queue' %}" class="btn btn-warning btn-sm fw-semibold shadow-sm d-inline-flex align-items-center gap-1">
+    <div class="console-header-btn-group">
+        <a href="{% url 'admin_panel:review_queue' %}" class="btn btn-warning shadow-sm console-header-btn" title="Review Queue">
             <i class="bi bi-inbox-fill"></i> Review Queue
             {% if pending_count %}
                 <span class="badge bg-danger text-white rounded-pill ms-1">{{ pending_count }}</span>
             {% endif %}
         </a>
-        <a href="{% url 'admin_panel:schedule_calendar' %}" class="btn btn-outline-secondary btn-sm shadow-sm d-inline-flex align-items-center gap-1">
+        <a href="{% url 'admin_panel:schedule_calendar' %}" class="btn btn-outline-secondary shadow-sm console-header-btn" title="Schedule Calendar">
             <i class="bi bi-calendar3"></i> Schedule Calendar
         </a>
-        <a href="{% url 'admin_panel:reports' %}" class="btn btn-outline-secondary btn-sm shadow-sm d-inline-flex align-items-center gap-1">
+        <a href="{% url 'admin_panel:reports' %}" class="btn btn-outline-secondary shadow-sm console-header-btn" title="CSV Reports">
             <i class="bi bi-download"></i> CSV Reports
         </a>
     </div>
@@ -29,62 +29,70 @@
 
 <!-- 4 Live Metric Cards -->
 <div class="row g-3 mb-4">
-    <div class="col-sm-6 col-xl-3">
-        <div class="stat-card border-start border-4 border-warning">
-            <div class="d-flex justify-content-between align-items-start">
-                <div>
+    <div class="col-12 col-sm-6 col-xl-3 d-flex">
+        <div class="stat-card w-100 h-100 border-start border-4 border-warning">
+            <div class="d-flex justify-content-between align-items-start gap-2">
+                <div class="flex-grow-1 min-w-0">
                     <div class="stat-label">Pending Requests</div>
-                    <div class="stat-value text-dark mt-1">{{ pending_count }}</div>
-                    <div class="small text-warning mt-1 fw-semibold"><i class="bi bi-hourglass-split me-1"></i>Awaiting decision</div>
+                    <div class="stat-value text-dark">{{ pending_count }}</div>
                 </div>
-                <div class="stat-icon bg-warning-subtle text-warning">
+                <div class="stat-icon bg-warning-subtle text-warning flex-shrink-0">
                     <i class="bi bi-inbox-fill"></i>
                 </div>
             </div>
+            <div class="stat-sub text-warning fw-semibold">
+                <i class="bi bi-hourglass-split me-1"></i>Awaiting decision
+            </div>
         </div>
     </div>
 
-    <div class="col-sm-6 col-xl-3">
-        <div class="stat-card border-start border-4 border-success">
-            <div class="d-flex justify-content-between align-items-start">
-                <div>
+    <div class="col-12 col-sm-6 col-xl-3 d-flex">
+        <div class="stat-card w-100 h-100 border-start border-4 border-success">
+            <div class="d-flex justify-content-between align-items-start gap-2">
+                <div class="flex-grow-1 min-w-0">
                     <div class="stat-label">Approved Upcoming</div>
-                    <div class="stat-value text-dark mt-1">{{ approved_upcoming_count }}</div>
-                    <div class="small text-success mt-1 fw-semibold"><i class="bi bi-calendar2-check-fill me-1"></i>Scheduled slots</div>
+                    <div class="stat-value text-dark">{{ approved_upcoming_count }}</div>
                 </div>
-                <div class="stat-icon bg-success-subtle text-success">
+                <div class="stat-icon bg-success-subtle text-success flex-shrink-0">
                     <i class="bi bi-calendar-check-fill"></i>
                 </div>
             </div>
-        </div>
-    </div>
-
-    <div class="col-sm-6 col-xl-3">
-        <div class="stat-card border-start border-4 border-primary">
-            <div class="d-flex justify-content-between align-items-start">
-                <div>
-                    <div class="stat-label">Completed Events</div>
-                    <div class="stat-value text-dark mt-1">{{ completed_events_count }}</div>
-                    <div class="small text-primary mt-1 fw-semibold"><i class="bi bi-check2-all me-1"></i>Inspection passed</div>
-                </div>
-                <div class="stat-icon bg-primary-subtle text-primary">
-                    <i class="bi bi-award-fill"></i>
-                </div>
+            <div class="stat-sub text-success fw-semibold">
+                <i class="bi bi-calendar2-check-fill me-1"></i>Scheduled slots
             </div>
         </div>
     </div>
 
-    <div class="col-sm-6 col-xl-3">
-        <div class="stat-card border-start border-4 border-danger">
-            <div class="d-flex justify-content-between align-items-start">
-                <div>
-                    <div class="stat-label">Active Facilities</div>
-                    <div class="stat-value text-dark mt-1">{{ active_facilities_count }}</div>
-                    <div class="small text-danger mt-1 fw-semibold"><i class="bi bi-building-fill me-1"></i>Campus capacity</div>
+    <div class="col-12 col-sm-6 col-xl-3 d-flex">
+        <div class="stat-card w-100 h-100 border-start border-4 border-primary">
+            <div class="d-flex justify-content-between align-items-start gap-2">
+                <div class="flex-grow-1 min-w-0">
+                    <div class="stat-label">Completed Events</div>
+                    <div class="stat-value text-dark">{{ completed_events_count }}</div>
                 </div>
-                <div class="stat-icon bg-danger-subtle text-danger">
+                <div class="stat-icon bg-primary-subtle text-primary flex-shrink-0">
+                    <i class="bi bi-award-fill"></i>
+                </div>
+            </div>
+            <div class="stat-sub text-primary fw-semibold">
+                <i class="bi bi-check2-all me-1"></i>Inspection passed
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 col-sm-6 col-xl-3 d-flex">
+        <div class="stat-card w-100 h-100 border-start border-4 border-danger">
+            <div class="d-flex justify-content-between align-items-start gap-2">
+                <div class="flex-grow-1 min-w-0">
+                    <div class="stat-label">Active Facilities</div>
+                    <div class="stat-value text-dark">{{ active_facilities_count }}</div>
+                </div>
+                <div class="stat-icon bg-danger-subtle text-danger flex-shrink-0">
                     <i class="bi bi-buildings-fill"></i>
                 </div>
+            </div>
+            <div class="stat-sub text-danger fw-semibold">
+                <i class="bi bi-building-fill me-1"></i>Campus capacity
             </div>
         </div>
     </div>
@@ -209,7 +217,7 @@
                                 <td>
                                     <form method="post" action="{% url 'admin_panel:approve_reservation' req.id %}" class="d-inline">
                                         {% csrf_token %}
-                                        <button type="submit" class="btn btn-sm btn-success" title="Atomically Approve">
+                                        <button type="submit" class="btn btn-sm btn-success btn-icon" title="Atomically Approve">
                                             <i class="bi bi-check-lg"></i>
                                         </button>
                                     </form>

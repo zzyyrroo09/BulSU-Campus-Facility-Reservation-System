@@ -105,16 +105,22 @@ code, kbd, samp, pre {
     padding: 0.9rem 1.35rem;
 }
 
-/* Stat & KPI Cards */
+/* Stat & KPI Cards - Uniform Proportions */
 .stat-card {
     background: #ffffff;
     border: 1px solid var(--bsu-border);
     border-radius: var(--bsu-radius);
-    padding: 1.35rem;
+    padding: 1.25rem;
     box-shadow: var(--bsu-shadow-xs);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
     position: relative;
     overflow: hidden;
+    height: 100%;
+    min-height: 140px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-sizing: border-box;
 }
 
 .stat-card:hover {
@@ -129,7 +135,8 @@ code, kbd, samp, pre {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.4rem;
+    font-size: 1.35rem;
+    flex-shrink: 0;
 }
 
 .stat-card .stat-value {
@@ -138,14 +145,32 @@ code, kbd, samp, pre {
     line-height: 1.1;
     color: var(--bsu-text-main);
     letter-spacing: -0.02em;
+    margin-top: 0.25rem;
+    margin-bottom: 0.35rem;
 }
 
 .stat-card .stat-label {
-    font-size: 0.8rem;
-    font-weight: 600;
+    font-size: 0.75rem;
+    font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.04em;
     color: var(--bsu-text-muted);
+    min-height: 2.2rem;
+    display: flex;
+    align-items: center;
+    line-height: 1.25;
+}
+
+.stat-card .stat-sub {
+    font-size: 0.78rem;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin-top: auto;
 }
 
 /* ==========================================================================
@@ -227,9 +252,155 @@ code, kbd, samp, pre {
 .btn {
     border-radius: var(--bsu-radius-sm);
     font-weight: 600;
-    font-size: 0.88rem;
-    padding: 0.5rem 1rem;
+    font-size: 0.86rem;
+    height: 38px;
+    min-height: 38px;
+    min-width: 105px;
+    padding: 0 1rem;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    white-space: nowrap;
+    text-align: center;
+    box-sizing: border-box;
     transition: all 0.15s ease;
+}
+
+.btn-sm {
+    height: 32px;
+    min-height: 32px;
+    min-width: 86px;
+    padding: 0 0.75rem;
+    font-size: 0.8rem;
+    gap: 0.3rem;
+}
+
+.btn-lg {
+    height: 44px;
+    min-height: 44px;
+    min-width: 130px;
+    padding: 0 1.25rem;
+    font-size: 0.95rem;
+}
+
+/* Button Width & Sizing Overrides */
+.btn.w-100 {
+    width: 100% !important;
+    min-width: 0 !important;
+}
+
+.btn-auto,
+.dropdown-toggle,
+.btn-close {
+    min-width: auto !important;
+}
+
+/* Table Row Action Buttons - Exact Identical Width & Height */
+.table-action-btn,
+.table .btn-sm:not(.btn-icon):not(.btn-action-wide) {
+    width: 88px !important;
+    min-width: 88px !important;
+    max-width: 88px !important;
+    height: 32px !important;
+    min-height: 32px !important;
+    padding: 0 0.5rem !important;
+    font-size: 0.8rem !important;
+    font-weight: 600 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 0.25rem !important;
+    white-space: nowrap !important;
+}
+
+.table-action-btn-wide {
+    min-width: 125px !important;
+    height: 32px !important;
+    min-height: 32px !important;
+    padding: 0 0.75rem !important;
+    font-size: 0.8rem !important;
+    font-weight: 600 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 0.3rem !important;
+    white-space: nowrap !important;
+}
+
+/* Icon-Only Buttons */
+.btn-icon,
+.btn-icon-sm {
+    width: 32px !important;
+    min-width: 32px !important;
+    max-width: 32px !important;
+    height: 32px !important;
+    min-height: 32px !important;
+    padding: 0 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+/* Console Header Container & Equal-Width Action Buttons */
+.console-header-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--bsu-border);
+}
+
+.console-header-info {
+    flex: 1 1 320px;
+    min-width: 280px;
+}
+
+.console-header-btn-group {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    flex-wrap: wrap;
+    flex-shrink: 0;
+}
+
+/* Specifically for Admin Dashboard Header Buttons: All 3 Buttons Have the Same Exact Width */
+.console-header-btn {
+    width: 175px !important;
+    min-width: 175px !important;
+    max-width: 175px !important;
+    height: 38px !important;
+    min-height: 38px !important;
+    padding: 0 0.75rem !important;
+    font-size: 0.84rem !important;
+    font-weight: 600 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 0.4rem !important;
+    white-space: nowrap !important;
+    text-align: center !important;
+    box-sizing: border-box !important;
+}
+
+/* Standard Header Action Buttons for All Other Modules */
+.btn-header-action {
+    height: 38px !important;
+    min-height: 38px !important;
+    min-width: 150px !important;
+    padding: 0 1rem !important;
+    font-size: 0.85rem !important;
+    font-weight: 600 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 0.4rem !important;
+    white-space: nowrap !important;
 }
 
 .btn-primary, .btn-bsu {
@@ -259,10 +430,27 @@ code, kbd, samp, pre {
 .form-control, .form-select {
     border-radius: var(--bsu-radius-sm);
     border: 1px solid #cbd5e1;
-    padding: 0.55rem 0.85rem;
-    font-size: 0.9rem;
+    padding: 0.45rem 0.85rem;
+    font-size: 0.88rem;
     color: var(--bsu-text-main);
     transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.form-control:not(textarea):not(.form-control-sm),
+.form-select:not(.form-select-sm) {
+    height: 38px;
+    min-height: 38px;
+}
+
+.form-control-sm,
+.form-select-sm,
+.input-group-sm > .form-control,
+.input-group-sm > .input-group-text,
+.input-group-sm > .btn {
+    height: 32px !important;
+    min-height: 32px !important;
+    padding: 0.25rem 0.65rem !important;
+    font-size: 0.82rem !important;
 }
 
 .form-control:focus, .form-select:focus {
@@ -273,7 +461,7 @@ code, kbd, samp, pre {
 
 .form-label {
     font-weight: 600;
-    font-size: 0.84rem;
+    font-size: 0.82rem;
     color: var(--bsu-text-main);
     margin-bottom: 0.35rem;
 }
@@ -347,7 +535,7 @@ code, kbd, samp, pre {
 }
 
 .admin-sidebar .nav-link {
-    color: #0860e2;
+    color: #94a3b8;
     padding: 0.68rem 1.35rem;
     display: flex;
     align-items: center;
@@ -388,9 +576,12 @@ code, kbd, samp, pre {
 .admin-main-wrapper {
     margin-left: 260px;
     min-height: 100vh;
+    width: calc(100% - 260px);
     display: flex;
     flex-direction: column;
     background-color: var(--bsu-canvas-bg);
+    overflow-x: hidden;
+    box-sizing: border-box;
 }
 
 .admin-topbar {
@@ -410,6 +601,8 @@ code, kbd, samp, pre {
 .admin-content {
     padding: 2rem;
     flex-grow: 1;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 /* ==========================================================================
@@ -501,6 +694,63 @@ code, kbd, samp, pre {
 
 .table-responsive::-webkit-scrollbar-thumb:hover {
     background: #94a3b8;
+}
+
+/* ==========================================================================
+   PC RESOLUTION RESPONSIVENESS (1280px, 1366px, 1440px, 1600px, 1920px+)
+   ========================================================================== */
+
+/* Laptop & Compact PC Screens (1280px - 1400px: 1366x768, 1280x800, 1080p@125%) */
+@media (min-width: 993px) and (max-width: 1400px) {
+    .admin-content {
+        padding: 1.5rem 1.25rem;
+    }
+    .admin-topbar {
+        padding: 0 1.25rem;
+    }
+    .stat-card {
+        padding: 1.15rem 1rem;
+    }
+    .stat-card .stat-value {
+        font-size: 1.65rem;
+    }
+    .stat-card .stat-label {
+        font-size: 0.72rem;
+    }
+    .console-header-btn {
+        width: 165px !important;
+        min-width: 165px !important;
+        max-width: 165px !important;
+    }
+}
+
+/* Widescreen & Full HD Desktop PC Displays (>= 1401px) */
+@media (min-width: 1401px) {
+    .admin-content {
+        padding: 2rem 2.25rem;
+    }
+    .admin-topbar {
+        padding: 0 2.25rem;
+    }
+}
+
+/* Clean, visible scrollbar and nowrap behavior for tables */
+.table thead th {
+    white-space: nowrap;
+}
+
+.table td.text-nowrap, .table th.text-nowrap {
+    white-space: nowrap;
+}
+
+/* User portal full-width responsive container */
+.user-container-responsive {
+    width: 100%;
+    max-width: 1380px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
 }
 
 @media (max-width: 992px) {

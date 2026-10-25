@@ -3,17 +3,17 @@
 {% block title %}Browse Facilities - BulSU Facility Portal{% endblock %}
 
 {% block content %}
-<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4 pb-2 border-bottom">
-    <div>
+<div class="console-header-container mb-4 pb-2 border-bottom">
+    <div class="console-header-info">
         <div class="d-flex align-items-center gap-2 mb-1">
             <h3 class="fw-bold mb-0 text-dark tracking-tight"><i class="bi bi-building text-danger me-2"></i>Campus Facilities Catalog</h3>
             <span class="badge bg-secondary-subtle text-secondary border">ACTIVE VENUES</span>
         </div>
         <p class="text-muted mb-0 small">Browse approved venues, inspect seating capacity, operating hours, and available amenities</p>
     </div>
-    <div class="d-flex gap-2">
-        <a href="{% url 'user_portal:reserve' %}" class="btn btn-bsu btn-sm shadow-sm">
-            <i class="bi bi-calendar-plus me-1"></i> Request Reservation
+    <div class="console-header-btn-group">
+        <a href="{% url 'user_portal:reserve' %}" class="btn btn-bsu shadow-sm btn-header-action">
+            <i class="bi bi-calendar-plus"></i> Request Reservation
         </a>
     </div>
 </div>
@@ -86,10 +86,10 @@
                 </div>
                 <div class="card-footer bg-white border-top p-3 d-flex gap-2">
                     <a href="{% url 'user_portal:facility_detail' fac.id %}" class="btn btn-outline-secondary btn-sm flex-grow-1">
-                        <i class="bi bi-calendar-event me-1"></i> Check Open Slots
+                        <i class="bi bi-calendar-event"></i> Check Open Slots
                     </a>
-                    <a href="{% url 'user_portal:reserve_facility' fac.id %}" class="btn btn-danger btn-sm px-3" style="background-color: var(--bsu-maroon);">
-                        Request
+                    <a href="{% url 'user_portal:reserve_facility' fac.id %}" class="btn btn-danger btn-sm" style="background-color: var(--bsu-maroon); min-width: 95px;">
+                        <i class="bi bi-plus-circle"></i> Request
                     </a>
                 </div>
             </div>

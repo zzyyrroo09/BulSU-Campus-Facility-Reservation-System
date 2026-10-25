@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Campus User Registration - BulSU Facility System</title>
+    <title>Student Registration - BulSU Facility System</title>
     <!-- Google Fonts: Plus Jakarta Sans & JetBrains Mono -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -16,102 +16,125 @@
     <link href="{% static 'css/modern_theme.css' %}" rel="stylesheet">
     <style>
         body {
-            background: radial-gradient(circle at top right, #3d0000 0%, #111827 60%, #030712 100%);
+            background-color: #0b0f19;
+            background-image: 
+                radial-gradient(ellipse 80% 50% at 50% -10%, rgba(128, 0, 0, 0.5) 0%, transparent 70%),
+                radial-gradient(ellipse 60% 40% at 90% 100%, rgba(245, 158, 11, 0.08) 0%, transparent 60%),
+                linear-gradient(155deg, #180303 0%, #0f172a 50%, #070b14 100%);
+            background-attachment: fixed;
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 2.5rem 1.25rem;
+            padding: 1.5rem 1rem;
+            margin: 0;
+            overflow-y: auto;
         }
         .register-card {
             width: 100%;
-            max-width: 580px;
+            max-width: 560px;
             background: #ffffff;
-            border-radius: var(--bsu-radius-lg);
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.45);
+            border-radius: var(--bsu-radius);
+            box-shadow: 0 20px 45px -10px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.08);
             overflow: hidden;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: none;
+            margin: auto;
         }
         .register-header {
             background: linear-gradient(135deg, var(--bsu-maroon), #4a0000);
             color: #ffffff;
-            padding: 2rem 1.75rem;
+            padding: 1.25rem 1.75rem;
             text-align: center;
             border-bottom: 3px solid var(--bsu-gold);
+        }
+        .register-body {
+            padding: 1.5rem 1.75rem;
+        }
+        .register-body .form-control {
+            height: 38px;
+            padding: 0.45rem 0.75rem;
+            font-size: 0.88rem;
+            border-radius: var(--bsu-radius-sm);
+        }
+        .register-body .form-label {
+            font-size: 0.8rem;
+            margin-bottom: 0.35rem;
+            font-weight: 600;
+            color: #334155;
         }
     </style>
 </head>
 <body>
     <div class="register-card">
         <div class="register-header">
-            <h4 class="fw-bold mb-1"><i class="bi bi-person-plus-fill me-2 text-warning"></i>Campus User Registration</h4>
-            <div class="small text-white-50">Create your Basic User account for facility requests</div>
+            <h5 class="fw-bold mb-1 text-white"><i class="bi bi-person-plus-fill me-2 text-warning"></i>Student Registration</h5>
+            <div class="small text-white-50" style="font-size: 0.78rem;">Create your campus student account for facility reservation requests</div>
         </div>
 
-        <div class="p-4">
+        <div class="register-body">
             {% if form.non_field_errors %}
-                <div class="alert alert-danger small">
+                <div class="alert alert-danger small py-2 px-3 mb-3">
                     {% for error in form.non_field_errors %}
                         <div>{{ error }}</div>
                     {% endfor %}
                 </div>
             {% endif %}
 
-            <div class="alert alert-info py-2 small d-flex align-items-center gap-2">
-                <i class="bi bi-shield-check fs-5"></i>
-                <div>All public registrations automatically assign the <strong>Basic User</strong> role. Administrative roles are provisioned exclusively via institutional governance.</div>
+            <div class="alert alert-info py-2 px-3 small d-flex align-items-center gap-2 mb-3" style="font-size: 0.78rem;">
+                <i class="bi bi-shield-check fs-6 text-primary flex-shrink-0"></i>
+                <div>Registrations automatically provision the <strong>Basic User</strong> role for campus student facility requests.</div>
             </div>
 
             <form method="post" novalidate>
                 {% csrf_token %}
                 <div class="row g-3">
                     <div class="col-md-6">
-                        <label class="form-label small fw-semibold">Username *</label>
+                        <label class="form-label">Username *</label>
                         {{ form.username }}
-                        {% if form.username.errors %}<div class="text-danger small">{{ form.username.errors.0 }}</div>{% endif %}
+                        {% if form.username.errors %}<div class="text-danger small mt-1" style="font-size: 0.74rem;">{{ form.username.errors.0 }}</div>{% endif %}
                     </div>
                     <div class="col-md-6">
-                        <label class="form-label small fw-semibold">Institutional Email *</label>
+                        <label class="form-label">Institutional Email *</label>
                         {{ form.email }}
-                        {% if form.email.errors %}<div class="text-danger small">{{ form.email.errors.0 }}</div>{% endif %}
+                        {% if form.email.errors %}<div class="text-danger small mt-1" style="font-size: 0.74rem;">{{ form.email.errors.0 }}</div>{% endif %}
                     </div>
                     <div class="col-md-6">
-                        <label class="form-label small fw-semibold">First Name *</label>
+                        <label class="form-label">First Name *</label>
                         {{ form.first_name }}
-                        {% if form.first_name.errors %}<div class="text-danger small">{{ form.first_name.errors.0 }}</div>{% endif %}
+                        {% if form.first_name.errors %}<div class="text-danger small mt-1" style="font-size: 0.74rem;">{{ form.first_name.errors.0 }}</div>{% endif %}
                     </div>
                     <div class="col-md-6">
-                        <label class="form-label small fw-semibold">Last Name *</label>
+                        <label class="form-label">Last Name *</label>
                         {{ form.last_name }}
-                        {% if form.last_name.errors %}<div class="text-danger small">{{ form.last_name.errors.0 }}</div>{% endif %}
+                        {% if form.last_name.errors %}<div class="text-danger small mt-1" style="font-size: 0.74rem;">{{ form.last_name.errors.0 }}</div>{% endif %}
                     </div>
                     <div class="col-md-6">
-                        <label class="form-label small fw-semibold">Contact Number</label>
+                        <label class="form-label">Contact Number</label>
                         {{ form.contact_number }}
                     </div>
                     <div class="col-md-6">
-                        <label class="form-label small fw-semibold">College / Department</label>
+                        <label class="form-label">College / Department</label>
                         {{ form.department }}
                     </div>
                     <div class="col-md-6">
-                        <label class="form-label small fw-semibold">Password *</label>
+                        <label class="form-label">Password *</label>
                         {{ form.password }}
-                        {% if form.password.errors %}<div class="text-danger small">{{ form.password.errors.0 }}</div>{% endif %}
+                        {% if form.password.errors %}<div class="text-danger small mt-1" style="font-size: 0.74rem;">{{ form.password.errors.0 }}</div>{% endif %}
                     </div>
                     <div class="col-md-6">
-                        <label class="form-label small fw-semibold">Confirm Password *</label>
+                        <label class="form-label">Confirm Password *</label>
                         {{ form.password_confirm }}
-                        {% if form.password_confirm.errors %}<div class="text-danger small">{{ form.password_confirm.errors.0 }}</div>{% endif %}
+                        {% if form.password_confirm.errors %}<div class="text-danger small mt-1" style="font-size: 0.74rem;">{{ form.password_confirm.errors.0 }}</div>{% endif %}
                     </div>
                 </div>
 
-                <button type="submit" class="btn btn-bsu w-100 py-2 mt-4">
-                    <i class="bi bi-check2-circle me-1"></i> Complete Registration
+                <button type="submit" class="btn btn-bsu w-100 mt-3 mb-2 shadow-sm d-flex align-items-center justify-content-center gap-1" style="height: 40px; font-size: 0.9rem;">
+                    <i class="bi bi-check2-circle"></i> Complete Registration
                 </button>
             </form>
 
-            <div class="mt-3 text-center">
-                <span class="text-muted small">Already have an account?</span>
+            <div class="pt-3 mt-3 border-top text-center" style="font-size: 0.85rem;">
+                <span class="text-muted">Already have an account?</span>
                 <a href="{% url 'login' %}" class="fw-semibold text-danger text-decoration-none ms-1">Sign In</a>
             </div>
         </div>

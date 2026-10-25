@@ -3,16 +3,16 @@
 {% block title %}My Bookings - BulSU Facility Portal{% endblock %}
 
 {% block content %}
-<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4 pb-2 border-bottom">
-    <div>
+<div class="console-header-container mb-4 pb-2 border-bottom">
+    <div class="console-header-info">
         <div class="d-flex align-items-center gap-2 mb-1">
             <h3 class="fw-bold mb-0 text-dark tracking-tight"><i class="bi bi-bookmark-check-fill text-danger me-2"></i>My Facility Bookings</h3>
             <span class="badge bg-success-subtle text-success border border-success-subtle">PERSONAL SCHEDULE</span>
         </div>
         <p class="text-muted mb-0 small">Track status of pending requests, approved reservations, and historical event logs</p>
     </div>
-    <div class="d-flex gap-2">
-        <a href="{% url 'user_portal:reserve' %}" class="btn btn-bsu btn-sm shadow-sm d-inline-flex align-items-center gap-1">
+    <div class="console-header-btn-group">
+        <a href="{% url 'user_portal:reserve' %}" class="btn btn-bsu shadow-sm btn-header-action">
             <i class="bi bi-plus-lg"></i> New Request
         </a>
     </div>
@@ -76,15 +76,17 @@
                         <td>
                             <span class="badge-status status-{{ res.status }}">{{ res.get_status_display }}</span>
                         </td>
-                        <td class="text-end">
-                            <a href="{% url 'user_portal:reservation_detail' res.id %}" class="btn btn-sm btn-outline-secondary me-1">
-                                Details
-                            </a>
-                            {% if res.can_be_cancelled_by_user %}
-                                <a href="{% url 'user_portal:cancel_reservation' res.id %}" class="btn btn-sm btn-outline-danger">
-                                    Cancel
+                        <td class="text-end text-nowrap" style="min-width: 195px;">
+                            <div class="d-inline-flex gap-2 justify-content-end">
+                                <a href="{% url 'user_portal:reservation_detail' res.id %}" class="btn btn-sm btn-outline-secondary table-action-btn">
+                                    <i class="bi bi-eye"></i> Details
                                 </a>
-                            {% endif %}
+                                {% if res.can_be_cancelled_by_user %}
+                                    <a href="{% url 'user_portal:cancel_reservation' res.id %}" class="btn btn-sm btn-outline-danger table-action-btn">
+                                        <i class="bi bi-x-circle"></i> Cancel
+                                    </a>
+                                {% endif %}
+                            </div>
                         </td>
                     </tr>
                 {% empty %}
