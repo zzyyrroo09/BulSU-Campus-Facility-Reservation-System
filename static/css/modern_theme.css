@@ -297,15 +297,15 @@ code, kbd, samp, pre {
     min-width: auto !important;
 }
 
-/* Table Row Action Buttons - Exact Identical Width & Height */
+/* Table Row Action Buttons - Standard Width (e.g. Check In, No Show, Approve, Reject, Edit, Archive) */
 .table-action-btn,
-.table .btn-sm:not(.btn-icon):not(.btn-action-wide) {
+.table .btn-sm:not(.btn-icon):not(.table-action-btn-wide):not(.btn-action-wide):not(.modal *):not(.modal-dialog *) {
     width: 88px !important;
     min-width: 88px !important;
     max-width: 88px !important;
     height: 32px !important;
     min-height: 32px !important;
-    padding: 0 0.5rem !important;
+    padding: 0 0.45rem !important;
     font-size: 0.8rem !important;
     font-weight: 600 !important;
     display: inline-flex !important;
@@ -315,18 +315,32 @@ code, kbd, samp, pre {
     white-space: nowrap !important;
 }
 
-.table-action-btn-wide {
-    min-width: 125px !important;
+/* Table Row Action Buttons - Wide / Variable Width (e.g. Sign-Off Complete, Reschedule) */
+.table-action-btn-wide,
+.table .table-action-btn-wide,
+.table .btn-action-wide {
+    width: auto !important;
+    min-width: 160px !important;
+    max-width: none !important;
     height: 32px !important;
     min-height: 32px !important;
-    padding: 0 0.75rem !important;
+    padding: 0 0.85rem !important;
     font-size: 0.8rem !important;
     font-weight: 600 !important;
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
-    gap: 0.3rem !important;
+    gap: 0.35rem !important;
     white-space: nowrap !important;
+}
+
+/* Modal action buttons should never be constrained to table-action fixed widths */
+.modal .btn,
+.modal-dialog .btn,
+.table .modal .btn,
+.table .modal-dialog .btn {
+    width: auto !important;
+    max-width: none !important;
 }
 
 /* Icon-Only Buttons */

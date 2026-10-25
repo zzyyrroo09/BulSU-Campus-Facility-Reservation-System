@@ -3,6 +3,20 @@
 {% block title %}Event Operations Console - Admin Console{% endblock %}
 
 {% block content %}
+<style>
+    .table-action-btn-wide,
+    .table .table-action-btn-wide,
+    .table .btn-sm.table-action-btn-wide {
+        width: auto !important;
+        min-width: 165px !important;
+        max-width: none !important;
+        padding: 0 0.9rem !important;
+        white-space: nowrap !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
+</style>
 <div class="console-header-container mb-4 pb-2 border-bottom">
     <div class="console-header-info">
         <h3 class="fw-bold mb-1 text-dark"><i class="bi bi-play-circle-fill text-danger me-2"></i>Event Monitoring & Operations</h3>
@@ -25,7 +39,7 @@
                     <th>Event Details</th>
                     <th>Scheduled Slot</th>
                     <th>Status</th>
-                    <th class="text-end">Operational Actions</th>
+                    <th class="text-end" style="min-width: 200px;">Operational Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -66,8 +80,8 @@
                                         </button>
                                     {% endif %}
                                 {% elif res.status == 'CHECKED_IN' %}
-                                    <button type="button" class="btn btn-sm btn-success table-action-btn-wide" data-bs-toggle="modal" data-bs-target="#completeModal{{ res.id }}">
-                                        <i class="bi bi-check2-circle"></i> Sign-Off Complete
+                                    <button type="button" class="btn btn-sm btn-success table-action-btn-wide" style="width: auto !important; min-width: 165px !important; max-width: none !important; padding: 0 0.9rem !important; white-space: nowrap !important;" data-bs-toggle="modal" data-bs-target="#completeModal{{ res.id }}">
+                                        <i class="bi bi-check2-circle me-1"></i> Sign-Off Complete
                                     </button>
                                 {% endif %}
                             </div>
