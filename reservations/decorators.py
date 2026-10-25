@@ -51,10 +51,6 @@ def user_required(view_func):
             messages.error(request, "Your account has been deactivated. Transactions are blocked.")
             return redirect('login')
 
-        if request.user.profile.is_admin:
-            # If an admin lands in portal, redirect them to admin management
-            return redirect('admin_panel:dashboard')
-
         return view_func(request, *args, **kwargs)
 
     return _wrapped_view
