@@ -3,6 +3,8 @@
 **Instructor:** Dr. Aaron Paul M. Dela Rosa  
 **System:** BulSU CICT Campus Facility Reservation and Event Scheduling System  
 **Test Suite:** Django Automated Unit & Integration Testing (`reservations/tests.py`)  
+**Tested & Verified By:** Student Development & QA Team (All Group Members)  
+**Date of Execution:** October 2026  
 
 ---
 
