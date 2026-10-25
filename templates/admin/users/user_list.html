@@ -81,19 +81,21 @@
                             {% endif %}
                         </td>
                         <td>{{ profile.user.date_joined|date:"M d, Y" }}</td>
-                        <td class="text-end">
-                            <a href="{% url 'admin_panel:user_detail' profile.user.id %}" class="btn btn-sm btn-outline-secondary me-1" title="View History">
-                                <i class="bi bi-clock-history me-1"></i> History
-                            </a>
-                            {% if profile.is_active_account %}
-                                <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#toggleUserModal{{ profile.user.id }}" title="Deactivate Account">
-                                    Deactivate
-                                </button>
-                            {% else %}
-                                <button type="button" class="btn btn-sm btn-outline-success" data-bs-toggle="modal" data-bs-target="#toggleUserModal{{ profile.user.id }}" title="Activate Account">
-                                    Activate
-                                </button>
-                            {% endif %}
+                        <td class="text-end text-nowrap" style="min-width: 195px;">
+                            <div class="d-inline-flex gap-2 justify-content-end">
+                                <a href="{% url 'admin_panel:user_detail' profile.user.id %}" class="btn btn-sm btn-outline-secondary table-action-btn" title="View History">
+                                    <i class="bi bi-clock-history"></i> History
+                                </a>
+                                {% if profile.is_active_account %}
+                                    <button type="button" class="btn btn-sm btn-outline-danger table-action-btn" data-bs-toggle="modal" data-bs-target="#toggleUserModal{{ profile.user.id }}" title="Deactivate Account">
+                                        <i class="bi bi-slash-circle"></i> Deactivate
+                                    </button>
+                                {% else %}
+                                    <button type="button" class="btn btn-sm btn-outline-success table-action-btn" data-bs-toggle="modal" data-bs-target="#toggleUserModal{{ profile.user.id }}" title="Activate Account">
+                                        <i class="bi bi-check-circle"></i> Activate
+                                    </button>
+                                {% endif %}
+                            </div>
 
                             <!-- User Status Modal -->
                             <div class="modal fade" id="toggleUserModal{{ profile.user.id }}" tabindex="-1" aria-hidden="true">

@@ -3,22 +3,22 @@
 {% block title %}Facility Schedule Calendar - Admin Console{% endblock %}
 
 {% block content %}
-<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4 pb-2 border-bottom">
-    <div>
+<div class="console-header-container mb-4 pb-2 border-bottom">
+    <div class="console-header-info">
         <div class="d-flex align-items-center gap-2 mb-1">
             <h3 class="fw-bold mb-0 text-dark tracking-tight"><i class="bi bi-calendar3 text-danger me-2"></i>Weekly Facility Schedule Calendar</h3>
             <span class="badge bg-danger-subtle text-danger border border-danger-subtle">[start, end) INTERVALS</span>
         </div>
         <p class="text-muted mb-0 small">Auditable schedule view of approved bookings, checked-in events, and maintenance closures</p>
     </div>
-    <div class="d-flex flex-wrap align-items-center justify-content-between justify-content-md-end gap-2 w-100 w-md-auto">
-        <a href="?date={{ prev_week }}{% if selected_facility %}&facility={{ selected_facility }}{% endif %}" class="btn btn-outline-secondary btn-sm shadow-sm">
+    <div class="console-header-btn-group">
+        <a href="?date={{ prev_week }}{% if selected_facility %}&facility={{ selected_facility }}{% endif %}" class="btn btn-outline-secondary shadow-sm" style="min-width: 125px; height: 38px;">
             <i class="bi bi-chevron-left"></i> Prev Week
         </a>
-        <span class="badge bg-white text-dark border px-3 py-2 fw-bold shadow-2xs">
+        <span class="badge bg-white text-dark border px-3 d-inline-flex align-items-center fw-bold shadow-2xs" style="height: 38px; font-size: 0.85rem;">
             <i class="bi bi-calendar-range text-primary me-1"></i> {{ start_of_week|date:"M d" }} &ndash; {{ end_of_week|date:"M d, Y" }}
         </span>
-        <a href="?date={{ next_week }}{% if selected_facility %}&facility={{ selected_facility }}{% endif %}" class="btn btn-outline-secondary btn-sm shadow-sm">
+        <a href="?date={{ next_week }}{% if selected_facility %}&facility={{ selected_facility }}{% endif %}" class="btn btn-outline-secondary shadow-sm" style="min-width: 125px; height: 38px;">
             Next Week <i class="bi bi-chevron-right"></i>
         </a>
     </div>
