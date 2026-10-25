@@ -339,3 +339,95 @@ class TimeFormatAndValidationTestCase(TestCase):
             'end_time_input': '03:00 PM',
         })
         self.assertTrue(form.is_valid(), form.errors.as_json())
+
+
+class UserRegistrationPasswordValidationTestCase(TestCase):
+    """
+    Test strong password enforcement in user registration form.
+    Requires at least 8 characters, 1 uppercase, 1 lowercase, 1 number, and 1 symbol.
+    """
+    def test_demo_passwords_pass_validation(self):
+        """
+        Demo passwords like AdminPass123! and UserPass123! must be fully valid.
+        """
+        from reservations.forms import UserRegistrationForm
+        form1 = UserRegistrationForm(data={
+            'username': 'newuser1',
+            'email': 'newuser1@bulsu.edu.ph',
+            'first_name': 'Test',
+            'last_name': 'User',
+            'password': 'AdminPass123!',
+            'password_confirm': 'AdminPass123!',
+        })
+        self.assertTrue(form1.is_valid(), form1.errors.as_json())
+
+        form2 = UserRegistrationForm(data={
+            'username': 'newuser2',
+            'email': 'newuser2@bulsu.edu.ph',
+            'first_name': 'Test',
+            'last_name': 'User',
+            'password': 'UserPass123!',
+            'password_confirm': 'UserPass123!',
+        })
+        self.assertTrue(form2.is_valid(), form2.errors.as_json())
+
+    def test_weak_password_rejection(self):
+        """
+        Weak passwords missing uppercase, number, symbol, or length < 8 must fail.
+        """
+        from reservations.forms import UserRegistrationForm
+
+        # Missing symbol and uppercase
+        form_no_symbol = UserRegistrationForm(data={
+            'username': 'testuser',
+            'email': 'testuser@bulsu.edu.ph',
+            'first_name': 'Test',
+            'last_name': 'User',
+            'password': 'simplepassword123',
+            'password_confirm': 'simplepassword123',
+        })
+        self.assertFalse(form_no_symbol.is_valid())
+        self.assertIn('password', form_no_symbol.errors)
+        self.assertIn('symbol', str(form_no_symbol.errors['password']))
+
+        # Missing numbers
+        form_no_number = UserRegistrationForm(data={
+            'username': 'testuser',
+            'email': 'testuser@bulsu.edu.ph',
+            'first_name': 'Test',
+            'last_name': 'User',
+            'password': 'AdminPassword!',
+            'password_confirm': 'AdminPassword!',
+        })
+        self.assertFalse(form_no_number.is_valid())
+        self.assertIn('number', str(form_no_number.errors['password']))
+
+        # Short password (<8 characters)
+        form_short = UserRegistrationForm(data={
+            'username': 'testuser',
+            'email': 'testuser@bulsu.edu.ph',
+            'first_name': 'Test',
+            'last_name': 'User',
+            'password': 'Ad1!',
+            'password_confirm': 'Ad1!',
+        })
+        self.assertFalse(form_short.is_valid())
+        self.assertIn('8 characters', str(form_short.errors['password']))
+
+    def test_password_mismatch(self):
+        """
+        Mismatched password and password_confirm must trigger a validation error.
+        """
+        from reservations.forms import UserRegistrationForm
+        form = UserRegistrationForm(data={
+            'username': 'mismatchuser',
+            'email': 'mismatch@bulsu.edu.ph',
+            'first_name': 'Test',
+            'last_name': 'User',
+            'password': 'AdminPass123!',
+            'password_confirm': 'DifferentPass123!',
+        })
+        self.assertFalse(form.is_valid())
+        self.assertIn('password_confirm', form.errors)
+        self.assertIn('Passwords do not match.', str(form.errors['password_confirm']))
+

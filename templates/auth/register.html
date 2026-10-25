@@ -32,7 +32,7 @@
         }
         .register-card {
             width: 100%;
-            max-width: 560px;
+            max-width: 580px;
             background: #ffffff;
             border-radius: var(--bsu-radius);
             box-shadow: 0 20px 45px -10px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.08);
@@ -56,11 +56,70 @@
             font-size: 0.88rem;
             border-radius: var(--bsu-radius-sm);
         }
+        .register-body .input-group:has(.password-toggle-btn) .form-control {
+            border-top-right-radius: 0 !important;
+            border-bottom-right-radius: 0 !important;
+        }
+        .register-body .password-toggle-btn {
+            height: 38px;
+            padding: 0.45rem 0.75rem;
+            font-size: 0.9rem;
+            background-color: #ffffff;
+            color: #64748b;
+            border: 1px solid #cbd5e1;
+            border-left: none;
+            border-top-left-radius: 0 !important;
+            border-bottom-left-radius: 0 !important;
+            border-top-right-radius: var(--bsu-radius-sm) !important;
+            border-bottom-right-radius: var(--bsu-radius-sm) !important;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: color 0.15s ease, background-color 0.15s ease, border-color 0.15s ease;
+        }
+        .register-body .password-toggle-btn:hover {
+            color: var(--bsu-maroon);
+            background-color: #f8fafc;
+        }
+        .register-body .password-toggle-btn:focus {
+            box-shadow: none;
+            color: var(--bsu-maroon);
+        }
+        .register-body .password-toggle-btn:focus-visible {
+            outline: 2px solid var(--bsu-maroon);
+            outline-offset: -2px;
+        }
+        .register-body .input-group:focus-within {
+            box-shadow: 0 0 0 3px rgba(128, 0, 0, 0.12);
+            border-radius: var(--bsu-radius-sm);
+        }
+        .register-body .input-group:focus-within .form-control,
+        .register-body .input-group:focus-within .password-toggle-btn {
+            border-color: var(--bsu-maroon);
+        }
         .register-body .form-label {
             font-size: 0.8rem;
             margin-bottom: 0.35rem;
             font-weight: 600;
             color: #334155;
+        }
+        .pwd-req-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            transition: all 0.2s ease;
+            font-size: 0.73rem;
+        }
+        .pwd-req-badge.valid {
+            color: #198754 !important;
+            font-weight: 600;
+        }
+        .pwd-req-badge.valid i {
+            color: #198754 !important;
+        }
+        .pwd-req-badge.invalid {
+            color: #64748b;
         }
     </style>
 </head>
@@ -91,22 +150,38 @@
                     <div class="col-md-6">
                         <label class="form-label">Username *</label>
                         {{ form.username }}
-                        {% if form.username.errors %}<div class="text-danger small mt-1" style="font-size: 0.74rem;">{{ form.username.errors.0 }}</div>{% endif %}
+                        {% if form.username.errors %}
+                            <div class="text-danger small mt-1" style="font-size: 0.74rem;">
+                                {% for error in form.username.errors %}<div>{{ error }}</div>{% endfor %}
+                            </div>
+                        {% endif %}
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Institutional Email *</label>
                         {{ form.email }}
-                        {% if form.email.errors %}<div class="text-danger small mt-1" style="font-size: 0.74rem;">{{ form.email.errors.0 }}</div>{% endif %}
+                        {% if form.email.errors %}
+                            <div class="text-danger small mt-1" style="font-size: 0.74rem;">
+                                {% for error in form.email.errors %}<div>{{ error }}</div>{% endfor %}
+                            </div>
+                        {% endif %}
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">First Name *</label>
                         {{ form.first_name }}
-                        {% if form.first_name.errors %}<div class="text-danger small mt-1" style="font-size: 0.74rem;">{{ form.first_name.errors.0 }}</div>{% endif %}
+                        {% if form.first_name.errors %}
+                            <div class="text-danger small mt-1" style="font-size: 0.74rem;">
+                                {% for error in form.first_name.errors %}<div>{{ error }}</div>{% endfor %}
+                            </div>
+                        {% endif %}
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Last Name *</label>
                         {{ form.last_name }}
-                        {% if form.last_name.errors %}<div class="text-danger small mt-1" style="font-size: 0.74rem;">{{ form.last_name.errors.0 }}</div>{% endif %}
+                        {% if form.last_name.errors %}
+                            <div class="text-danger small mt-1" style="font-size: 0.74rem;">
+                                {% for error in form.last_name.errors %}<div>{{ error }}</div>{% endfor %}
+                            </div>
+                        {% endif %}
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Contact Number</label>
@@ -118,13 +193,70 @@
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Password *</label>
-                        {{ form.password }}
-                        {% if form.password.errors %}<div class="text-danger small mt-1" style="font-size: 0.74rem;">{{ form.password.errors.0 }}</div>{% endif %}
+                        <div class="input-group">
+                            {{ form.password }}
+                            <button type="button" class="btn password-toggle-btn" id="togglePasswordBtn" aria-label="Show password" title="Show password" tabindex="-1">
+                                <i class="bi bi-eye text-muted" id="togglePasswordIcon"></i>
+                            </button>
+                        </div>
+                        {% if form.password.errors %}
+                            <div class="text-danger small mt-1" style="font-size: 0.74rem;">
+                                {% for error in form.password.errors %}
+                                    <div><i class="bi bi-exclamation-circle-fill me-1"></i>{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Confirm Password *</label>
-                        {{ form.password_confirm }}
-                        {% if form.password_confirm.errors %}<div class="text-danger small mt-1" style="font-size: 0.74rem;">{{ form.password_confirm.errors.0 }}</div>{% endif %}
+                        <div class="input-group">
+                            {{ form.password_confirm }}
+                            <button type="button" class="btn password-toggle-btn" id="toggleConfirmPasswordBtn" aria-label="Show password" title="Show password" tabindex="-1">
+                                <i class="bi bi-eye text-muted" id="toggleConfirmPasswordIcon"></i>
+                            </button>
+                        </div>
+                        {% if form.password_confirm.errors %}
+                            <div class="text-danger small mt-1" style="font-size: 0.74rem;">
+                                {% for error in form.password_confirm.errors %}
+                                    <div><i class="bi bi-exclamation-circle-fill me-1"></i>{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Interactive Password Requirements & Strength Meter -->
+                    <div class="col-12 mt-2">
+                        <div class="p-2 px-3 rounded-2 border bg-light-subtle">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <span class="text-dark fw-semibold" style="font-size: 0.74rem;">
+                                    <i class="bi bi-shield-lock-fill text-warning me-1"></i> Password Security Requirements:
+                                </span>
+                                <span class="badge bg-secondary-subtle text-secondary border px-2 py-1" id="strengthLabel" style="font-size: 0.68rem;">Example: AdminPass123!</span>
+                            </div>
+                            <div class="progress mb-2" style="height: 4px; background-color: #e2e8f0;">
+                                <div class="progress-bar" id="strengthProgressBar" role="progressbar" style="width: 0%; transition: width 0.3s ease, background-color 0.3s ease;"></div>
+                            </div>
+                            <div class="row g-1 text-muted" style="font-size: 0.72rem;">
+                                <div class="col-6 col-sm-4 pwd-req-badge invalid" id="req-len">
+                                    <i class="bi bi-circle"></i> <span>At least 8 chars</span>
+                                </div>
+                                <div class="col-6 col-sm-4 pwd-req-badge invalid" id="req-upper">
+                                    <i class="bi bi-circle"></i> <span>1 Uppercase (A-Z)</span>
+                                </div>
+                                <div class="col-6 col-sm-4 pwd-req-badge invalid" id="req-lower">
+                                    <i class="bi bi-circle"></i> <span>1 Lowercase (a-z)</span>
+                                </div>
+                                <div class="col-6 col-sm-4 pwd-req-badge invalid" id="req-num">
+                                    <i class="bi bi-circle"></i> <span>1 Number (0-9)</span>
+                                </div>
+                                <div class="col-6 col-sm-4 pwd-req-badge invalid" id="req-sym">
+                                    <i class="bi bi-circle"></i> <span>1 Symbol (!@#$...)</span>
+                                </div>
+                                <div class="col-6 col-sm-4 pwd-req-badge invalid" id="req-match">
+                                    <i class="bi bi-circle"></i> <span>Passwords match</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -140,6 +272,119 @@
         </div>
     </div>
 
+    <script>
+        // Password Show/Hide Toggle
+        function setupPasswordToggle(btnId, inputId, iconId) {
+            const btn = document.getElementById(btnId);
+            const input = document.getElementById(inputId);
+            const icon = document.getElementById(iconId);
+            if (!btn || !input || !icon) return;
+
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                const isPassword = input.getAttribute('type') === 'password';
+                if (isPassword) {
+                    input.setAttribute('type', 'text');
+                    icon.className = 'bi bi-eye-slash text-danger';
+                    btn.setAttribute('title', 'Hide password');
+                    btn.setAttribute('aria-label', 'Hide password');
+                } else {
+                    input.setAttribute('type', 'password');
+                    icon.className = 'bi bi-eye text-muted';
+                    btn.setAttribute('title', 'Show password');
+                    btn.setAttribute('aria-label', 'Show password');
+                }
+                input.focus();
+            });
+        }
+
+        setupPasswordToggle('togglePasswordBtn', 'id_password', 'togglePasswordIcon');
+        setupPasswordToggle('toggleConfirmPasswordBtn', 'id_password_confirm', 'toggleConfirmPasswordIcon');
+
+        // Dynamic Password Strength & Requirements Checker
+        const passwordInput = document.getElementById('id_password');
+        const confirmPasswordInput = document.getElementById('id_password_confirm');
+        const strengthBar = document.getElementById('strengthProgressBar');
+        const strengthLabel = document.getElementById('strengthLabel');
+
+        const reqLen = document.getElementById('req-len');
+        const reqUpper = document.getElementById('req-upper');
+        const reqLower = document.getElementById('req-lower');
+        const reqNum = document.getElementById('req-num');
+        const reqSym = document.getElementById('req-sym');
+        const reqMatch = document.getElementById('req-match');
+
+        function setReqStatus(elem, isValid) {
+            if (!elem) return;
+            const icon = elem.querySelector('i');
+            if (isValid) {
+                elem.classList.remove('invalid');
+                elem.classList.add('valid');
+                if (icon) icon.className = 'bi bi-check-circle-fill text-success';
+            } else {
+                elem.classList.remove('valid');
+                elem.classList.add('invalid');
+                if (icon) icon.className = 'bi bi-circle text-muted';
+            }
+        }
+
+        function updatePasswordStrength() {
+            const val = passwordInput ? passwordInput.value : '';
+            const confirmVal = confirmPasswordInput ? confirmPasswordInput.value : '';
+
+            const hasLen = val.length >= 8;
+            const hasUpper = /[A-Z]/.test(val);
+            const hasLower = /[a-z]/.test(val);
+            const hasNum = /[0-9]/.test(val);
+            const hasSym = /[^A-Za-z0-9]/.test(val);
+            const isMatch = Boolean(val.length > 0 && confirmVal.length > 0 && val === confirmVal);
+
+            setReqStatus(reqLen, hasLen);
+            setReqStatus(reqUpper, hasUpper);
+            setReqStatus(reqLower, hasLower);
+            setReqStatus(reqNum, hasNum);
+            setReqStatus(reqSym, hasSym);
+            setReqStatus(reqMatch, isMatch);
+
+            let score = 0;
+            if (hasLen) score++;
+            if (hasUpper) score++;
+            if (hasLower) score++;
+            if (hasNum) score++;
+            if (hasSym) score++;
+
+            if (!val) {
+                strengthBar.style.width = '0%';
+                strengthBar.className = 'progress-bar';
+                strengthLabel.className = 'badge bg-secondary-subtle text-secondary border';
+                strengthLabel.innerText = 'Example: AdminPass123!';
+            } else if (score <= 2) {
+                strengthBar.style.width = '35%';
+                strengthBar.className = 'progress-bar bg-danger';
+                strengthLabel.className = 'badge bg-danger-subtle text-danger border border-danger-subtle';
+                strengthLabel.innerText = 'Weak Password';
+            } else if (score <= 4) {
+                strengthBar.style.width = '70%';
+                strengthBar.className = 'progress-bar bg-warning';
+                strengthLabel.className = 'badge bg-warning-subtle text-warning-emphasis border border-warning-subtle';
+                strengthLabel.innerText = 'Moderate Password';
+            } else {
+                strengthBar.style.width = '100%';
+                strengthBar.className = 'progress-bar bg-success';
+                strengthLabel.className = 'badge bg-success-subtle text-success border border-success-subtle';
+                strengthLabel.innerText = 'Strong Password ✓';
+            }
+        }
+
+        if (passwordInput) {
+            passwordInput.addEventListener('input', updatePasswordStrength);
+        }
+        if (confirmPasswordInput) {
+            confirmPasswordInput.addEventListener('input', updatePasswordStrength);
+        }
+        // Initialize on load
+        updatePasswordStrength();
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

@@ -1,3 +1,4 @@
+import re
 from datetime import datetime
 from django import forms
 from django.contrib.auth.models import User
@@ -39,11 +40,18 @@ class UserRegistrationForm(forms.Form):
         widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'e.g., CICT, COE, CBA'})
     )
     password = forms.CharField(
-        widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'At least 6 characters'}),
-        min_length=6
+        widget=forms.PasswordInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'e.g., AdminPass123!',
+            'autocomplete': 'new-password'
+        })
     )
     password_confirm = forms.CharField(
-        widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Repeat your password'}),
+        widget=forms.PasswordInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Repeat your password',
+            'autocomplete': 'new-password'
+        }),
         label="Confirm Password"
     )
 
@@ -52,6 +60,35 @@ class UserRegistrationForm(forms.Form):
         if User.objects.filter(username__iexact=username).exists():
             raise forms.ValidationError("This username is already taken.")
         return username
+
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        if email and User.objects.filter(email__iexact=email).exists():
+            raise forms.ValidationError("An account with this institutional email already exists.")
+        return email
+
+    def clean_password(self):
+        password = self.cleaned_data.get('password')
+        if not password:
+            return password
+
+        missing = []
+        if len(password) < 8:
+            missing.append("at least 8 characters")
+        if not re.search(r'[A-Z]', password):
+            missing.append("at least 1 uppercase letter (A-Z)")
+        if not re.search(r'[a-z]', password):
+            missing.append("at least 1 lowercase letter (a-z)")
+        if not re.search(r'\d', password):
+            missing.append("at least 1 number (0-9)")
+        if not re.search(r'[^A-Za-z0-9]', password):
+            missing.append("at least 1 special symbol (e.g., !@#$%^&*)")
+
+        if missing:
+            raise forms.ValidationError(
+                f"Password must include {', '.join(missing)}. Example: AdminPass123!"
+            )
+        return password
 
     def clean(self):
         cleaned_data = super().clean()
