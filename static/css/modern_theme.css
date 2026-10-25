@@ -292,14 +292,18 @@ code, kbd, samp, pre {
 }
 
 .btn-auto,
+.table .btn-auto,
+.table td[colspan] .btn,
 .dropdown-toggle,
 .btn-close {
+    width: auto !important;
     min-width: auto !important;
+    max-width: none !important;
 }
 
 /* Table Row Action Buttons - Standard Width (e.g. Check In, No Show, Approve, Reject, Edit, Archive) */
 .table-action-btn,
-.table .btn-sm:not(.btn-icon):not(.table-action-btn-wide):not(.btn-action-wide):not(.modal *):not(.modal-dialog *) {
+.table tbody td:not([colspan]) .btn-sm:not(.btn-icon):not(.table-action-btn-wide):not(.btn-action-wide):not(.btn-auto):not(.modal *):not(.modal-dialog *) {
     width: 88px !important;
     min-width: 88px !important;
     max-width: 88px !important;
